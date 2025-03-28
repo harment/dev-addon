@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<routes>
-    <route prefix="torrent-manager" controller="TorrentManager\Admin\Controller\Settings" />
-</routes>
