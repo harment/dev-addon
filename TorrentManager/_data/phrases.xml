@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+    <phrase title="permission_interface_group_torrentManagerPermissions" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[Torrent Manager Permissions]]>
+    </phrase>
+    <phrase title="permission_forum_canUploadTorrent" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[Can upload torrents]]>
+    </phrase>
+	
+	 <phrase title="torrent_manager_settings" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[Torrent Manager Settings]]>
+    </phrase>
+    <phrase title="tmdb_api_key" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[TMDB API Key]]>
+    </phrase>
+    <phrase title="tmdb_api_key_hint" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[Enter your TMDB API key to enable movie data integration.]]>
+    </phrase>
+	 <phrase title="torrent_manager_settings" addon_id="TorrentManager" version_id="1000010" version_string="1.0.0">
+        <![CDATA[إعدادات Torrent Manager]]>
+    </phrase>
+</phrases>

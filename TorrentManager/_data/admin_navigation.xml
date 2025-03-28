@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin_navigation>
+    <section id="torrentManager" title="Torrent Manager" display_order="1000">
+        <entry id="settings" title="Settings" link="admin.php?torrent-manager/settings" display_order="10" />
+    </section>
+</admin_navigation>

@@ -1,0 +1,11 @@
+<xf:title>إعدادات Torrent Manager</xf:title>
+
+<xf:form action="{{ link('torrent-manager/settings/save') }}" method="post">
+    <xf:textboxrow name="tracker_url" label="عنوان التراكر" value="{$options.torrent_manager_tracker_url}" />
+    <xf:numberboxrow name="ratio_min" label="الحد الأدنى للريشيو" value="{$options.torrent_manager_ratio_min}" />
+    <xf:checkboxrow>
+        <xf:option name="force_thank" label="فرض الشكر للتحميل" checked="{$options.torrent_manager_force_thank}" />
+        <xf:option name="global_freeleech" label="تفعيل Global FreeLeech" checked="{$options.torrent_manager_global_freeleech}" />
+    </xf:checkboxrow>
+    <xf:submitrow submit="حفظ الإعدادات" />
+</xf:form>

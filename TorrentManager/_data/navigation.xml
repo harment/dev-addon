@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation>
+    <section id="torrentManager" title="Torrent Manager" display_order="1000">
+        <entry id="rewards" title="Rewards and Punishments" link="admin.php?torrent-manager/rewards" display_order="10" />
+    </section>
+	 <section id="torrentManager" title="Torrent Manager" display_order="1000">
+        <entry id="settings" title="Settings" link="admin.php?torrent-manager/settings" display_order="10" />
+    </section>
+	
+</navigation>

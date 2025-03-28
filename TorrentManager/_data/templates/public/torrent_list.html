@@ -1,0 +1,38 @@
+<xf:title>قائمة التورنت</xf:title>
+
+<div class="torrent-list">
+    <xf:foreach loop="$torrents" value="$torrent">
+        <div class="torrent-item">
+            <img src="{$torrent.poster_url}" alt="Poster" style="max-width: 150px;" />
+            <h3>{$torrent.title}</h3>
+            <p>
+                القسم: {{ $torrent.category_id == 1 ? 'أفلام' : 'مسلسلات' }} |
+                الفيديو: {$torrent.video_type} |
+                الصوت: {$torrent.audio_type} {$torrent.audio_channels}
+            </p>
+            <a href="{{ link('torrents/download', $torrent) }}">تحميل</a>
+        </div>
+    </xf:foreach>
+</div>
+
+<xf:css src="slick/slick.css" />
+<xf:css src="slick/slick-theme.css" />
+<xf:js src="slick/slick.min.js" />
+
+<div class="torrent-slider">
+    <xf:foreach loop="$latestTorrents" value="$torrent">
+        <div>
+            <img src="{$torrent.poster_url}" alt="Poster" style="width: 100%;" />
+            <h4>{$torrent.title}</h4>
+        </div>
+    </xf:foreach>
+</div>
+
+<xf:js>
+    $('.torrent-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000,
+    });
+</xf:js>
