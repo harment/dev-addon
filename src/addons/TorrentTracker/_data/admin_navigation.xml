@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin_navigation>
+  <admin_navigation_entry navigation_id="torrent" display_order="1" link="torrents" icon="fas fa-magnet" debug_only="0" development_only="0" hide_no_children="0"/>
+  <admin_navigation_entry navigation_id="torrentBonusPoints" parent_navigation_id="torrent" display_order="500" link="torrents/bonus-points" admin_permission_id="option" debug_only="0" development_only="0" hide_no_children="0"/>
+  <admin_navigation_entry navigation_id="torrentipban" parent_navigation_id="torrent" display_order="200" link="torrents/ip-ban" admin_permission_id="option" debug_only="0" development_only="0" hide_no_children="0"/>
+  <admin_navigation_entry navigation_id="torrentlogs" parent_navigation_id="torrent" display_order="400" link="torrents/log" debug_only="0" development_only="0" hide_no_children="0"/>
+  <admin_navigation_entry navigation_id="torrentsclientban" parent_navigation_id="torrent" display_order="300" link="torrents/client-ban" debug_only="0" development_only="0" hide_no_children="0"/>
+  <admin_navigation_entry navigation_id="torrentsetting" parent_navigation_id="torrent" display_order="100" link="options/groups/xenTorrentTrackerOptions/" debug_only="0" development_only="0" hide_no_children="0"/>
+</admin_navigation>

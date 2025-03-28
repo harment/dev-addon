@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget_definitions>
+  <widget_definition definition_id="mytracker_stats" definition_class="TorrentTracker\Widget\MytrackerStats"/>
+  <widget_definition definition_id="torrenttracker_stats" definition_class="TorrentTracker\Widget\TorrentStats"/>
+</widget_definitions>

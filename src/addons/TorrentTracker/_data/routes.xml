@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<routes>
+  <route route_type="admin" route_prefix="torrents" controller="TorrentTracker:Torrent" context="torrents"/>
+  <route route_type="public" route_prefix="torrents" format=":+int&lt;torrent_id&gt;/" controller="TorrentTracker:Torrent" context="torrents"/>
+</routes>

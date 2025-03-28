@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+  <option option_id="freeleechreqtime" edit_format="spinbox" data_type="unsigned_integer">
+    <default_value>5</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="410"/>
+  </option>
+  <option option_id="freeleechrequessize" edit_format="spinbox" data_type="unsigned_integer">
+    <default_value>5120</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="420"/>
+  </option>
+  <option option_id="xenAdditionalTorrentTracker" edit_format="template" data_type="array">
+    <default_value>{"host":"","port":"","xenAdditionalTrackerEnabled":false}</default_value>
+    <edit_format_params>option_template_xenAdditionalTorrentTracker</edit_format_params>
+    <sub_options>host
+port
+xenAdditionalTrackerEnabled</sub_options>
+    <relation group_id="xenTorrentTrackerOptions" display_order="101"/>
+  </option>
+  <option option_id="xenGlobalMultiplier" edit_format="template" data_type="array">
+    <default_value>{"upload_multiplier":"1","download_multiplier":"1","xenGlobalMultiplierEnabled":false}</default_value>
+    <edit_format_params>option_template_xenGlobalMultiplier</edit_format_params>
+    <sub_options>upload_multiplier
+download_multiplier
+xenGlobalMultiplierEnabled</sub_options>
+    <relation group_id="xenTorrentTrackerOptions" display_order="530"/>
+  </option>
+  <option option_id="xenTTNewUser" edit_format="template" data_type="array">
+    <default_value>{"upload":"2048","wait_time":"0","can_leech":"1","peers_limit":"0"}</default_value>
+    <edit_format_params>xentorrent_option_template_registrationDefault</edit_format_params>
+    <sub_options>upload
+wait_time
+can_leech
+peers_limit</sub_options>
+    <relation group_id="xenTorrentTrackerOptions" display_order="200"/>
+  </option>
+  <option option_id="xenTTPerPage" edit_format="spinbox" data_type="positive_integer">
+    <default_value>15</default_value>
+    <edit_format_params>min=0
+step=5</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="400"/>
+  </option>
+  <option option_id="xenTTStatsOnHome" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="440"/>
+  </option>
+  <option option_id="xenTorrentAttachmentPostfix" edit_format="textbox" data_type="string">
+    <default_value></default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="470"/>
+  </option>
+  <option option_id="xenTorrentCategoriesImagePath" edit_format="textbox" data_type="string">
+    <default_value>/styles/xentorrent/categories/</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="450"/>
+  </option>
+  <option option_id="xenTorrentCloudfare" edit_format="onoff" data_type="integer">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="102"/>
+  </option>
+  <option option_id="xenTorrentComment" edit_format="textbox" data_type="string">
+    <default_value></default_value>
+    <edit_format_params>rows=2</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="460"/>
+  </option>
+  <option option_id="xenTorrentGlobalFreeleech" edit_format="radio" data_type="integer">
+    <default_value>0</default_value>
+    <edit_format_params>1=Yes
+0=No</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="520"/>
+  </option>
+  <option option_id="xenTorrentHttpsTracker" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="103"/>
+  </option>
+  <option option_id="xenTorrentMagnetLink" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="510"/>
+  </option>
+  <option option_id="xenTorrentMaxiumSticky" edit_format="spinbox" data_type="unsigned_integer">
+    <default_value>0</default_value>
+    <edit_format_params>min=0
+step=1</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="340"/>
+  </option>
+  <option option_id="xenTorrentMinimumPost" edit_format="spinbox" data_type="unsigned_integer">
+    <default_value>0</default_value>
+    <edit_format_params>min=0
+step=5</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="310"/>
+  </option>
+  <option option_id="xenTorrentMinimumRatio" edit_format="textbox" data_type="unsigned_numeric">
+    <default_value>0.2</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="300"/>
+  </option>
+  <option option_id="xenTorrentMustLike" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="320"/>
+  </option>
+  <option option_id="xenTorrentMustReply" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="330"/>
+  </option>
+  <option option_id="xenTorrentPrefixSystem" edit_format="radio" data_type="integer">
+    <default_value>1</default_value>
+    <edit_format_params>1=yes
+0=no</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="104"/>
+  </option>
+  <option option_id="xenTorrentPrivateFlag" edit_format="radio" data_type="integer">
+    <default_value>1</default_value>
+    <edit_format_params>1=yes
+0=no</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="104"/>
+  </option>
+  <option option_id="xenTorrentReseedInterval" edit_format="spinbox" data_type="integer">
+    <default_value>86400</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="430"/>
+  </option>
+  <option option_id="xenTorrentSeedingIndicator" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="107"/>
+  </option>
+  <option option_id="xenTorrentTagSystem" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="106"/>
+  </option>
+  <option option_id="xenTorrentTracker" edit_format="template" data_type="array">
+    <default_value>{"host":"","port":""}</default_value>
+    <edit_format_params>option_template_xenTorrentTracker</edit_format_params>
+    <sub_options>host
+port</sub_options>
+    <relation group_id="xenTorrentTrackerOptions" display_order="100"/>
+  </option>
+  <option option_id="xfdevTrackerWithoutPort" edit_format="onoff" data_type="integer">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="102"/>
+  </option>
+  <option option_id="xfttAnnounceInterval" edit_format="spinbox" data_type="numeric">
+    <default_value>1800</default_value>
+    <edit_format_params>min=1</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="700"/>
+  </option>
+  <option option_id="xfttDisableRatioCheck" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="521"/>
+  </option>
+  <option option_id="xfttDownloadSnatchedTorrents" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xenTorrentTrackerOptions" display_order="522"/>
+  </option>
+  <option option_id="xfttInactiveTorrentMoveDestinationForum" edit_format="callback" data_type="unsigned_integer">
+    <default_value>0</default_value>
+    <edit_format_params>\XF\Option\Forum::renderSelect</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="603"/>
+  </option>
+  <option option_id="xfttInactiveTorrentsMoveDays" edit_format="spinbox" data_type="numeric">
+    <default_value>60</default_value>
+    <edit_format_params>min=1</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="600"/>
+  </option>
+  <option option_id="xfttResetPasskeyOnBan" edit_format="radio" data_type="integer">
+    <default_value>0</default_value>
+    <edit_format_params>1=Yes
+0=No</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="201"/>
+  </option>
+  <option option_id="xfttSeedbonusAmountPerInterval" edit_format="spinbox" data_type="numeric">
+    <default_value>1</default_value>
+    <edit_format_params>min=1</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="702"/>
+  </option>
+  <option option_id="xfttSeedbonusInterval" edit_format="spinbox" data_type="numeric">
+    <default_value>3600</default_value>
+    <edit_format_params>min=1</edit_format_params>
+    <relation group_id="xenTorrentTrackerOptions" display_order="701"/>
+  </option>
+</options>

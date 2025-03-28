@@ -1,0 +1,2471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="admin" title="option_template_xenAdditionalTorrentTracker" version_id="2020654" version_string="2.2.6 Release Candidate 4"><![CDATA[<xf:checkboxrow
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:option name="{$inputName}[xenAdditionalTrackerEnabled]" selected="$option.option_value.xenAdditionalTrackerEnabled" data-hide="true"
+		label="Enable Additional Tracker?">
+
+		<xf:dependent>
+
+		<div class="inputGroup inputGroup--numbers">
+		<xf:textbox name="{$inputName}[host]" value="{$option.option_value.host}" placeholder="{{ phrase('host') }}"/>
+		<span class="inputGroup-text">:</span>
+		<xf:textbox name="{$inputName}[port]" value="{$option.option_value.port}" placeholder="{{ phrase('port') }}"/>
+		<xf:if is="{$formatParams.units}"><span class="inputGroup-text">{$formatParams.units}</span></xf:if>
+		<xf:comment>
+		<span id="trackerStatus">
+			<a  href="{{ link('torrents/check-status') }}" data-xf-click="overlay" class="Loader button">{{ phrase('check_status') }} </a>
+		</span>
+		</xf:comment>
+	</div>
+
+	</xf:dependent>
+	</xf:option>
+</xf:checkboxrow>]]></template>
+  <template type="admin" title="option_template_xenGlobalMultiplier" version_id="2021079" version_string="2.2.10.9"><![CDATA[<xf:checkboxrow
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:option name="{$inputName}[xenGlobalMultiplierEnabled]" selected="$option.option_value.xenGlobalMultiplierEnabled" data-hide="true"
+		label="Enable Global Multiplier?">
+
+		<xf:dependent>
+			
+			<xf:numberbox name="{$inputName}[upload_multiplier]" value="{$option.option_value.upload_multiplier}" min="0" default="1"/> 
+			<div class="formRow-explain">Upload Multiplier</div>
+			
+			<xf:numberbox name="{$inputName}[download_multiplier]" value="{$option.option_value.download_multiplier}" min="0" default="1"/> 
+			<div class="formRow-explain">Download Multiplier</div>
+
+		</xf:dependent>
+	</xf:option>
+</xf:checkboxrow>]]></template>
+  <template type="admin" title="option_template_xenTorrentTracker" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:formrow rowtype="input"
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<div class="inputGroup inputGroup--numbers">
+		<xf:textbox name="{$inputName}[host]" value="{$option.option_value.host}" placeholder="{{ phrase('host') }}"/>
+		<span class="inputGroup-text">:</span>
+		<xf:textbox name="{$inputName}[port]" value="{$option.option_value.port}" placeholder="{{ phrase('port') }}"/>
+		<xf:if is="{$formatParams.units}"><span class="inputGroup-text">{$formatParams.units}</span></xf:if>
+		<span id="trackerStatus">
+			<a  href="{{ link('torrents/check-status') }}" data-xf-click="overlay" class="Loader button">{{ phrase('check_status') }} </a>
+		</span>
+	</div>
+</xf:formrow>
+<xf:hiddenval name="xenTorrentTrackerOptions">1</xf:hiddenval>]]></template>
+  <template type="admin" title="torrent_tracker_option_macros" version_id="2021379" version_string="2.2.13.9"><![CDATA[<xf:macro name="option_form_block" arg-group="" arg-options="!" arg-containerBeforeHtml="" arg-headers="{{ [] }}">
+    <xf:if is="$options is not empty">
+        <xf:form action="{{ link('options/update') }}" ajax="true" class="block">
+            {$containerBeforeHtml|raw}
+            <div class="block-container">
+               
+                <xf:foreach loop="$headers" value="$header">
+                    <xf:macro name="option_rows" arg-header="{$header.label}"
+                              arg-group="{$group}" arg-options="{$options}"
+                              arg-minDisplayOrder="{$header.minDisplayOrder}" arg-maxDisplayOrder="{$header.maxDisplayOrder}" />
+                </xf:foreach>
+
+                <xf:submitrow sticky="true" icon="save" />
+            </div>
+        </xf:form>
+    </xf:if>
+</xf:macro>
+
+<xf:macro name="option_form_block_tabs" arg-group="" arg-options="!" arg-containerBeforeHtml="" arg-headers="{{ [] }}">
+    <xf:if is="$options is not empty">
+        <xf:form action="{{ link('options/update') }}" ajax="true" class="block">
+            {$containerBeforeHtml|raw}
+            <div class="block-container">
+                <h2 class="block-tabHeader tabs" data-xf-init="tabs" role="tablist">
+                    <xf:foreach loop="$headers" key="$key" value="$header">
+                        <a class="tabs-tab{{ $header.active ? ' is-active' : '' }}" role="tab" tabindex="0" aria-controls="{$key}">{$header.label}</a>
+                    </xf:foreach>
+                </h2>
+                <ul class="tabPanes">
+                    <xf:foreach loop="$headers" key="$key" value="$header">
+                        <li class="{{ $header.active ? 'is-active' : '' }}" role="tabpanel" id="{$key}">
+                            <xf:macro name="option_rows"
+                                      arg-group="{$group}" arg-options="{$options}"
+                                      arg-minDisplayOrder="{$header.minDisplayOrder}" arg-maxDisplayOrder="{$header.maxDisplayOrder}" />
+                        </li>
+                    </xf:foreach>
+                </ul>
+                <xf:submitrow sticky="true" icon="save" />
+            </div>
+        </xf:form>
+    </xf:if>
+</xf:macro>
+
+<xf:macro name="option_rows" arg-header="" arg-group="!" arg-options="!" arg-minDisplayOrder="{{ 0 }}" arg-maxDisplayOrder="!">
+    <xf:set var="$hundred" value="0" />
+
+    <xf:if is="$header">
+        <h3 class="block-formSectionHeader">{$header}</h3>
+    </xf:if>
+
+    <div class="block-body">
+        <xf:foreach loop="$options" value="$option">
+            <xf:if is="{$option.Relations.{$group.group_id}.display_order} >= $minDisplayOrder AND ({$option.Relations.{$group.group_id}.display_order} < $maxDisplayOrder OR $maxDisplayOrder == -1)">
+                <xf:if is="$group">
+                    <xf:set var="$curHundred" value="{{ floor($option.Relations.{$group.group_id}.display_order / 100) }}" />
+                    <xf:if is="{{ $curHundred > $hundred }}">
+                        <xf:set var="$hundred" value="{$curHundred}" />
+                        <hr class="formRowSep" />
+                    </xf:if>
+                </xf:if>
+
+                <xf:macro template="option_macros" name="option_row"
+                          arg-group="{$group}" arg-option="{$option}" />
+            </xf:if>
+        </xf:foreach>
+    </div>
+</xf:macro>]]></template>
+  <template type="admin" title="xentorrent_bonus_points_add" version_id="2021078" version_string="2.2.10.8"><![CDATA[<xf:title>{{ phrase('xftt_bonus_points_add') }}</xf:title>
+
+<xf:form action="{{ link('torrents/bonus-points/add') }}" ajax="true" class="block-container">
+
+	<div class="block-body">
+		<xf:numberboxrow name="data_receivable" value="0" min="0" step="1" label="Data Receivable (In GB)" 
+						 explain="{{ phrase('data_receivable_explain') }}" />
+		<xf:numberboxrow name="points_needed" value="0" min="0" step="10" label="{{ phrase('points_needed') }}" 
+						 explain="{{ phrase('points_needed_explain') }}"  />
+		<xf:numberboxrow name="display_order" value="0" min="0" step="1" label="{{ phrase('display_order') }}" 
+						 explain="{{ phrase('display_order_explain') }}" />		
+	</div>
+	<xf:submitrow class="js-submitButton" sticky="true" icon="save"/> 
+</xf:form>]]></template>
+  <template type="admin" title="xentorrent_bonus_points_list" version_id="2021078" version_string="2.2.10.8"><![CDATA[<xf:title>{{ phrase('bonus_points') }}</xf:title>
+
+<xf:pageaction>
+	<div class="buttonGroup">
+		<xf:button href="{{ link('torrents/bonus-points/add') }}" icon="add">{{ phrase('add') }}</xf:button>
+	</div>
+</xf:pageaction>
+
+<xf:if is="$bonusPoints is not empty">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:datalist>
+				<xf:datarow rowtype="header">
+					<xf:cell>{{ phrase('display_order') }}</xf:cell> 
+					<xf:cell>{{ phrase('data_receivable') }}</xf:cell>
+					<xf:cell>{{ phrase('points_needed') }}</xf:cell> 
+					<xf:cell>&nbsp;</xf:cell>
+				</xf:datarow>
+				<xf:foreach loop="{$bonusPoints}" key="$key" value="$bonus">
+					<tbody class="dataList-rowGroup">
+						<xf:datarow>
+							<xf:cell>
+								{$bonus.display_order}
+							</xf:cell> 
+							<xf:cell>
+								{$bonus.data_receivable} GB
+							</xf:cell>
+							<xf:cell>
+								{$bonus.points_needed}
+							</xf:cell>
+							
+							<xf:cell class="dataList-cell--iconic dataList-cell--action">
+								<xf:button href="{{ link('torrents/bonus-points/delete', '', {'id':$bonus.id}) }}" class="dataList-delete" data-xf-init="tooltip"  data-original-title="Delete" icon="delete"></xf:button>
+							</xf:cell> 
+						</xf:datarow>
+					</tbody>
+				</xf:foreach>
+			</xf:datalist>
+		</div> 
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('not_have_content') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="xentorrent_check_status" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('check_announce_status') }}</xf:title>
+
+<div class="block-container">
+	<div class="block-body">
+		<xf:inforow rowtype="confirm">
+			your tracker server is <font size="20px" color="{{$status == 'online' ? 'red' : 'blue'}}">{$status}</font>
+		</xf:inforow>
+	</div>
+</div>]]></template>
+  <template type="admin" title="xentorrent_clientban_add" version_id="2021170" version_string="2.2.11"><![CDATA[<xf:title>{{ phrase('xm_add_ban') }}</xf:title>
+
+<xf:form action="{{ link('torrents/client-ban/add') }}" ajax="true" class="block-container">
+
+	<div class="block-body">
+		<xf:textboxrow label="{{ phrase('peer_id') }}" explain="Clients with peer_id starting with this are banned from using tracker." name="peer_id" />
+		<xf:textboxrow label="{{ phrase('Comment') }}" explain="Don't allow private networks - 10.0.0.0/8" name="comment"  />
+	</div>
+	<xf:submitrow class="js-submitButton" sticky="true" icon="save"/> 
+</xf:form>]]></template>
+  <template type="admin" title="xentorrent_clientban_list" version_id="2010070" version_string="2.1.0"><![CDATA[<xf:title>{{ phrase('client_ban_manager') }}</xf:title>
+
+<xf:pageaction>
+	<div class="buttonGroup">
+		<xf:button href="{{ link('torrents/client-ban/add') }}" icon="add">{{ phrase('add') }}</xf:button>
+	</div>
+</xf:pageaction>
+
+<xf:if is="$clients is not empty">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:datalist>
+				<xf:datarow rowtype="header"> 
+					<xf:cell>{{ phrase('peer_id') }}</xf:cell>
+					<xf:cell>{{ phrase('comment') }}</xf:cell> 
+					<xf:cell>&nbsp;</xf:cell>
+				</xf:datarow>
+				<xf:foreach loop="{$clients}" key="$key" value="$client">
+					<tbody class="dataList-rowGroup">
+						<xf:datarow>  
+							<xf:cell>
+								{$client.peer_id}
+							</xf:cell>
+							<xf:cell>
+								{$client.comment|raw}
+							</xf:cell> 
+							<xf:cell class="dataList-cell--iconic dataList-cell--action">
+								<xf:button href="{{ link('torrents/client-ban/delete', '', {'peer_id':$client.peer_id}) }}" class="dataList-delete" data-xf-init="tooltip"  data-original-title="Delete" icon="delete"></xf:button>
+							</xf:cell> 
+						</xf:datarow>
+					</tbody>
+				</xf:foreach>
+			</xf:datalist>
+		</div> 
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('not_have_content') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="xentorrent_helper_criteria_user" version_id="2021276" version_string="2.2.12.6"><![CDATA[<xf:checkboxrow label="{{ phrase('xf2_torrent_tracker') }}">
+
+	<xf:option label="{{ phrase('user_has_uploaded_at_least_x_mb') }}" name="user_criteria[xentt_uploaded][rule]" value="xentt_uploaded" selected="{$criteria.xentt_uploaded}">
+			<xf:textbox name="user_criteria[xentt_uploaded][data][uploaded]" value="{$criteria.xentt_uploaded.uploaded}" type="number" size="20" min="0" step="500" />
+	</xf:option>
+	
+	<xf:option label="{{ phrase('user_has_downloaded_at_least_x_mb') }}" name="user_criteria[xentt_downloaded][rule]" value="xentt_downloaded" selected="{$criteria.xentt_downloaded}">
+			<xf:textbox name="user_criteria[xentt_downloaded][data][downloaded]" value="{$criteria.xentt_downloaded.downloaded}" type="number" size="20" min="0" step="500" />
+	</xf:option>
+	
+	<xf:option label="{{ phrase('user_has_uploaded_at_least_x_torrents') }}" name="user_criteria[xentt_uploaded_torrent][rule]" value="xentt_uploaded_torrent" selected="{$criteria.xentt_uploaded_torrent}">
+			<xf:textbox name="user_criteria[xentt_uploaded_torrent][data][uploaded_torrent]" value="{$criteria.xentt_uploaded_torrent.uploaded_torrent}" type="number" size="20" min="0" step="1" />
+	</xf:option>
+	
+	<xf:option label="{{ phrase('user_have_ratio_less_than_x') }}" name="user_criteria[xentt_ratio_less][rule]" value="xentt_ratio_less" selected="{$criteria.xentt_ratio_less}">
+			<xf:textbox name="user_criteria[xentt_ratio_less][data][ratio_less]" value="{$criteria.xentt_ratio_less.ratio_less}" type="number" size="20" min="0" step="0.1" />
+	</xf:option>
+	
+	<xf:option label="{{ phrase('user_have_ratio_greater_than_x') }}" name="user_criteria[xentt_ratio_greater][rule]" value="xentt_ratio_greater" selected="{$criteria.xentt_ratio_greater}">
+			<xf:textbox name="user_criteria[xentt_ratio_greater][data][ratio_greater]" value="{$criteria.xentt_ratio_greater.ratio_greater}" type="number" size="20" min="0" step="0.1" />
+	</xf:option>
+	
+</xf:checkboxrow>
+
+<hr class="formRowSep" />]]></template>
+  <template type="admin" title="xentorrent_ipban_add" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('xm_add_language') }}</xf:title>
+
+<xf:form action="{{ link('torrents/ip-ban/add') }}" ajax="true" class="block-container">
+
+	<div class="block-body">
+		<xf:textboxrow label="{{ phrase('Begin') }}" explain="Example: 10.0.0.0" name="begin" />
+		<xf:textboxrow label="{{ phrase('End') }}" explain="Example: 10.255.255.255" name="end"  />
+		<xf:textboxrow label="{{ phrase('Comment') }}" explain="Don't allow private networks - 10.0.0.0/8" name="comment"  />
+		
+	</div>
+	<xf:submitrow class="js-submitButton" sticky="true" icon="save"/> 
+</xf:form>]]></template>
+  <template type="admin" title="xentorrent_ipban_list" version_id="2010070" version_string="2.1.0"><![CDATA[<xf:title>{{ phrase('ip_ban_manager') }}</xf:title>
+
+<xf:pageaction>
+	<div class="buttonGroup">
+		<xf:button href="{{ link('torrents/ip-ban/add') }}" icon="add">{{ phrase('add') }}</xf:button>
+	</div>
+</xf:pageaction>
+
+<xf:if is="$ips is not empty">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:datalist>
+				<xf:datarow rowtype="header"> 
+					<xf:cell width="50%">{{ phrase('comment') }}</xf:cell>
+					<xf:cell>{{ phrase('Begin') }}</xf:cell>
+					<xf:cell>{{ phrase('End') }}</xf:cell>
+					<xf:cell>&nbsp;</xf:cell>
+				</xf:datarow>
+				<xf:foreach loop="{$ips}" key="$key" value="$ip">
+					<tbody class="dataList-rowGroup">
+						<xf:datarow>  
+							<xf:cell>
+								{$ip.comment|raw}
+							</xf:cell>
+							<xf:cell>
+								{$ip.begin|ip}
+							</xf:cell>
+							<xf:cell>
+								{$ip.end|ip}
+							</xf:cell>
+							<xf:cell class="dataList-cell--iconic dataList-cell--action">
+								<xf:button href="{{ link('torrents/ip-ban/delete', '', {'begin':$ip.begin, 'end':$ip.end}) }}" class="dataList-delete" data-xf-init="tooltip"  data-original-title="Delete" icon="delete"></xf:button>
+							</xf:cell> 
+						</xf:datarow>
+					</tbody>
+				</xf:foreach>
+			</xf:datalist>
+		</div> 
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('not_have_content') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="xentorrent_log" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('xentorrent_tracker_log') }}</xf:title>
+ 
+
+<xf:if is="$entries is not empty">
+	<div class="block">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:foreach loop="$entries" value="$entry">
+						<xf:datarow overlay="true"
+							label="{{phrase('action')}}: {$entry.action}"
+							href="{{ link('torrents/log', '', {'log_id':$entry.log_id}) }}" 
+							dir="auto">
+							<xf:explain>
+								<ul class="listInline listInline--bullet">
+									<li><xf:date time="{$entry.log_date}" /></li>
+									<li>{$entry.message}</li>
+								</ul>
+							</xf:explain>
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($entries, $total) }}</span>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+			link="torrents/log"
+			wrapperclass="block-outer block-outer--after" />
+	</div>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_errors_have_been_logged') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="xentorrent_log_view" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('xentorrent_tracker_log_entry') }}</xf:title>
+<div class="block">
+	<div class="block-container">
+		<div class="block-body block-row">
+			<ul class="listInline listInline--bullet u-ltr">
+				<li><span class="u-dimmed">{{phrase('action')}}:</span> {$entry.action}</li>
+				<li class="u-dimmed">{$entry.filename}:{$entry.line}</li>
+			</ul>
+			<ul class="listInline listInline--bullet u-muted">
+				 <li>{{ date_time($entry.log_date) }}</li>
+			</ul>
+		</div>
+
+		<h3 class="block-minorHeader">{{ phrase('response') }}</h3>
+		<div class="block-body block-body--contained block-row" dir="ltr">
+			<pre>{$entry.message}</pre>
+		</div>
+
+		<h3 class="block-minorHeader">{{ phrase('request_state') }}</h3>
+		<div class="block-body block-body--contained block-row" dir="ltr">
+			{{ dump_simple($entry.params) }}
+		</div> 
+	</div>
+</div>]]></template>
+  <template type="admin" title="xentorrent_option_template_registrationDefault" version_id="2010070" version_string="2.1.0"><![CDATA[<xf:formrow rowtype="input"
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}"> 
+	<xf:numberbox name="{$inputName}[upload]" value="{$option.option_value.upload}" min="0" />
+	<div class="formRow-explain">{{ phrase('upload') }} {{ phrase('upload_explain') }}</div>
+	<br/>
+	<xf:numberbox name="{$inputName}[wait_time]" value="{$option.option_value.wait_time}" min="0" step="3600" />
+	<div class="formRow-explain">{{ phrase('wait_time') }} {{ phrase('wait_time_explain') }}</div>
+	<br/>
+	<xf:numberbox name="{$inputName}[peers_limit]" value="{$option.option_value.peers_limit}" min="0"/> 
+	<div class="formRow-explain">{{ phrase('peers_limit') }} {{ phrase('peers_limit_explain') }}</div>
+	<br/>
+	<xf:checkbox>
+		<xf:option name="{$inputName}[can_leech]" selected="$option.option_value.can_leech">{{ phrase('can_leech') }}</xf:option>
+	</xf:checkbox>
+	<div class="formRow-explain">{{ phrase('can_leech_desc') }}</div>
+</xf:formrow>]]></template>
+  <template type="admin" title="xentorrent_user_upgrade_edit" version_id="2021270" version_string="2.2.12"><![CDATA[<xf:formrow rowtype="input"
+			label="{{ phrase('bit_torrent') }}"> 
+	<xf:checkbox label="{{ phrase('can_leech') }}">
+		<xf:option name="xentt_options[can_leech]" selected="$upgrade.xentt_options.can_leech">
+			{{ phrase('can_leech') }}
+		</xf:option>
+		<xf:option name="xentt_options[freeleech]" selected="$upgrade.xentt_options.freeleech">
+			{{ phrase('freeleech') }}
+		</xf:option> 
+	</xf:checkbox>
+	<label class="iconic iconic--radio iconic--labelled"><i aria-hidden="true"></i>{{ phrase('wait_time') }}</label>
+	<xf:numberbox name="xentt_options[wait_time]" value="{$upgrade.xentt_options.wait_time}" min="0"
+					 label="{{ phrase('wait_time') }}" />
+	<label class="iconic iconic--radio iconic--labelled"><i aria-hidden="true"></i>{{ phrase('peers_limit') }}</label>
+	<xf:numberbox name="xentt_options[peers_limit]" value="{$upgrade.xentt_options.peers_limit}" min="0"
+					 label="{{ phrase('peers_limit') }}" />
+	<label class="iconic iconic--radio iconic--labelled"><i aria-hidden="true"></i>{{ phrase('upload_credit') }}</label>
+	<xf:numberbox name="xentt_options[upload_credit]" value="{$upgrade.xentt_options.upload_credit}" min="0"
+					 label="{{ phrase('upload_credit') }}" />
+	
+	<label class="iconic iconic--radio iconic--labelled"><i aria-hidden="true"></i>{{ phrase('upload_multiplier') }}</label>
+	<xf:numberbox name="xentt_options[upload_multiplier]" value="{$upgrade.xentt_options.upload_multiplier}" min="0"
+					 label="Upload Multiplier" default="1" />
+	<label class="iconic iconic--radio iconic--labelled"><i aria-hidden="true"></i>{{ phrase('download_multiplier') }}</label>
+	<xf:numberbox name="xentt_options[download_multiplier]" value="{$upgrade.xentt_options.download_multiplier}" min="0"
+					 label="Download Multiplier" default="1" />
+	
+
+	<div class="formRow-explain">{{ phrase('following_values_will_be_set_for_the_user_while_upgrade_is_active') }}</div>
+</xf:formrow>]]></template>
+  <template type="public" title="alert_thread_freeleech" version_id="2020972" version_string="2.2.9.2"><![CDATA[{{ phrase('x_has_requested_freeleech_request_for_torrent', {
+	'user':username_link($user, false, {'defaultname': $alert.username}),
+	'title': '<a href="' . link('torrents/freeleech-requests') . '" class="fauxBlockLink-blockLink">' . prefix('thread', $thread) . $content.title . '</a>',
+	'date': date($extra.time)
+}) }}]]></template>
+  <template type="public" title="alert_thread_reseed" version_id="2000270" version_string="2.0.2"><![CDATA[<xf:if is="{$content.user_id} == {$visitor.user_id} || {$extra.action} == 'uploaded'">
+	{{ phrase('x_has_requested_reseed_for_torrent_y_uploaded', {
+	'user':username_link($user, false, {'defaultname': $alert.username}),
+	'title': '<a href="' . link('threads', $content) . '" class="fauxBlockLink-blockLink">' . prefix('thread', $thread) . $content.title . '</a>',
+	'date': date($extra.time)
+}) }}
+	
+<xf:else />
+	{{ phrase('x_has_requested_reseed_for_torrent_y_completed', {
+	'user':username_link($user, false, {'defaultname': $alert.username}),
+	'title': '<a href="' . link('threads', $content) . '" class="fauxBlockLink-blockLink">' . prefix('thread', $thread) . $content.title . '</a>',
+	'date': date($extra.time)
+}) }}
+</xf:if>]]></template>
+  <template type="public" title="make_free_leech" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:if is="$torrent.freeleech">
+	<xf:title>{{ phrase('remove_freeleech') }}</xf:title>
+	<xf:else />
+	<xf:title>{{ phrase('make_freeleech') }}</xf:title>
+</xf:if>
+<xf:form action="{{ link('torrents/make-freeleech', $torrent) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$torrent.freeleech">
+				<xf:inforow rowtype="confirm">
+					{{ phrase('you_sure_you_want_to_remove_freeleech_this_torrent') }}
+				</xf:inforow>
+				<xf:submitrow submit="{{ phrase('remove_freeleech') }}" />
+				<xf:else />
+				<xf:inforow rowtype="confirm">
+					{{ phrase('you_sure_you_want_to_make_freeleech_this_torrent') }}
+				</xf:inforow>
+				<xf:submitrow submit="{{ phrase('make_freeleech') }}" />
+			</xf:if>
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="make_sticky_torrent" version_id="2021271" version_string="2.2.12.1"><![CDATA[<xf:if is="$torrent.sticky">
+	<xf:title>{{ phrase('remove_sticky_torrent') }}</xf:title>
+	<xf:else />
+	<xf:title>{{ phrase('make_sticky_torrent') }}</xf:title>
+</xf:if>
+<xf:form action="{{ link('torrents/make-sticky', $torrent) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$torrent.sticky">
+				<xf:inforow rowtype="confirm">
+					{{ phrase('remove_sticky_torrent_ques') }}
+				</xf:inforow>
+				<xf:submitrow submit="{{ phrase('remove_sticky_torrent') }}" />
+				<xf:else />
+					<xf:set var="$maxstickytorrents" value="{{$xf.options.xenTorrentMaxiumSticky}}" />
+					<xf:if is="{$stickyTorrents}<{$maxstickytorrents}">
+						<xf:inforow rowtype="confirm">
+							{{ phrase('make_sticky_torrent_ques') }}
+						</xf:inforow>
+						<xf:submitrow submit="{{ phrase('make_sticky_torrent') }}" />
+						<xf:else />
+						<xf:inforow>
+							Only {$maxstickytorrents} Torrents can be Sticked.
+						</xf:inforow>
+					</xf:if>
+			</xf:if>
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="member_torrents" version_id="2021270" version_string="2.2.12"><![CDATA[<xf:title>{{ phrase('torrent_of_x', {'name': $user.username}) }}</xf:title>
+<div class="tabs tabs--standalone">
+	<div class="hScroller" data-xf-init="h-scroller">
+		<span class="hScroller-scroll">
+			<a class="tabs-tab {{!$filter ? 'is-active':''}}" href="{{ link('members/torrents', $user) }}" rel="nofollow">{{ phrase('you_torrent') }}</a>
+			<a class="tabs-tab {{$filter == 'inactive' ? 'is-active':''}}" href="{{ link('members/torrents', $user, {'filter': 'inactive'}) }}" rel="nofollow">{{ phrase('Inactive') }}</a>
+			<a class="tabs-tab {{$filter == 'leech' ? 'is-active':''}}" href="{{ link('members/torrents', $user, {'filter': 'leech'}) }}" rel="nofollow">{{ phrase('Leeching') }}</a>
+			<a class="tabs-tab {{$filter == 'seed' ? 'is-active':''}}" href="{{ link('members/torrents', $user, {'filter': 'seed'}) }}" rel="nofollow">{{ phrase('Seeding') }}</a>
+		</span>
+	</div>
+</div>
+<xf:if is="$torrents is not empty">
+	<xf:if is="$filter is empty">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('Category') }}</xf:cell>
+						<xf:cell>{{ phrase('name') }}</xf:cell>
+						<xf:cell class="download"><span><i class="fas fa-download" style="font-size: 20px;" title="{{ phrase('download') }}"></i></span></xf:cell>
+						<xf:cell class="comments"><span><i class="fas fa-comments" style="font-size: 20px;" title="{{ phrase('comments') }}"></i></span></xf:cell>
+						<xf:cell class="size"><span><i class="fas fa-database" style="font-size: 20px;" title="{{ phrase('size') }}"></i></span></xf:cell>
+						<xf:cell class="snatched"><span><i class="fas fa-th" style="font-size: 20px;" title="{{ phrase('completed') }}"></i></span></xf:cell>
+						<xf:cell class="seeders"><span><i class="fas fa-arrow-alt-up" style="font-size: 20px; color:green" title="{{ phrase('seeders') }}"></i></span></xf:cell>
+						<xf:cell class="leechers"><span><i class="fas fa-arrow-alt-down" style="font-size: 20px; color:red" title="{{ phrase('leechers') }}"></i></span></xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="{$torrents}" key="$torrentId" value="$torrent">
+						<tbody class="dataList-rowGroup">
+							<xf:datarow> 
+								<xf:cell href="{{ link('forums', $torrent.Thread.Forum) }}">
+									<span class="label label--primary">{$torrent.Thread.Forum.Node.title}</span>
+								</xf:cell>
+								<xf:cell href="{{ link('threads', $torrent.Thread) }}">
+									{$torrent.Thread.title}
+								</xf:cell>
+								<xf:cell href="{{ link('attachments', $torrent.Attachment) }}"  tooltip="{{ phrase('download') }}">
+									<img src="{{ base_url('styles/torrent/torrent.png') }}" border="0" />
+								</xf:cell>
+								<xf:cell>
+									{$torrent.Thread.reply_count|number}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.size|file_size}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.completed|number}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.seeders|number}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.leechers|number}
+								</xf:cell>
+							</xf:datarow>
+						</tbody>
+					</xf:foreach>
+				</xf:datalist>
+			</div> 
+			<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="members/torrents" data="{$user}" params="{{ {'filter': $filter} }}"
+						wrapperclass="block-footer block-footer--split" />
+		</div>
+		<xf:else/>
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('Category') }}</xf:cell>
+						<xf:cell>{{ phrase('name') }}</xf:cell>
+						<xf:cell class="size"><span><i class="fa fa-database" style="font-size: 20px;"></i></span></xf:cell>
+						<xf:cell class="seeders"><span><i class="fas fa-arrow-alt-up" style="font-size: 20px; color:green" title="{{ phrase('seeders') }}"></i></span></xf:cell>
+						<xf:cell class="leechers"><span><i class="fas fa-arrow-alt-down" style="font-size: 20px; color:red" title="{{ phrase('leechers') }}"></i></span></xf:cell>
+						<xf:cell class="left"><span><i class="fas fa-hourglass-half" style="font-size: 20px;"></i></span></xf:cell>
+						<xf:cell class="uploaded"><span><i class="fas fa-upload" style="font-size: 20px;" title="{{ phrase('uploaded') }}"></i></span></xf:cell>
+						<xf:cell class="downloaded"><span><i class="fas fa-download" style="font-size: 20px;" title="{{ phrase('downloaded') }}"></i></span></xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="{$torrents}" key="$torrentId" value="$torrent">
+						<tbody class="dataList-rowGroup">
+							<xf:datarow> 
+								<xf:cell href="{{ link('forums', $torrent.Torrent.Thread.Forum) }}">
+									<span class="label label--primary">{$torrent.Torrent.Thread.Forum.Node.title}</span>
+								</xf:cell>
+								<xf:cell href="{{ link('threads', $torrent.Torrent.Thread) }}">
+									{$torrent.Torrent.Thread.title}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.Torrent.size|file_size}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.Torrent.seeders|number}
+								</xf:cell>
+								<xf:cell>
+									{$torrent.Torrent.leechers|number}
+								</xf:cell>
+								<xf:cell>
+									<xf:if is="{$filter} != 'seed'">	
+										<div class="listBlock left">
+											{$torrent.left|file_size} 
+										</div>
+										<xf:else />		
+										<div class="listBlock timespent">
+											<xf:if is="{$torrent.seedtime} < 3600">
+												{{number ($torrent.seedtime / 60 , 2)}} m
+												<xf:elseif is="{$torrent.seedtime} < 86400" />
+												{{number ($torrent.seedtime / 3600 , 2)}} h
+												<xf:else />
+												{{number ($torrent.seedtime / 86400 , 2)}} d
+											</xf:if>
+										</div>
+									</xf:if>
+								</xf:cell>
+
+								<xf:cell>
+									{$torrent.uploaded|file_size}  
+									<xf:if is="{$torrent.up_rate}">
+										<div class="secondRow muted">
+											@ {$torrent.up_rate|file_size} /s
+										</div>
+									</xf:if>
+								</xf:cell>
+								<xf:cell>
+									{$torrent.downloaded|file_size}  
+									<xf:if is="{$torrent.down_rate}">
+										<div class="secondRow muted">
+											@ {$torrent.down_rate|file_size} /s
+										</div>
+									</xf:if>
+								</xf:cell>
+
+							</xf:datarow>
+						</tbody>
+					</xf:foreach>
+				</xf:datalist>
+			</div> 
+			<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="members/torrents" data="{$user}" params="{{ {'filter': $filter} }}"
+						wrapperclass="block-footer block-footer--split" />
+		</div>
+	</xf:if>
+	<xf:else/>
+	<div class="blockMessage">{{ phrase('there_no_torrents_to_display') }}</div>
+</xf:if>]]></template>
+  <template type="public" title="sent_freeleech_request" version_id="2000270" version_string="2.0.2"><![CDATA[<xf:title>{{ phrase('freeleech_request') }}</xf:title>
+<xf:breadcrumb source="$torrent.Thread.getBreadcrumbs()" />
+<xf:set var="$freeleechreqsize" value="{{$xf.options.freeleechrequessize*1048576}}" />
+<xf:if is="{$torrent.size}<{$freeleechreqsize}">
+	<div class="block-container">
+			<div class="block-body"> 
+					<xf:inforow>
+						Can't Request Freeleech as 
+						File Size : {$torrent.size|file_size}
+						 and 
+						Freeleech Min. Request Size : {$freeleechreqsize|file_size}
+					</xf:inforow> 
+			</div>
+		</div>
+	<xf:else/>
+	<xf:form action="{{ link('torrents/request-freeleech', $torrent) }}" class="block" ajax="true">
+		<div class="block-container">
+			<div class="block-body"> 
+					<xf:inforow rowtype="confirm">
+						{{ phrase('you_sure_you_want_to_sent_freeleech_request') }}
+					</xf:inforow> 
+			</div>
+			<xf:submitrow submit="{{ phrase('sent') }}" rowtype="simple" />
+		</div>
+	</xf:form>
+</xf:if>]]></template>
+  <template type="public" title="torrent_list_index" version_id="2021771" version_string="2.2.17.1"><![CDATA[<xf:title>{{ phrase('torrents') }}</xf:title>
+<xf:css src="torrent_list_index.less"/>
+
+<xf:pageaction>
+    <div class="buttonGroup">
+        <xf:button href="{{ link('torrents/upload') }}" data-xf-click="overlay" icon="upload">{{
+            phrase('xftt_torrent_upload') }}
+        </xf:button>
+    </div>
+</xf:pageaction>
+
+<xf:comment>
+	<xf:wrap template="torrent_wrapper">
+		<xf:set var="$pageSelected" value="{{ $active ? $active.node_id : 'overview' }}"/>
+	</xf:wrap>
+</xf:comment>
+
+<xf:if is="$total is empty">
+    <div class="blockMessage">{{ phrase('there_no_torrents_to_display') }}</div>
+    <xf:else/>
+
+	<xf:include template="torrent_list_mobile_search" />
+
+    <!--	New Changes Starts -->
+	<div class="torrent-search-options">
+		<xf:form action="{{ link('torrents') }}" class="block" ajax="true">
+        <div class="block">
+            <div class="block-container">
+<!--                Filters-->
+<!--                <div style="color: dimgrey; padding: 5px;margin-top: 5px">Filters:</div>-->
+                <div class="searchFilters filterBlock" style="display: flex;padding: 5px; float: none; border: none">
+                    <div style="margin-right: 10px;">
+                        <xf:textbox name="username" value="{$linkFilters.username}" ac="single"
+                                    class="input filterBlock-input"
+                                    placeholder="{{ phrase('user_name') }}"/>
+                    </div>
+
+                    <div class="inputGroup inputGroup--auto inputGroup--inline">
+                        <xf:dateinput name="start"
+                                      value="{{ $linkFilters.start ? date($linkFilters.start, 'Y-m-d') : '' }}"
+                                      class="filterBlock-input filterBlock-input--small" placeholder="{{ phrase('start_date') }}" />
+                        <span class="inputGroup-text">-</span>
+                        <xf:dateinput name="end"
+                                      value="{{ $linkFilters.end ? date($linkFilters.end, 'Y-m-d') : '' }}"
+                                      class="filterBlock-input filterBlock-input--small" placeholder="{{ phrase('end_date') }}" />
+                        <span class="inputGroup-splitter"></span>
+                    </div>
+					<xf:if is="{$xf.options.xenTorrentTagSystem}">
+						<div>
+							<xf:textbox name="tag" value="{$linkFilters.tag}"
+										class="input filterBlock-input"
+										placeholder="{{ phrase('tag') }}"/>
+						</div>
+					</xf:if>
+					<div style="margin-left:10px">
+						<xf:button href="{{ link('torrents',null,{'freeleech':1}) }}">Show Freeleech Torrents</xf:button>
+					</div>
+                </div>
+
+<!--                Search Bar -->
+                <div style="display: flex; padding: 5px" class="searchBar">
+                    <div style="flex-basis: 70%">
+                        <xf:textbox name="filename" value="{$linkFilters.filename}" label="fileName" class="input filterBlock-input"
+                                    placeholder="{{ phrase('filename') }}"/>
+                    </div>
+
+                    <div style="flex-basis: 25%">
+                        <xf:select name="category_id" class="js-presetChange filterBlock-input" value="{$linkFilters.category_id}">
+							<xf:option value="" selected="!{$nodeIds}">{{ phrase('category') }}:</xf:option>
+                            <xf:optgroup>
+                                <xf:foreach loop="$nodeTree.getFlattened(0)" value="$treeEntry">
+                                    <xf:option value="{$treeEntry.record.node_id}"
+										disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}"
+										label="{{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }} {$treeEntry.record.title}" />
+                                </xf:foreach>
+                            </xf:optgroup>
+                        </xf:select>
+                    </div>
+
+                    <div style="flex-basis: 5%;margin-left: 3px">
+                        <xf:button type="submit" class="button" fa="fa-search" style="padding:7px">{{ phrase('search') }}</xf:button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </xf:form>
+	</div>
+    
+
+    <!--	New Changes Ends  -->
+    <div class="block-container">
+        <div class="block-body">
+            <xf:datalist>
+                <xf:datarow rowtype="header">
+                    <xf:cell>{{ phrase('Category') }}</xf:cell>
+                    <xf:cell>{{ phrase('name') }}</xf:cell>
+                    <xf:cell class="download"><a><span><i class="fas fa-download" style="font-size: 20px;"
+                                                          title="{{ phrase('download') }}"></i></span></a></xf:cell>
+                    <xf:cell class="comments"><a
+                            href="{{ link('torrents', null, $linkFilters + {'order': 'Thread.reply_count','direction':'desc'}) }}"><span><i
+                            class="fas fa-comments" style="font-size: 20px;"
+                            title="{{ phrase('comments') }}"></i></span>{$iCon.Thread.reply_count}</a></xf:cell>
+                    <xf:cell class="size" style="text-align:center;"><a
+                            href="{{ link('torrents', null, $linkFilters + {'order': 'size','direction':'desc'}) }}"><span><i
+                            class="fas fa-database" style="font-size: 20px;"
+                            title="{{ phrase('size') }}"></i></span></a>{$iCon.size}
+                    </xf:cell>
+                    <xf:cell class="snatched"><a
+                            href="{{ link('torrents', null, $linkFilters + {'order': 'completed','direction':'desc'}) }}"><span><i
+                            class="fas fa-th" style="font-size: 20px;" title="{{ phrase('completed') }}"></i></span></a>{$iCon.completed}
+                    </xf:cell>
+                    <xf:cell class="seeders"><a
+                            href="{{ link('torrents', null, $linkFilters + {'order': 'seeders','direction':'desc'}) }}"><span><i
+                            class="fas fa-arrow-alt-up" style="font-size: 20px; color:green"
+                            title="{{ phrase('seeders') }}"></i></span>{$iCon.seeders}</a></xf:cell>
+                    <xf:cell class="leechers"><a
+                            href="{{ link('torrents', null, $linkFilters + {'order': 'leechers','direction':'desc'}) }}"><span><i
+                            class="fas fa-arrow-alt-down" style="font-size: 20px; color:red"
+                            title="{{ phrase('leechers') }}"></i>{$iCon.leechers}</span></a></xf:cell>
+                </xf:datarow>
+
+                <!--[Sticky Torrents]-->
+                <xf:if is="$stickyTorrents is not empty">
+                    <xf:datarow>
+                        <xf:cell colspan="8">
+                            <i class="structItem-status structItem-status--sticky"
+                               title="{{ phrase('sticky')|for_attr }}">Sticky</i>
+                        </xf:cell>
+                    </xf:datarow>
+
+                    <!--[Fetching Sticky Torrents]-->
+                    <xf:foreach loop="{$stickyTorrents}" key="$torrentId" value="$torrent">
+                        <xf:macro template="torrent_macros" name="torrent_list_macro"
+                                  arg-torrent="{$torrent}" arg-className="sticky-torrents"/>
+                    </xf:foreach>
+
+                </xf:if>
+
+                <!--[Normal Torrents]-->
+                <xf:if is="$torrents is not empty">
+                    <xf:datarow>
+                        <xf:cell colspan="8">
+                            <i class="structItem-status structItem-status--sticky"
+                               title="{{ phrase('sticky')|for_attr }}">Normal</i>
+                        </xf:cell>
+                    </xf:datarow>
+
+                    <!--[Fetching Normal Torrents]-->
+                    <xf:foreach loop="{$torrents}" key="$torrentId" value="$torrent">
+                        <xf:macro template="torrent_macros" name="torrent_list_macro"
+                                  arg-torrent="{$torrent}" arg-className="normal-torrents {{ $xf.options.xenTorrentSeedingIndicator ? (in_array($torrent.torrent_id,$seedingTorrents) ? 'seeding-torrent' : '') : '' }}"/>
+                    </xf:foreach>
+					
+					<xf:else/>
+					<xf:datarow>
+						<xf:cell colspan="8">
+							<xf:inforow rowtype="" style="text-align:center">
+								{{ phrase('no_torrent_found') }}
+							</xf:inforow>
+						</xf:cell>
+					</xf:datarow>
+
+                </xf:if>
+            </xf:datalist>
+        </div>
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents"
+                    params="{$pageNavParams}"
+                    wrapperclass="block-footer block-footer--split"/>
+    </div>
+</xf:if>
+
+<xf:comment>
+<!-- Sidebar Section -->
+</xf:comment>
+
+<xf:page option="sideNavTitle">{{ phrase('categories') }}</xf:page>
+<xf:sidenav>
+	<xf:set var="$selected" value="{{ $active ? $active.node_id : 'overview' }}"/>
+	<xf:macro template="torrent_sidebar_category" name="simple_list_block"
+		arg-selected="{$selected}"
+		arg-categoryTree="{$nodeTree}"
+		arg-categoryExtras="{$nodeExtras}" />
+</xf:sidenav>
+
+<xf:sidenav>
+<div class="block" >
+	<div class="block-container">
+		<h3 class="block-minorHeader">BitTorrent Tracker Stats</h3>
+		<div class="block-body block-row">
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('seeders') }}</dt>
+				<dd>{$Statistics.peers.seeding|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('leechers') }}</dt>
+				<dd>{$Statistics.peers.leeching|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('peers') }}</dt>
+				<dd>{{$Statistics.peers.seeding + $Statistics.peers.leeching}}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('snatches') }}</dt>
+				<dd>{$Statistics.snatches}</dd>
+			</dl>
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('torrents') }}</dt>
+				<dd>{$Statistics.torrents}</dd>
+			</dl>
+		</div>
+	</div>
+</div>
+</xf:sidenav>
+<xf:page option="sideNavTitle">{{ phrase('torrent') }}</xf:page>
+{$innerContent|raw}
+
+<xf:js>
+	$('.categoryList-toggler + .categoryList-link').removeAttr("href");
+	$('.categoryList-toggler + .categoryList-link').attr("data-xf-click","toggle").attr("role","button").attr("tabindex","0").attr("aria-label","Toggle Expanded").attr("data-target","< :up :next");
+</xf:js>]]></template>
+  <template type="public" title="torrent_list_index.less" version_id="2021771" version_string="2.2.17.1"><![CDATA[@media only screen and (max-width: 600px) {
+	.torrent-search-options{
+		display:none;
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.mobile-torrent-search-box{
+		display:none;
+	}
+}
+
+
+
+.torrentListItem .download a {
+	display: inline-block; 
+	}
+	.torrentListItem .download .fa-magnet {
+	font-size: 16px;
+	color: #f51515;
+	}
+	.torrentListItem .download img {
+	width: 16px;
+	max-width:16px;
+	height: 16px;
+	}
+	.structItem-parts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: inline;
+	font-size: 12px;
+	color: #8c8c8c;
+	}
+	.structItem-parts > li {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	}
+	.structItem-parts > li:nth-child(even) {
+	color: #505050;
+	}
+	.structItem-parts > li:before {
+	content: "\00B7\20";
+	}
+	.structItem-parts > li:first-child:before {
+	content: "";
+	display: none;
+	}
+	.structItem-parts a {
+	color: inherit;
+	text-decoration: none;
+	}
+	.structItem-parts a:hover {
+	text-decoration: underline;
+	}
+	.structItem-title {
+	font-size: 17px;
+	font-weight: 400;
+	margin: 0;
+	padding: 0;
+	}
+
+	.sticky-torrents{
+		background-color:@xf-stickyTorrentBackground--background-color;
+	}
+
+.seeding-torrent{
+	background-color:@xf-seedingTorrentBackground--background-color;
+}]]></template>
+  <template type="public" title="torrent_list_mobile_search" version_id="2021670" version_string="2.2.16"><![CDATA[<div class="mobile-torrent-search-box" style="margin:10px;">
+	
+	<div style="text-align:center;margin-bottom: 10px;">
+		<xf:button href="{{ link('torrents',null,{'freeleech':1}) }}">Show Freeleech Torrents</xf:button>
+	</div>
+	
+    <xf:textbox value="{$linkFilters.filename}" label="fileName" class="input"
+                placeholder="{{ phrase('search_torrent') }}"
+                data-xf-click="menu"
+                aria-expanded="false"
+                aria-haspopup="true"
+                title="{{ phrase('search')|for_attr }}"/>
+    <xf:comment>
+        <a href="{{ link('search') }}"
+           class="p-navgroup-link p-navgroup-link--iconic p-navgroup-link--search"
+           data-xf-click="menu"
+           data-xf-key="{{ phrase('shortcut.search_menu')|for_attr }}"
+           aria-label="{{ phrase('search')|for_attr }}"
+           aria-expanded="false"
+           aria-haspopup="true"
+           title="{{ phrase('search')|for_attr }}">
+            <i aria-hidden="true"></i>
+            <span class="p-navgroup-linkText">{{ phrase('search') }}</span>
+        </a>
+
+    </xf:comment>
+
+    <div class="menu menu--structural menu--wide menu-content" data-menu="menu" aria-hidden="true">
+        <form action="{{ link('torrents') }}" class="menu-content"
+              data-xf-init="ajax-submit" method="post">
+
+            <h3 class="menu-header">{{ phrase('search') }}</h3>
+            <!--[XF:search_menu:above_input]-->
+            <div class="menu-row">
+                <xf:textbox name="filename" value="{$linkFilters.filename}" label="fileName"
+                            placeholder="{{ phrase('filename...') }}"
+                            aria-label="{{ phrase('filename') }}"
+                            class="input filterBlock-input"
+                            data-menu-autofocus="true"/>
+
+            </div>
+
+            <!--[XF:search_menu:above_member]-->
+            <div class="menu-row">
+                <div class="inputGroup inputGroup--auto inputGroup--inline">
+                    <span class="inputGroup-text" id="ctrl_search_menu_by_member">{{ phrase('by:') }}</span>
+                    <xf:textbox name="username" value="{$linkFilters.username}" ac="single"
+                                class="input filterBlock-input"
+                                placeholder="{{ phrase('user_name') }}"/>
+                </div>
+            </div>
+            <div class="menu-row">
+                <div class="inputGroup inputGroup--auto inputGroup--inline">
+                    <xf:dateinput name="start"
+                                  value="{{ $linkFilters.start ? date($linkFilters.start, 'Y-m-d') : '' }}"
+                                  class="filterBlock-input filterBlock-input--small"
+                                  placeholder="{{ phrase('start_date') }}"/>
+                    <span class="inputGroup-text">-</span>
+                    <xf:dateinput name="end"
+                                  value="{{ $linkFilters.end ? date($linkFilters.end, 'Y-m-d') : '' }}"
+                                  class="filterBlock-input filterBlock-input--small"
+                                  placeholder="{{ phrase('end_date') }}"/>
+                </div>
+            </div>
+            <div class="menu-row">
+                <xf:select name="category_id" class="js-presetChange filterBlock-input"
+                           value="{$linkFilters.category_id}">
+                    <xf:option value="" selected="!{$nodeIds}">{{ phrase('category') }}:</xf:option>
+                    <xf:optgroup>
+                        <xf:foreach loop="$nodeTree.getFlattened(0)" value="$treeEntry">
+                            <xf:option value="{$treeEntry.record.node_id}"
+                                       disabled="{{ $treeEntry.record.node_type_id != 'Forum' }}"
+                                       label="{{ repeat('&nbsp;&nbsp;', $treeEntry.depth)|raw }} {$treeEntry.record.title}"/>
+                        </xf:foreach>
+                    </xf:optgroup>
+                </xf:select>
+            </div>
+			<xf:if is="{$xf.options.xenTorrentTagSystem}">
+				<div class="menu-row">
+					<xf:textbox name="tag" value="{$linkFilters.tag}"
+										class="input filterBlock-input"
+										placeholder="{{ phrase('tag') }}"/>
+				</div>
+			</xf:if>
+            <div class="menu-footer">
+				<span class="menu-footer-controls">
+					<xf:button type="submit" class="button--primary" icon="search"/>
+				</span>
+            </div>
+        </form>
+    </div>
+
+</div>]]></template>
+  <template type="public" title="torrent_macros" version_id="2021771" version_string="2.2.17.1"><![CDATA[<xf:macro name="member_torrent_stat_pairs" arg-torrentStats="!" arg-context="!">
+	<!--[Shows Downloaded Info]-->
+	<xf:css src="torrent_user_stats.less" />
+	
+	<dl class="pairs pairs--rows pairs--rows--centered fauxBlockLink">
+		<dt>{{ phrase('downloaded') }}</dt>
+		<dd class="torrentUserDownloaded">
+				{$torrentStats.downloaded|file_size}
+		</dd>
+	</dl>
+	<!--[Shows Uploaded Info]-->
+	<dl class="pairs pairs--rows pairs--rows--centered">
+		<dt>{{ phrase('uploaded') }}</dt>
+		<dd class="torrentUserUploaded">
+			{$torrentStats.uploaded|file_size}
+		</dd>
+	</dl>
+	<!--[Shows Ratio Info]-->
+	<dl class="pairs pairs--rows pairs--rows--centered">
+		<dt>{{ phrase('ratio') }}</dt>
+		<dd class="torrentUserRatio">
+			{$torrentStats.ratio}
+		</dd>
+	</dl><!--[Shows Seedbonus Info]-->
+	<dl class="pairs pairs--rows pairs--rows--centered">
+		<dt>{{ phrase('seedbonus') }}</dt>
+		<dd class="torrentUserSeedbonus">
+			{$torrentStats.seedbonus}
+		</dd>
+	</dl>
+	<!--[Shows Torrent Upload Count]-->
+	<dl class="pairs pairs--rows pairs--rows--centered">
+		<dt>{{ phrase('torrent_upload_count') }}</dt>
+		<dd class="torrentUserUploadCount">
+			<span data-xf-init='tooltip' class='current_upload_count' title="{{ phrase('xftt_current_upload_count_phrase') }}">
+				{$torrentStats.currentUploadCount}
+			</span>
+			<span data-xf-init='tooltip' class='total_upload_count' title="{{ phrase('xftt_total_upload_count_phrase') }}">
+				({$torrentStats.totalUploadCount})
+			</span>
+		</dd>
+	</dl>
+</xf:macro>
+
+<xf:macro name="member_torrent_stat_pairs_justified" arg-torrentStats="!" arg-context="!">
+	<!--[Shows Downloaded Info]-->
+	<xf:css src="torrent_user_stats.less" />
+	
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('downloaded') }}</dt>
+		<dd class="torrentUserDownloaded">
+				{$torrentStats.downloaded|file_size}
+		</dd>
+	</dl>
+	<!--[Shows Uploaded Info]-->
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('uploaded') }}</dt>
+		<dd class="torrentUserUploaded">
+			{$torrentStats.uploaded|file_size}
+		</dd>
+	</dl>
+	<!--[Shows Ratio Info]-->
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('ratio') }}</dt>
+		<dd class="torrentUserRatio">
+			{$torrentStats.ratio}
+		</dd>
+	</dl>
+	<!--[Shows Seedbonus Info]-->
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('seedbonus') }}</dt>
+		<dd class="torrentUserSeedbonus">
+			{$torrentStats.seedbonus}
+		</dd>
+	</dl>
+	<!--[Shows Torrent Upload Count]-->
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('torrent_upload_count') }}</dt>
+		<dd class="torrentUserUploadCount">
+			<span data-xf-init='tooltip' class='current_upload_count' title="{{ phrase('xftt_current_upload_count_phrase') }}">
+				{$torrentStats.currentUploadCount}
+			</span>
+			<span data-xf-init='tooltip' class='total_upload_count' title="{{ phrase('xftt_total_upload_count_phrase') }}">
+				({$torrentStats.totalUploadCount})
+			</span>
+		</dd>
+	</dl>
+</xf:macro>
+
+<xf:macro name="torrent_list_macro" arg-torrent="!" arg-className="!">
+	<tbody class="dataList-rowGroup torrentListItem {$className}">
+		<xf:datarow> 
+			<xf:cell href="{{ link('forums', $torrent.Thread.Forum) }}">
+				<xf:if is="$torrent.Thread.Forum.torrent_category_image">
+					<img style="display:block;width: {{ property('torrentCatWidth') }};height: {{ property('torrentCatHeight') }};text-align: center;" src="{$torrent.Thread.Forum.torrent_category_image}" alt="{$torrent.Thread.Forum.Node.title}"  title="{$torrent.Thread.Forum.Node.title}" data-xf-init="tooltip" />
+					<xf:else/>
+					<img style="display:block;width: {{ property('torrentCatWidth') }};height: {{ property('torrentCatHeight') }};text-align: center;" src="{{ base_url('styles/torrent/default-category-icon.png') }}" alt="{$torrent.Thread.Forum.Node.title}" title="{$torrent.Thread.Forum.Node.title}" data-xf-init="tooltip" />
+				</xf:if>
+
+			</xf:cell>
+			<xf:cell >
+				<div class="structItem-title">
+
+					<xf:set var="$canPreview" value="{{ $torrent.Thread.canPreview() }}" />
+					<a href="{{ link('threads' . (($torrent.Thread.isUnread()) ? '/unread' : ''), $torrent.Thread) }}" class="" data-tp-primary="on" data-xf-init="{{ $canPreview ? 'preview-tooltip' : '' }}" data-preview-url="{{ $canPreview ? link('threads/preview', $torrent.Thread) : '' }}">{$torrent.Thread.title}</a>
+
+					<xf:if is="$torrent.freeleech" >
+						<span class="label label--accent" data-xf-init="tooltip" title="{{phrase('freeleech_desc')}}" style="display: inline" >{{phrase('freeleech')}}</span>
+					</xf:if>
+					<xf:if is="$xf.options.xenTorrentPrefixSystem">
+						<a href="{{ link('torrents', null, {'prefix_id': $torrent.Thread.prefix_id}) }}" class="labelLink" rel="nofollow">{{ prefix('thread', $torrent.Thread, 'html', '') }}</a>
+					</xf:if>
+				</div> 
+				<ul class="structItem-parts">
+					<li><xf:username user="$torrent.Thread.User" defaultname="{$torrent.Thread.username}" /></li>
+					<li class="structItem-startDate"><a href="{{ link('threads', $torrent.Thread) }}" rel="nofollow"><xf:date time="{$torrent.Thread.post_date}" /></a></li>
+				</ul>
+				
+				<xf:if is="{$xf.options.xenTorrentTagSystem}">
+					<div>
+						<ul class="structItem-parts">
+							<xf:if is="$xf.options.enableTagging AND ($torrent.Thread.tags)">
+								<li>									
+									<xf:macro template="torrent_macros" name="tag_list"
+										arg-tags="{$torrent.Thread.tags}"
+										arg-tagList="tagList--thread-{$thread.thread_id}" />
+								</li>
+							</xf:if>
+						</ul>
+					</div>
+				</xf:if>
+				
+			</xf:cell>
+			<xf:cell href="{{ link('attachments', $torrent.Attachment) }}" class="download"  tooltip="{{ phrase('download') }}">
+				<img src="{{ base_url('styles/torrent/torrent.png') }}" border="0" />
+				<xf:if is="{$torrent.magnetLink}">
+					<a href="{$torrent.magnetLink}" title="{{ phrase('download') }}"><i class="fa fa-magnet" style="font-size:16px;"></i></a>
+				</xf:if>
+			</xf:cell>
+			<xf:cell>
+				{$torrent.Thread.reply_count|number}
+			</xf:cell>
+			<xf:cell>
+				{$torrent.size|file_size}
+			</xf:cell>
+			<xf:cell>
+				{$torrent.completed|number}
+			</xf:cell>
+			<xf:cell>
+				{$torrent.seeders|number}
+			</xf:cell>
+			<xf:cell>
+				{$torrent.leechers|number}
+			</xf:cell>
+		</xf:datarow>	
+	</tbody>
+</xf:macro>
+
+<xf:macro name="tag_list"
+	arg-tags="!"
+	arg-tagList="!"
+	arg-containerClass=""
+	arg-highlightTerm="">
+
+	<xf:set var="$tagIcon">
+		<xf:fa icon="fa-tags" title="{{ phrase('tags')|for_attr }}" />
+		<span class="u-srOnly">{{ phrase('tags') }}</span>
+	</xf:set>
+
+	<dl class="tagList {$tagList} {{ $containerClass ?: '' }}">
+		<dt>
+			{$tagIcon}
+		</dt>
+		<dd>
+			<span class="js-tagList">
+				<xf:if is="$tags">
+					<xf:foreach loop="$tags" value="$tag">
+						<a href="{{ link('torrents','null',{'tag':$tag.tag_url}) }}" class="tagItem tagItem--tag_{$tag.tag_url}" dir="auto">
+							{{ $highlightTerm ? highlight($tag.tag, $highlightTerm) : $tag.tag }}
+						</a>
+					</xf:foreach>
+				<xf:else />
+					{{ phrase('none') }}
+				</xf:if>
+			</span>
+		</dd>
+	</dl>
+
+</xf:macro>
+
+<xf:macro name="tag_simple_list"
+	arg-tags="!"
+	arg-containerClass=""
+	arg-highlightTerm="">
+
+	<xf:if is="$tags">
+		<xf:foreach loop="$tags" value="$tag">
+			<span class="tagItem tagItem--tag_{$tag.tag_url}" dir="auto">
+				{{ $highlightTerm ? highlight($tag.tag, $highlightTerm) : $tag.tag }}
+			</span>
+		</xf:foreach>
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="public" title="torrent_post_attachment" version_id="2021374" version_string="2.2.13.4"><![CDATA[<xf:css src="torrent_post_attachment.less" />
+<div class="messageNotice torrentDetailsColor">
+	<ul class="listInline listInline--bullet listInline--selfInline">
+
+		<li>
+			<img src="{{ base_url('styles/torrent/torrent.png') }}" border="0" />
+			<a class="filename" href="{{link ('attachments', $thread.Torrent.Attachment)}}" target="_blank">{$thread.Torrent.Attachment.Data.filename}</a>
+			<xf:if is="{$thread.Torrent.magnetLink}">
+				<a href="{$thread.Torrent.magnetLink}" title="download"><i class="fa fa-magnet" style="font-size:16px;"></i></a>
+			</xf:if>
+		</li>
+		<li>
+			({$thread.Torrent.Attachment.file_size|file_size}, 
+			{$thread.Torrent.Attachment.view_count|number}, 
+			{{ phrase('size') }}: {$thread.Torrent.size|file_size}, 
+			{{ phrase('seeders') }}: <span class="seeders">{$thread.Torrent.seeders|number}</span>, 
+			{{ phrase('leechers') }}: <span class="leechers">{$thread.Torrent.leechers|number}</span>,
+			{{ phrase('completed') }}: <span class="completed">{$thread.Torrent.completed|number})</span>
+		</li>
+	</ul>
+
+</div>
+<div style="position:relative;">
+	<div class="actionLinks" style="margin-bottom:10px;"> 
+
+		<xf:if is="{$xf.visitor.canAcceptFreeleechRequest()}">
+			<a class="label label--primary" href="{{ link('torrents/make-freeleech', $thread.Torrent) }} " data-xf-click="switch-overlay" data-sk-make="{{ phrase('make_freeleech') }}" data-sk-remove="{{ phrase('remove_freeleech') }}">
+				<xf:if is="{$thread.Torrent.freeleech}">
+					{{ phrase('remove_freeleech') }} 
+					<xf:else />
+					{{ phrase('make_freeleech') }} 
+				</xf:if>
+			</a>
+		</xf:if>
+		<xf:if is="{$xf.visitor.canStickUnstickTorrent()}">
+			<a class="label label--primary" href="{{ link('torrents/make-sticky', $thread.Torrent) }} " data-xf-click="switch-overlay" data-sk-make="{{ phrase('make_sticky_torrent') }}" data-sk-remove="{{ phrase('remove_sticky_torrent') }}">
+				<xf:if is="{$thread.Torrent.sticky}">
+					{{ phrase('remove_sticky_torrent') }} 
+					<xf:else />
+					{{ phrase('make_sticky_torrent') }} 
+				</xf:if>
+			</a>
+		</xf:if> 
+		<xf:if is="$thread.canRequestForFreeleech() && $thread.Torrent.canRequestForFreeleech()" >
+			<a  class="label label--primary" href="{{ link('torrents/request-freeleech', $thread.Torrent) }}" data-xf-click="overlay">
+				{{ phrase('request_freeleech') }} 
+			</a>
+		</xf:if>
+
+		<xf:if is="$thread.Torrent.canAskForReseed()">
+			<a class="label label--primary" href="{{ link('torrents/request-reseed', $thread.Torrent) }}" data-xf-click="overlay">{{ phrase('request_reseed') }} </a>
+		</xf:if>
+	</div>
+
+	<h2 class="block-tabHeader tabs hScroller"
+		data-xf-init="tabs h-scroller"
+		data-panes=".js-torrentTabPanes"
+		data-state="replace"
+		role="tablist">
+		<span class="hScroller-scroll">
+			<!--[XF:tabs:start]--> 
+			<a class="tabs-tab is-active"
+			   role="tab"
+			   aria-controls="torrent-info">{{ phrase('torrent_info') }}</a> 
+
+			<a rel="nofollow"
+			   class="tabs-tab"
+			   id="files"
+			   role="tab">{{ phrase('file') }}</a>
+			<xf:if is="$xf.visitor.canViewPeerList()">
+				<a rel="nofollow"
+				   class="tabs-tab"
+				   id="peer"
+				   role="tab">{{ phrase('peer_list') }}</a>
+			</xf:if>
+			<xf:if is="$xf.visitor.canViewSnatchList()">
+				<a class="tabs-tab"
+				   id="snatchers"
+				   role="tab">{{ phrase('snatchers_list') }}</a>
+			</xf:if>
+		</span>
+	</h2>
+</div>
+<div class="torrentInfoSection">
+<ul class="tabPanes js-torrentTabPanes">
+	<li class="is-active" role="tabpanel" id="torrent-info">
+		<dl class="pairsColumns">
+			<dd>
+				<div class="torrentInfo">
+					<div class="torrentInfoHeader">Created With:</div>
+
+					{$thread.Torrent.Info.file_details.created}
+
+				</div>
+			</dd>
+
+			<dd>
+				<div class="torrentInfo">
+					<div class="torrentInfoHeader">Comment:</div>
+					<xf:if is="$thread.Torrent.Info.file_details.comment">
+						{$thread.Torrent.Info.file_details.comment|raw}
+						<xf:else/>
+						{{ phrase('no_comment_for_this_torrent') }}
+					</xf:if>
+
+
+				</div>
+			</dd>
+
+			<dd>
+				<div class="torrentInfo">
+					<div class="torrentInfoHeader">Peers:</div>
+					{$thread.Torrent.seeders} {{ phrase('seeders') }} + {$thread.Torrent.leechers} {{ phrase('leechers') }} = 
+					{{$thread.Torrent.seeders + $thread.Torrent.leechers}} {{ phrase('peers') }}
+				</div> 
+			</dd>
+
+			<dd>
+				<div class="torrentInfo">
+					<div class="torrentInfoHeader">{{ phrase('last_announced') }}</div>
+
+					<xf:if is="{$thread.Torrent.mtime}">
+						<xf:date time="{$thread.Torrent.mtime}" />
+						<xf:else />
+						{{ phrase('n_a') }} 
+					</xf:if>
+
+				</div>
+			</dd>
+			
+			<dd>
+				<div class="torrentInfo">
+					<div class="torrentInfoHeader">Info Hash:</div>
+
+					{$thread.Torrent.info_hash|hex}
+
+				</div>
+			</dd>
+		</dl>
+	</li>
+
+
+	<li data-href="{{ link('torrents/files', $thread.Torrent) }}" role="tabpanel" aria-labelledby="files">
+		{{ phrase('loading...') }}
+	</li>
+	<xf:if is="$xf.visitor.canViewPeerList()">
+		<li data-href="{{ link('torrents/peer-list', $thread.Torrent) }}" role="tabpanel" aria-labelledby="peer">
+			{{ phrase('loading...') }}
+		</li>
+	</xf:if>
+
+	<xf:if is="$xf.visitor.canViewSnatchList()">
+		<li data-href="{{ link('torrents/snatchers', $thread.Torrent) }}" role="tabpanel" aria-labelledby="snatchers">
+			{{ phrase('loading...') }}
+		</li>
+	</xf:if>
+</ul>
+</div>
+<xf:css>
+	.fa-magnet {
+	font-size: 16px;
+	color: #f51515;
+	}
+	#torrent-info dd {
+	width: 50%;
+	float: left;
+	margin: 0;
+	}
+	.torrentInfoHeader {
+	font-weight: bold;
+	text-decoration: underline;
+	}
+</xf:css>]]></template>
+  <template type="public" title="torrent_post_attachment.less" version_id="2021073" version_string="2.2.10.3"><![CDATA[.torrentDetailsColor{
+	color:@xf-torrentDetailsColor--color !important;
+	font-weight:bold;
+}]]></template>
+  <template type="public" title="torrent_sidebar_category" version_id="2021379" version_string="2.2.13.9"><![CDATA[<xf:macro name="simple_category_list"
+	arg-selected="0"
+	arg-pathToSelected="{{ [] }}"
+	arg-children="!"
+	arg-extras="!"
+	arg-isActive="{{ false }}"
+>
+	<ol class="categoryList toggleTarget{{ $isActive ? ' is-active' : '' }}">
+		<xf:foreach loop="$children" key="$id" value="$child">
+			<xf:macro name="simple_category_list_item"
+				arg-selected="{$selected}"
+				arg-pathToSelected="{$pathToSelected}"
+				arg-category="{$child.record}"
+				arg-extras="{$extras.{$id}}"
+				arg-children="{$child}"
+				arg-childExtras="{$extras}"
+			/>
+		</xf:foreach>
+	</ol>
+</xf:macro>
+
+<xf:macro name="simple_category_list_item"
+	arg-selected="!"
+	arg-pathToSelected="{{ [] }}"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+>
+	<xf:set var="$isSelected" value="{{ $category.node_id == $selected }}" />
+	<xf:set var="$hasPathToSelected" value="{$pathToSelected.{$category.node_id}}" />
+	<xf:set var="$isActive" value="{{ $isSelected OR $hasPathToSelected AND $children is not empty }}" />
+
+	<li class="categoryList-item">
+		<div class="categoryList-itemRow">
+			<xf:if is="$children is not empty">
+				<a class="categoryList-toggler{{ $isActive ? ' is-active' : '' }}"
+					data-xf-click="toggle" data-target="< :up :next"
+					role="button" tabindex="0" aria-label="{{ phrase('toggle_expanded') }}"
+				></a>
+			<xf:else />
+				<span class="categoryList-togglerSpacer"></span>
+			</xf:if>
+			
+			<a href="{{ link('torrents', null, {'category_id': $category.node_id}) }}" class="categoryList-link{{ $isSelected ? ' is-selected' : '' }}">
+				{$category.title}
+			</a>
+				
+			
+			<span class="categoryList-label">
+				<span class="label label--subtle label--smallest">{$extras.discussion_count|number_short}</span>
+			</span>
+		</div>
+		<xf:if is="$children is not empty">
+			<xf:macro name="simple_category_list"
+				arg-selected="{$selected}"
+				arg-pathToSelected="{$pathToSelected}"
+				arg-children="{$children}"
+				arg-extras="{$childExtras}"
+				arg-isActive="{$isActive}"
+			/>
+		</xf:if>
+	</li>
+</xf:macro>
+
+<xf:macro name="simple_list_block" arg-categoryTree="!" arg-categoryExtras="!" arg-selected="{{ 0 }}">
+	<div class="block">
+		<div class="block-container">
+			<h3 class="block-header">{{ phrase('categories') }}</h3>
+			<div class="block-body">
+				<xf:if is="$categoryTree.count()">
+					<xf:macro name="simple_category_list"
+						arg-children="{$categoryTree}"
+						arg-extras="{$categoryExtras}"
+						arg-isActive="{{ true }}"
+						arg-selected="{$selected}"
+						arg-pathToSelected="{{ $selected ? $categoryTree.getPathTo($selected) : [] }}" />
+				<xf:else />
+					<div class="block-row">{{ phrase('n_a') }}</div>
+				</xf:if>
+			</div>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro name="category"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+	arg-chooseName=""
+	arg-bonusInfo="">
+	
+	<div class="node node--depth2 node--resourceCategory node--resourceCategory{$category.resource_category_id}">
+		<div class="node-body">
+			<div class="node-main js-nodeMain">
+				<xf:if is="$chooseName">
+					<xf:checkbox standalone="true">
+						<xf:option labelclass="u-pullRight" class="js-chooseItem" name="{$chooseName}[]" value="{$category.resource_category_id}" />
+					</xf:checkbox>
+				</xf:if>
+
+				<xf:set var="$descriptionDisplay" value="{{ property('nodeListDescriptionDisplay') }}" />
+				<h3 class="node-title">
+					<a href="{{ link('resources/categories', $category) }}" data-xf-init="{{ $descriptionDisplay == 'tooltip' ? 'element-tooltip' : '' }}" data-shortcut="node-description">{$category.title}</a>
+				</h3>
+				<xf:if is="$descriptionDisplay != 'none' && $category.description">
+					<div class="node-description {{ $descriptionDisplay == 'tooltip' ? 'node-description--tooltip js-nodeDescTooltip' : '' }}">{$category.description|raw}</div>
+				</xf:if>
+
+				<div class="node-meta">
+					<div class="node-statsMeta">
+						<dl class="pairs pairs--inline">
+							<dt>{{ phrase('xfrm_resources') }}</dt>
+							<dd>{$extras.resource_count|number}</dd>
+						</dl>
+					</div>
+				</div>
+
+				<xf:if is="$bonusInfo is not empty">
+					<div class="node-bonus">{$bonusInfo}</div>
+				</xf:if>
+			</div>
+
+			<div class="node-stats node-stats--single">
+				<dl class="pairs pairs--rows">
+					<dt>{{ phrase('xfrm_resources') }}</dt>
+					<dd>{$extras.resource_count|number}</dd>
+				</dl>
+			</div>
+
+			<div class="node-extra">
+				<xf:if is="{$extras.last_update}">
+					<div class="node-extra-row"><a href="{{ link('resources', {'resource_id': $extras.last_resource_id}) }}" class="node-extra-title" title="{$extras.last_resource_title}">{$extras.last_resource_title}</a></div>
+					<div class="node-extra-row">
+						<xf:date time="{$extras.last_update}" class="node-extra-date" />
+					</div>
+				<xf:else />
+					<span class="node-extra-placeholder">{{ phrase('none') }}</span>
+				</xf:if>
+			</div>
+		</div>
+	</div>
+	
+</xf:macro>]]></template>
+  <template type="public" title="torrent_user_stats.less" version_id="2021073" version_string="2.2.10.3"><![CDATA[.torrentUserUploaded{
+	color:rgb(0, 128, 87) !important;
+}
+
+.torrentUserDownloaded{
+	color:rgb(255, 102, 0) !important;
+}
+
+.torrentUserRatio{
+	color:rgb(0, 153, 255) !important;
+}
+
+.torrentUserSeedbonus{
+	color:rgb(249, 188, 109) !important;
+}]]></template>
+  <template type="public" title="torrent_wrapper" version_id="2021379" version_string="2.2.13.9"><![CDATA[<xf:sidenav>
+	<div class="block">
+		<div class="block-container">
+			<h3 class="block-header">{{ phrase('Categories') }}</h3>
+			<div class="block-body">
+				<ol class="categoryList is-active">
+					<xf:foreach loop="$nodes" key="$key" value="$parent">
+						<div class="category--Name">Test</div>
+						<xf:foreach loop="$parent" key="$nodeId" value="$node">
+							<xf:if is="{{ $xf.visitor->hasNodePermission($key, 'view') }}">
+								<li class="categoryList-item">
+									<div class="categoryList-itemRow">
+										<a class="categoryList-link {{ $pageSelected == $key ? 'is-selected' : '' }}" href="{{ link('torrents', null, {'category_id': $key}) }}">{$node.title}</a>
+										<xf:comment>
+										<!--								<span class="categoryList-label">-->
+										<!--									<span class="label label&#45;&#45;subtle label&#45;&#45;smallest">{$node.discussion_count}</span>-->
+										<!--								</span>-->
+										</xf:comment>
+									</div>
+								</li>
+							</xf:if>
+						</xf:foreach>
+
+					</xf:foreach>
+				</ol>
+			</div>
+		</div>
+	</div>
+</xf:sidenav>
+<xf:sidenav>
+<div class="block" >
+	<div class="block-container">
+		<h3 class="block-minorHeader">BitTorrent Tracker Stats</h3>
+		<div class="block-body block-row">
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('seeders') }}</dt>
+				<dd>{$Statistics.peers.seeding|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('leechers') }}</dt>
+				<dd>{$Statistics.peers.leeching|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('peers') }}</dt>
+				<dd>{{$Statistics.peers.seeding + $Statistics.peers.leeching}}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('snatches') }}</dt>
+				<dd>{$Statistics.snatches}</dd>
+			</dl>
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('torrents') }}</dt>
+				<dd>{$Statistics.torrents}</dd>
+			</dl>
+		</div>
+	</div>
+</div>
+</xf:sidenav>
+<xf:page option="sideNavTitle">{{ phrase('torrent') }}</xf:page>
+{$innerContent|raw}]]></template>
+  <template type="public" title="widget_xentorrent_sidebar_my_tracker_stats" version_id="2021270" version_string="2.2.12"><![CDATA[<xf:if is="$xf.visitor.user_id">
+
+	<xf:css src="widget_xentorrent_sidebar_my_tracker_stats.less" />
+	<xf:css src="torrent_user_stats.less" />
+	
+	<div class="block"{{ widget_data($widget) }}>
+	<div class="block-container">
+		<h3 class="block-minorHeader trackerStats">
+			{$title}
+
+			<span class="activeTorrents">
+				<a class="tabs-tab {{$filter == 'seed' ? 'is-active':''}}" href="{{ link('members/torrents', $xf.visitor, {'filter': 'seed'}) }}" rel="nofollow"><i class="fas fa-arrow-alt-up upload"></i> {$up|number}</a> &nbsp;
+				<a class="tabs-tab {{$filter == 'leech' ? 'is-active':''}}" href="{{ link('members/torrents', $xf.visitor, {'filter': 'leech'}) }}" rel="nofollow"><i class="fas fa-arrow-alt-down download"></i> {$down|number}</a>
+			</span>
+		</h3>
+		<div class="block-body block-row">
+			<xf:macro template="torrent_macros" name="member_torrent_stat_pairs_justified"
+					  arg-torrentStats="{$xf.visitor.getTorrentStats()}"
+					  arg-context="profile" />	
+		</div>
+	</div>
+</div>
+</xf:if>]]></template>
+  <template type="public" title="widget_xentorrent_sidebar_my_tracker_stats.less" version_id="2021073" version_string="2.2.10.3"><![CDATA[.trackerStats .activeTorrents 
+{
+	float: right;
+	font-size: 12px;
+	margin-top: 5px;
+}
+
+	.trackerStats .activeTorrents .upload {
+		color: rgb(0, 128, 87);
+		font-size: 12px;
+	}
+	
+	.trackerStats .activeTorrents .download {
+		color: rgb(255, 102, 0);
+		font-size: 12px;
+	}]]></template>
+  <template type="public" title="widget_xentorrent_sidebar_tracker_stats" version_id="2021378" version_string="2.2.13.8"><![CDATA[<xf:css src="widget_xentorrent_sidebar_tracker_stats.less" />
+
+<div class="block"{{ widget_data($widget) }}>
+	<div class="block-container">
+		<h3 class="block-minorHeader trackerStats">
+			{$title}
+
+			 
+		</h3>
+		<div class="block-body block-row">
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('seeders') }}</dt>
+				<dd class="torrentStatsSeeders">{$Statistics.peers.seeding|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('leechers') }}</dt>
+				<dd class="torrentStatsLeechers">{$Statistics.peers.leeching|number}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('peers') }}</dt>
+				<dd class="torrentStatsPeers">{{$Statistics.peers.seeding + $Statistics.peers.leeching}}</dd>
+			</dl>
+
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('snatches') }}</dt>
+				<dd>{$Statistics.snatches}</dd>
+			</dl>
+			<dl class="pairs pairs--justified">
+				<dt>{{ phrase('torrents') }}</dt>
+				<dd>{$Statistics.torrents}</dd>
+			</dl>
+		</div>
+		<xf:if is="{$xf.options.xenTorrentHttpsTracker}">
+			<div class="block-footer">
+				<xf:if is="{$xf.options.xfdevTrackerWithoutPort}">
+					<xf:if is="{$Statistics.online}">
+						<span class="trackerOnline">https://{$xf.options.xenTorrentTracker.host}/announce</span>
+						<xf:else />
+						<span class="trackerOffline">https://{$xf.options.xenTorrentTracker.host}/announce</span>
+					</xf:if>
+					
+					<xf:else />
+					
+					<xf:if is="{$Statistics.online}">
+						<span class="trackerOnline">https://{$xf.options.xenTorrentTracker.host}:{$xf.options.xenTorrentTracker.port}/announce</span>
+						<xf:else />
+						<span class="trackerOffline">https://{$xf.options.xenTorrentTracker.host}:{$xf.options.xenTorrentTracker.port}/announce</span>
+					</xf:if>
+				</xf:if>
+			</div>
+		<xf:else />
+			<div class="block-footer">
+				<xf:if is="{$xf.options.xfdevTrackerWithoutPort}">
+					<xf:if is="{$Statistics.online}">
+						<span class="trackerOnline">http://{$xf.options.xenTorrentTracker.host}/announce</span>
+						<xf:else />
+						<span class="trackerOffline">http://{$xf.options.xenTorrentTracker.host}/announce</span>
+					</xf:if>
+					
+					<xf:else />
+					
+					<xf:if is="{$Statistics.online}">
+						<span class="trackerOnline">http://{$xf.options.xenTorrentTracker.host}:{$xf.options.xenTorrentTracker.port}/announce</span>
+						<xf:else />
+						<span class="trackerOffline">http://{$xf.options.xenTorrentTracker.host}:{$xf.options.xenTorrentTracker.port}/announce</span>
+					</xf:if>
+				</xf:if>
+			</div>
+		</xf:if>
+		
+	</div>
+</div>]]></template>
+  <template type="public" title="widget_xentorrent_sidebar_tracker_stats.less" version_id="2021073" version_string="2.2.10.3"><![CDATA[.trackerOnline{
+	color:@xf-torrentTrackerOnlineColor--color !important;
+	font-weight:bold;
+}
+
+.trackerOffline{
+	color:@xf-torrentTrackerOfflineColor--color !important;
+	font-weight:bold;
+}
+
+.torrentStatsSeeders{
+	color:rgb(56, 147, 20) !important;
+}
+
+.torrentStatsLeechers{
+	color:rgb(13, 41, 222) !important;
+}
+
+.torrentStatsPeers{
+	color:rgb(255, 102, 0) !important;
+}]]></template>
+  <template type="public" title="xentorrent_bonus_points_redeem_confirmation" version_id="2021373" version_string="2.2.13.3"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('members/my-bonus/redeem') }}" class="block" ajax="true" data-force-flash-message="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('please_confirm_that_you_want_to_redeem_seedbonus') }}
+				<strong>
+					{$points} Seedbonus => {$amount} GB
+				</strong>
+			</xf:inforow>
+		</div>
+		<xf:hiddenval name="points" value="{$points}" />
+		<xf:submitrow rowtype="simple" icon="save" submit="Redeem" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="xentorrent_choose_category" version_id="2021379" version_string="2.2.13.9"><![CDATA[<xf:comment>
+<xf:title>{{ phrase('select') }}</xf:title>
+<xf:form action="{{ link('torrents/upload') }}" class="block" ajax="true">
+	<div class="block-container">
+		<xf:if is="$nodes is not empty">
+			<div class="block-body">
+				<xf:selectrow name="node_id"
+					label="{{ phrase('Category') }}"> 
+						<xf:foreach loop="$nodes" value="$node">
+							<xf:option value="{$node.node_id}">{$node.title}</xf:option>
+						</xf:foreach> 
+				</xf:selectrow>
+				<xf:submitrow submit="{{ phrase('Continue...') }}" rowtype="simple"  />
+			</div>
+			<xf:else />
+			<div class="block-body">
+				<xf:inforow rowtype="confirm">{{ phrase('not_have_torrent_forum') }}</xf:inforow>
+			</div> 
+		</xf:if>
+	</div>
+</xf:form>
+
+<xf:title>{{ phrase('xfrm_post_resource_in...') }}</xf:title>
+</xf:comment>
+
+<xf:macro name="category_list" arg-children="{$categoryTree}" arg-extras="{$categoryExtras}" />
+
+<xf:macro name="category_list" arg-children="!" arg-extras="!" arg-depth="0">
+	<xf:foreach loop="$children" key="$id" value="$child">
+		<xf:macro name="category_list_entry"
+			arg-category="{$child.record}"
+			arg-extras="{$extras.{$id}}"
+			arg-children="{$child.children}"
+			arg-childExtras="{$extras}"
+			arg-depth="{$depth}"
+		/>
+	</xf:foreach>
+</xf:macro>
+
+<xf:macro name="category_list_entry" arg-category="!" arg-extras="!" arg-children="!" arg-childExtras="!" arg-depth="0">
+	
+	<xf:if is="$category.node_type_id == 'Category'">
+		<xf:macro name="{{ $depth == 0 ? 'category_list_entry_no_add_level_0' : 'category_list_entry_add' }}"
+				arg-category="{$category}"
+				arg-extras="{$extras}"
+				arg-children="{$children}"
+				arg-childExtras="{$childExtras}"
+				arg-depth="{$depth}"
+			/>
+		<xf:else />
+			<xf:macro name="{{ $depth == 0 ? 'category_list_entry_add_level_0' : 'category_list_entry_add' }}"
+				arg-category="{$category}"
+				arg-extras="{$extras}"
+				arg-children="{$children}"
+				arg-childExtras="{$childExtras}"
+				arg-depth="{$depth}"
+			/>
+	</xf:if>
+	
+	<xf:comment>
+	<xf:if is="$category.canAddResource()">
+		<xf:macro name="{{ $depth == 0 ? 'category_list_entry_add_level_0' : 'category_list_entry_add' }}"
+			arg-category="{$category}"
+			arg-extras="{$extras}"
+			arg-children="{$children}"
+			arg-childExtras="{$childExtras}"
+			arg-depth="{$depth}"
+		/>
+	<xf:else />
+		<xf:macro name="{{ $depth == 0 ? 'category_list_entry_no_add_level_0' : 'category_list_entry_no_add' }}"
+			arg-category="{$category}"
+			arg-extras="{$extras}"
+			arg-children="{$children}"
+			arg-childExtras="{$childExtras}"
+			arg-depth="{$depth}"
+		/>
+	</xf:if>
+		</xf:comment>
+</xf:macro>
+
+<xf:macro name="category_list_entry_no_add_level_0"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+	arg-depth="0"
+>
+	<div class="block block--treeEntryChooser">
+		<div class="block-container">
+			<h2 class="block-header">
+				{$category.title}
+				<xf:if is="$category.description">
+					<span class="block-desc">
+						{$category.description|strip_tags}
+					</span>
+				</xf:if>
+			</h2>
+			<div class="block-body">
+				<xf:macro name="category_list"
+					arg-children="{$children}"
+					arg-extras="{$childExtras}"
+					arg-depth="{{ $depth + 1 }}"
+				/>
+			</div>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro name="category_list_entry_add_level_0"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+	arg-depth="0"
+>
+	<div class="block block--treeEntryChooser">
+		<div class="block-container">
+			<xf:macro name="category_list_entry_add"
+				arg-category="{$category}"
+				arg-extras="{$extras}"
+				arg-children="{$children}"
+				arg-childExtras="{$childExtras}"
+				arg-depth="{$depth}"
+			/>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro name="category_list_entry_add"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+	arg-depth="0"
+>
+	<div class="block-row block-row--clickable block-row--separated fauxBlockLink">
+		<div class="contentRow contentRow--alignMiddle{{ $depth > 1 ? ' u-depth' . ($depth - 1) : '' }}">
+			<div class="contentRow-main">
+				<h2 class="contentRow-title">
+					<a href="{{ link('forums/post-thread', $category) }}" class="fauxBlockLink-blockLink">
+						{$category.title}
+					</a>
+				</h2>
+				<xf:if is="$category.description">
+					<div class="contentRow-minor contentRow-minor--singleLine">
+						{$category.description|strip_tags}
+					</div>
+				</xf:if>
+			</div>
+			<div class="contentRow-suffix">
+				<dl class="pairs pairs--rows pairs--rows--centered">
+					<dt>{{ phrase('threads') }}</dt>
+					<dd>{$extras.discussion_count|number_short}</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+	<xf:macro name="category_list"
+		arg-children="{$children}"
+		arg-extras="{$childExtras}"
+		arg-depth="{{ $depth + 1 }}"
+	/>
+</xf:macro>
+
+<xf:macro name="category_list_entry_no_add"
+	arg-category="!"
+	arg-extras="!"
+	arg-children="!"
+	arg-childExtras="!"
+	arg-depth="0"
+>
+	<div class="block-row block-row--separated">
+		<div class="contentRow contentRow--alignMiddle{{ $depth > 1 ? ' u-depth' . ($depth - 1) : '' }} is-disabled">
+			<div class="contentRow-main">
+				<h2 class="contentRow-title">
+					{$category.title}
+				</h2>
+				<div class="contentRow-minor contentRow-minor--singleLine">
+					{{ phrase('xfdev_you_may_not_add_torrents_to_this_category') }}
+				</div>
+			</div>
+			<div class="contentRow-suffix">
+				<dl class="pairs pairs--rows pairs--rows--centered">
+					<dt>{{ phrase('threads') }}</dt>
+					<dd>{$extras.discussion_count|number_short}</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+	<xf:macro name="category_list"
+		arg-children="{$children}"
+		arg-extras="{$childExtras}"
+		arg-depth="{{ $depth + 1 }}"
+	/>
+</xf:macro>]]></template>
+  <template type="public" title="xentorrent_freeleech_request_list" version_id="2020972" version_string="2.2.9.2"><![CDATA[<xf:title>{{ phrase('freeleech_request') }}  {{$open == 1 ? phrase('active_requests')  : phrase('closed_requests') }}</xf:title>
+
+<xf:pageaction>
+	<div class="buttonGroup">
+		<xf:if is="{$open} == 1">
+			<xf:button href="{{ link('torrents/freeleech-requests', '' , {'open': '2'}) }}"  icon="add">{{ phrase('closed_requests') }}</xf:button>
+			<xf:else/>
+			<xf:button href="{{ link('torrents/freeleech-requests') }}"  icon="add">{{ phrase('active_requests') }}</xf:button>
+		</xf:if>
+	</div>
+</xf:pageaction>
+
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist>
+			<xf:datarow rowtype="header">
+				<xf:cell>{{ phrase('torrent') }}</xf:cell>
+				<xf:cell>{{ phrase('size') }}</xf:cell>
+				<xf:cell>{{ phrase('requested_by') }}</xf:cell>
+				<xf:cell>{{ phrase('actions') }}</xf:cell>
+			</xf:datarow>
+			<xf:if is="$requests is not empty">
+				<xf:foreach loop="{$requests}" key="$requestId" value="$request">
+					<tbody class="dataList-rowGroup torrentListItem">
+						<xf:datarow> 
+							<xf:cell  class="dataList-cell--link dataList-cell--main"  href="{{ link('threads', $request.Torrent.Thread) }}">
+								{$request.Torrent.Thread.title}
+							</xf:cell>
+							<xf:cell>
+								{$request.Torrent.size|file_size}
+							</xf:cell>
+							<xf:cell>
+								<xf:username user="$request.User" defaultname="{$request.User.username}" />
+							</xf:cell>
+							<xf:if is="$open == 1">
+								<xf:action>
+									<span class="label label--primary">
+										<a href="{{ link('torrents/make-freeleech', $request.Torrent,  {'request_id': $request.request_id}) }} " 
+										   data-xf-click="overlay"> 
+											{{ phrase('accept') }} 
+										</a>
+									</span>
+									<span class="label label--primary">
+										<a   href="{{ link('torrents/remove-freeleech', $request.Torrent,  {'request_id': $request.request_id}) }} " 
+										   data-xf-click="overlay" >
+												{{ phrase('reject') }}  
+										</a>
+									</span>
+								</xf:action>
+								<xf:else />
+								<xf:action>
+									<xf:if is="{$request.action} == 'accept'">
+										{{ phrase('accepted')}}
+										<xf:else />
+										{{ phrase('rejected')}}
+									</xf:if>
+								</xf:action>
+							</xf:if>
+
+
+						</xf:datarow>
+					</tbody>
+				</xf:foreach>
+				<xf:else/>
+				<tbody class="dataList-rowGroup torrentListItem">
+					<xf:datarow> 
+						<xf:cell>
+							{{ phrase('there_no_active_requests_requiring_your_attention') }}
+						</xf:cell>
+					</xf:datarow>
+				</tbody>
+			</xf:if>
+		</xf:datalist>
+	</div> 
+	<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents"
+				params="{$pageNavParams}"
+				wrapperclass="block-footer block-footer--split" />
+</div>]]></template>
+  <template type="public" title="xentorrent_member_mybonus" version_id="2021373" version_string="2.2.13.3"><![CDATA[<xf:title>{{ phrase('bonus_points_system') }}</xf:title>
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist>
+			<caption>Currently you have {{ $xf.visitor.getSeedbonus() }} Bonus Points! </caption>
+			<colgroup>
+				<col style="width: 60%">
+				<col style="width: 10%">
+				<col>
+			</colgroup>
+			<xf:datarow rowtype="header">
+				<xf:cell>{{ phrase('description') }}</xf:cell>
+				<xf:cell>{{ phrase('points_needed') }}</xf:cell>
+				<xf:cell>{{ phrase('trade') }}</xf:cell>
+			</xf:datarow> 
+			<tbody class="dataList-rowGroup">
+				<xf:foreach loop="$options" key="$points" value="$title">
+					<xf:datarow> 
+						<xf:cell> 
+							<div class="dataList-mainRow">{{ phrase('x_gb_upload_credit', {'gb': $title}) }}</div>
+							<div class="dataList-subRow">{{ phrase('bonus_points_redeem_desc') }}</div>
+						</xf:cell>
+						<xf:cell class="important">
+							{$points}
+						</xf:cell>
+						<xf:cell>
+							<xf:button class="tradeButton {{{$points} > $xf.visitor.seedbonus ? 'tradeDisabled':''  }}" href="{{{$points} > $xf.visitor.seedbonus ? false : link('members/my-bonus/redeem', '', {'redeem': 1, 'points':$points}) }}" overlay="true" >{{ phrase('redeem') }}</xf:button>
+						</xf:cell>
+					</xf:datarow>
+				</xf:foreach>
+			</tbody>
+		</xf:datalist>
+	</div>
+</div>
+		<xf:css>
+			.tradeButton.button, .tradeButton.button:hover {
+			background-color: green;
+			border: 1px solid;
+			border-radius: 8px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+			cursor: pointer;
+			display: block;
+			height: auto;
+			line-height: normal;
+			margin: 0 auto;
+			padding: 3px;
+			text-align: center;
+			width:90%
+			}
+			.tradeButton.tradeDisabled.button, .tradeButton.tradeDisabled.button:hover {
+			background-color: rgb(150, 150, 150);
+			color: white;
+			}
+			.dataList-table caption {
+			background-color: #65a5d1;
+			border-bottom: 1px solid #176093;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+			color: #f0f7fc;
+			font-size: 11pt;
+			font-weight: bold;
+			margin-bottom: 3px;
+			padding: 5px 10px;
+			}
+
+		</xf:css>]]></template>
+  <template type="public" title="xentorrent_post_torrent_file_list" version_id="2021271" version_string="2.2.12.1"><![CDATA[<xf:title>{{ phrase('files') }}</xf:title>
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist>
+			<xf:datarow rowtype="header">
+				<xf:cell>{{ phrase('size') }}</xf:cell>
+				<xf:cell>{{ phrase('name') }}</xf:cell>
+			</xf:datarow>
+			<xf:foreach loop="{$files.files}" key="$name" value="$size">
+				<tbody class="dataList-rowGroup">
+					<xf:datarow> 
+						<xf:cell>{$size|file_size}</xf:cell>
+						<xf:cell>{$name}</xf:cell>
+					</xf:datarow>
+				</tbody>
+			</xf:foreach>
+		</xf:datalist>
+	</div>
+</div>]]></template>
+  <template type="public" title="xentorrent_post_torrent_peer_list" version_id="2021373" version_string="2.2.13.3"><![CDATA[<xf:title>{{ phrase('peer_list_for_torrent_x', {
+	'title':prefix('thread', $thread) . $torrent.Thread.title
+}) }}</xf:title>
+<xf:h1>{{ phrase('peer_list_for_torrent_x', {
+	'title': '<a href="' . link('threads', $torrent.Thread) . '" class="fauxBlockLink-blockLink">' . prefix('thread', $thread) . $torrent.Thread.title . '</a>'
+}) }}</xf:h1>
+
+
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist class="dataList--contained" data-xf-init="responsive-data-list">
+			<xf:datarow rowtype="header">
+				<xf:cell>{{ phrase('user') }}</xf:cell>
+				<xf:cell>{{ phrase('xentorrent_active') }}</xf:cell>
+				<xf:cell>{{ phrase('timespent') }}</xf:cell>
+				<xf:cell>{{ phrase('ul') }}</xf:cell>
+				<xf:cell>{{ phrase('dl') }}</xf:cell>
+				<xf:cell>{{ phrase('ratio') }}</xf:cell>
+				<xf:cell>{{ phrase('progress') }}</xf:cell>
+				<xf:cell>{{ phrase('ul_speed') }}</xf:cell>
+				<xf:cell>{{ phrase('dl_speed') }}</xf:cell>
+				<xf:cell>{{ phrase('last_announced')}}</xf:cell>
+				<xf:cell>{{ phrase('agent') }}</xf:cell>
+				<xf:if is="$xf.visitor.is_staff">
+					<xf:cell>{{ phrase('ip') }}</xf:cell>
+				</xf:if>
+			</xf:datarow>
+			<xf:foreach loop="$peers" value="$peer">
+				<xf:set var="$ratio">
+					{{$peer.downloaded > 0 ? {$peer.uploaded} / {$peer.downloaded} : '-'}}
+				</xf:set>
+				<xf:if is="{$peer.completed} OR {$peer.left} == 0">
+					<xf:set var="$progress" value="100"/>
+					<xf:elseif is="{$peer.downloaded} == 0" />
+					<xf:set var="$progress" value="0"/>
+					<xf:else />
+					<xf:set var="$progress" value="{{({$torrent.size} - {$peer.left}) / {$torrent.size} * 100}}"/> 
+				</xf:if>
+				<tbody class="dataList-rowGroup">
+					<xf:datarow class="block-body--contained"> 
+						<xf:cell><xf:username user="$peer.User"/></xf:cell>
+						<xf:cell class="active">
+							{{$peer.active ? '<span style="color: green;">Yes</span>' : '<span style="color: red;">No</span>'}}
+						</xf:cell>
+						<xf:cell class="timespent"><span>
+							{$peer.timespent} 
+							</span>
+						</xf:cell>
+						<xf:cell>{$peer.uploaded|file_size}</xf:cell>
+						<xf:cell>{$peer.downloaded|file_size}</xf:cell>
+						<xf:cell>{$peer.ratio}</xf:cell>
+						<xf:cell class="progress">
+							<span>
+								<div class="progressGraph">
+									<div class="progressBar" style="width:{$progress}%;">
+										<p>{$progress}% complete</p>
+									</div>
+								</div>
+							</span>
+						</xf:cell>
+						<xf:cell>{$peer.up_rate|file_size}/s</xf:cell>
+						<xf:cell>{$peer.down_rate|file_size}/s</xf:cell>
+						<xf:cell>
+							<xf:if is="{$peer.mtime}">
+									<xf:date time="{$peer.mtime}" />
+								<xf:else />
+									{{ phrase('n_a') }} 
+							</xf:if>
+						</xf:cell>
+						<xf:cell>{$peer.useragent|raw}</xf:cell>
+						<xf:if is="$xf.visitor.is_staff">
+							<xf:cell>{$peer.ipa|ip}</xf:cell>		
+						</xf:if>
+					</xf:datarow>
+				</tbody>
+			</xf:foreach>
+		</xf:datalist>
+	</div>
+	<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents/peer-list" data="{$torrent}" wrapperclass="block-footer block-footer--split" />
+</div>
+
+<xf:css>
+	.progressGraph {
+	width: 100%; /* width and height are arbitrary, just make sure the #bar styles are changed accordingly */
+	height: 20px;
+	border: 1px solid #f0f7fc; 
+	background: #f0f7fc;
+	position: relative;
+	overflow: hidden;
+	}
+
+	.progressBar {
+	height: 19px; /* Not 20px because the 1px top-border brings it up to 20px to match #graph */
+	background-color: #f9bc6d; 
+	border-top: 1px solid #f9d9b0;
+	}
+
+	.progressBar p { 
+	position: absolute; 
+	text-align: center; 
+	width: 100%; 
+	margin: 0; 
+	line-height: 20px; 
+	height: 20px;
+	overflow: hidden;
+	}
+
+	.peerList .progress {
+	width: 14%;
+	}
+</xf:css>]]></template>
+  <template type="public" title="xentorrent_post_torrent_snatchers" version_id="2020658" version_string="2.2.6 Release Candidate 8"><![CDATA[<xf:title>{{ phrase('snatchers_list_for_torrent_x', {
+	'title':prefix('thread', $thread) . $torrent.Thread.title
+}) }}</xf:title>
+<xf:h1>{{ phrase('snatchers_list_for_torrent_x', {
+	'title': '<a href="' . link('threads', $torrent.Thread) . '" class="fauxBlockLink-blockLink">' . prefix('thread', $thread) . $torrent.Thread.title . '</a>'
+}) }}</xf:h1>
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist>
+			<xf:datarow rowtype="header">
+				<xf:cell>{{ phrase('user') }}</xf:cell>
+				<xf:cell>{{ phrase('time') }}</xf:cell>
+				<xf:if is="$xf.visitor.is_staff">
+					<xf:cell>{{ phrase('ip') }}</xf:cell>
+				</xf:if>
+			</xf:datarow>
+			<xf:foreach loop="$snatchers" value="$peer">
+				
+				<tbody class="dataList-rowGroup">
+					<xf:datarow> 
+						<xf:cell><xf:username user="$peer.User"/></xf:cell>
+						<xf:cell><xf:date time="{$peer.mtime}"/></xf:cell>
+						<xf:if is="$xf.visitor.is_staff">
+							<xf:cell>{$peer.ipa|ip}</xf:cell>
+						</xf:if>
+					</xf:datarow>
+				</tbody>
+			</xf:foreach>
+		</xf:datalist>
+	</div>
+	<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents/snatchers" data="{$torrent}" wrapperclass="block-footer block-footer--split" />
+</div>]]></template>
+  <template type="public" title="xentorrent_reset_pass_key" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('reset_pass_key') }}</xf:title>
+<xf:form action="{{ link('members/reset-pass-key') }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('reset_passkey_desc') }} 
+			</xf:inforow>
+			<xf:submitrow submit="{{ phrase('Continue...') }}" rowtype="simple" icon="markRead" />
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="xentorrent_top" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:title>{$title}</xf:title>
+
+<xf:wrap template="xentorrent_top_wrapper">
+	<xf:set var="$pageSelected" value="{$subtype}" />
+</xf:wrap>
+
+<xf:macro template="metadata_macros" name="canonical_url" arg-canonicalUrl="{{ link('canonical:torrents/top') }}" />
+<xf:if is="$items is empty">
+	<div class="blockMessage">Stats are updated weekly.</div>
+	<xf:else />
+	<xf:css src="member.less" /> 
+	<section class="block">
+		<div class="block-container"> 
+			<h3 class="block-header">{$title}</h3>
+			<ol class="block-body"> 
+				<xf:foreach loop="{$items}" key="$key" value="$item" i="$i">
+					<li class="block-row block-row--separated">
+						<xf:if is="$type == 'user'">
+
+							<xf:macro  name="itemList" 
+									  arg-item="{$item}" 
+									  arg-i="{$i}" 
+									  arg-user="{$user.{$key}}" 
+									  arg-extraDataBig="{{ true }}" />
+							<xf:else/>
+							<xf:macro  name="itemListtorrent" 
+									  arg-item="{$item}" 
+									  arg-thread="{$thread.{$key}}" 
+									  arg-i="{$i}"  />
+						</xf:if>
+					</li>
+					<xf:else />
+					<li class="block-row">{{ phrase('no_users_match_specified_criteria') }}</li>
+				</xf:foreach>
+			</ol>
+		</div>
+	</section>
+</xf:if>
+
+<xf:macro name="itemListtorrent" arg-item="!" arg-i="!" arg-thread="!">
+	<div class="contentRow">
+		<div class="contentRow-figure">
+			<xf:avatar user="$thread.User" size="s" notooltip="true" />
+		</div>
+		<xf:set var="$extraTemplate">
+			<span style="font-size: 32px" class="dimmed">{$item.item_count}</span> <span class="faint">{$item.item_title}</span>
+		</xf:set>
+		<div class="contentRow-main"> 
+			<div class="contentRow-extra contentRow-extra--largest">{$extraTemplate|raw}</div>
+			<h3 class="contentRow-header">
+				<a class="username" href="{{ link('threads', $thread) }}" rel="nofollow">
+					{$thread.title}
+				</a>
+			</h3> 
+			<div class="contentRow-minor">
+				<ul class="listInline listInline--bullet">
+					<!--[XF:stats:start]-->
+					<li><dl class="pairs pairs--inline">
+						<dt>{{ phrase('seeders') }}</dt>
+						<dd>{$item.seeders|number}</dd>
+						</dl></li>
+					<!--[XF:stats:after_messages]-->
+					<li><dl class="pairs pairs--inline">
+						<dt>{{ phrase('leechers') }}</dt>
+						<dd>{$item.leechers|number}</dd>
+						</dl></li>
+					<!--[XF:stats:after_likes]-->
+					<xf:if is="$xf.options.enableTrophies">
+						<li><dl class="pairs pairs--inline">
+							<dt>{{ phrase('snatches') }}</dt>
+							<dd>{$item.completed|number}</dd>
+							</dl></li>
+					</xf:if>
+					<!--[XF:stats:end]-->
+				</ul>
+			</div>
+		</div>
+	</div>
+</xf:macro>
+
+<xf:macro name="itemList" arg-item="!" arg-i="!" arg-user="!" arg-extraDataBig="{{ false }}">
+	<div class="contentRow">
+		<div class="contentRow-figure">
+			<xf:avatar user="$user" size="s" notooltip="true" />
+		</div>
+		<xf:set var="$extraTemplate">
+			<span style="font-size: 32px" class="dimmed">{$item.item_count}</span> <span class="faint">{$item.item_title}</span>
+		</xf:set>
+		<div class="contentRow-main"> 
+			<div class="contentRow-extra contentRow-extra--largest">{$extraTemplate|raw}</div>
+			<h3 class="contentRow-header"><xf:username user="$user" rich="true" notooltip="true" /></h3> 
+			<xf:userblurb user="$user" class="contentRow-lesser" />
+
+			<div class="contentRow-minor">
+				<ul class="listInline listInline--bullet">
+					<!--[XF:stats:start]-->
+					<li><dl class="pairs pairs--inline">
+						<dt>{{ phrase('messages') }}</dt>
+						<dd>{$user.message_count|number}</dd>
+						</dl></li>
+					<!--[XF:stats:after_messages]-->
+					<li><dl class="pairs pairs--inline">
+						<dt>{{ phrase('reactions') }}</dt>
+						<dd>{$user.reaction_score|number}</dd>
+						</dl></li>
+					<!--[XF:stats:after_likes]-->
+					<xf:if is="$xf.options.enableTrophies">
+						<li><dl class="pairs pairs--inline">
+							<dt>{{ phrase('points') }}</dt>
+							<dd>{$user.trophy_points|number}</dd>
+							</dl></li>
+					</xf:if>
+					<!--[XF:stats:end]-->
+				</ul>
+			</div>
+		</div>
+	</div>
+</xf:macro>]]></template>
+  <template type="public" title="xentorrent_top_wrapper" version_id="2000070" version_string="2.0.0"><![CDATA[<xf:sidenav>
+	<div class="block">
+		<div class="block-container">
+			<h3 class="block-header">{{ phrase('top_10_user') }}</h3>
+			<div class="block-body">
+				<xf:foreach loop="$userType" key="$key" value="$type">
+					<a class="blockLink {{ $pageSelected == $key ? 'is-selected' : '' }}" href="{{ link('torrents/top', '', {'type':'user', 'subtype':$key}) }}">{$type}</a>
+				</xf:foreach>
+			</div>
+
+			 
+		</div>
+	</div>
+
+	<div class="block">
+		<div class="block-container">
+			<h3 class="block-header">{{ phrase('top_10_torrent') }}</h3>
+			<div class="block-body">
+				<xf:foreach loop="$torrentType" key="$key" value="$type">
+					<a class="blockLink {{ $pageSelected == $key ? 'is-selected' : '' }}" href="{{ link('torrents/top', '', {'type':'torrent', 'subtype':$key}) }}">{$type}</a>
+				</xf:foreach>
+			</div>
+
+			 
+		</div>
+	</div>
+</xf:sidenav>
+{$innerContent|raw}]]></template>
+</templates>
