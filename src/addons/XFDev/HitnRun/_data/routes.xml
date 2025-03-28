@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<routes>
+  <route route_type="admin" route_prefix="hitnrun" controller="XFDev\HitnRun:HitnRun" context="xftt_hitnrun_list"/>
+  <route route_type="public" route_prefix="members" sub_name="hitnrun" format=":int&lt;user_id,username&gt;/hitnrun/:page" controller="XF:Member" context="torrents" action_prefix="Hitnrun"/>
+  <route route_type="public" route_prefix="members" sub_name="my-hnr" format=":int&lt;user_id,username&gt;/my-hnr/:page" controller="XF:Member" context="torrents" action_prefix="MyHnr"/>
+</routes>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+  <option option_id="xfdevHitnRunBypassUsergroups" edit_format="callback" data_type="array">
+    <default_value>[]</default_value>
+    <edit_format_params>XF\Option\UserGroup::renderSelectMultiple</edit_format_params>
+    <sub_options>*</sub_options>
+    <relation group_id="xfdev_hitnrun_settings" display_order="9"/>
+  </option>
+  <option option_id="xfdev_hintrun_check_method" edit_format="select" data_type="string">
+    <default_value>seed_only</default_value>
+    <edit_format_params>seed_only=Seed Only
+ratio_only=Ratio Only
+seed_or_ratio=Seed or Ratio
+seed_and_ratio=Seed and Ratio</edit_format_params>
+    <relation group_id="xfdev_hitnrun_settings" display_order="2"/>
+  </option>
+  <option option_id="xfdev_hitnrun_1mbtobonus" edit_format="spinbox" data_type="numeric">
+    <default_value>0.12</default_value>
+    <edit_format_params>step=0.01</edit_format_params>
+    <relation group_id="xfdev_hitnrun_settings" display_order="8"/>
+  </option>
+  <option option_id="xfdev_hitnrun_block_leech" edit_format="template" data_type="array">
+    <default_value>{"disableLeech_hnr":"1","disableLeech_tolerance":"1","xendevHitnRunBlockLeechEnabled":false}</default_value>
+    <edit_format_params>option_template_xendev_hnrBlockLeech</edit_format_params>
+    <sub_options>disableLeech_hnr
+disableLeech_tolerance
+xendevHitnRunBlockLeechEnabled</sub_options>
+    <relation group_id="xfdev_hitnrun_settings" display_order="7"/>
+  </option>
+  <option option_id="xfdev_hitnrun_check_tolerance_period" edit_format="spinbox" data_type="integer">
+    <default_value>2</default_value>
+    <relation group_id="xfdev_hitnrun_settings" display_order="6"/>
+  </option>
+  <option option_id="xfdev_hitnrun_download_trigger" edit_format="spinbox" data_type="integer">
+    <default_value>50</default_value>
+    <edit_format_params>step=1</edit_format_params>
+    <relation group_id="xfdev_hitnrun_settings" display_order="5"/>
+  </option>
+  <option option_id="xfdev_hitnrun_enable" edit_format="onoff" data_type="integer">
+    <default_value>0</default_value>
+    <relation group_id="xfdev_hitnrun_settings" display_order="1"/>
+  </option>
+  <option option_id="xfdev_hitnrun_minimum_ratio" edit_format="spinbox" data_type="numeric">
+    <default_value>1</default_value>
+    <edit_format_params>step=0.1</edit_format_params>
+    <relation group_id="xfdev_hitnrun_settings" display_order="4"/>
+  </option>
+  <option option_id="xfdev_hitnrun_minimum_seed_hours" edit_format="spinbox" data_type="integer">
+    <default_value>168</default_value>
+    <relation group_id="xfdev_hitnrun_settings" display_order="3"/>
+  </option>
+  <option option_id="xfdev_hitnrun_send_conversation_on_block_leech" edit_format="template" data_type="array" validation_class="XFDev\HitnRun\Option\BlockLeechConversation" validation_method="verifyOption">
+    <default_value>{"messageEnabled":false,"messageParticipants":false,"messageTitle":false,"messageBody":false,"messageOpenInvite":false,"messageLocked":false,"messageDelete":false}</default_value>
+    <edit_format_params>xfdev_hitnrun_leech_block_conversation</edit_format_params>
+    <sub_options>messageEnabled
+messageParticipants
+messageTitle
+messageBody
+messageOpenInvite
+messageLocked
+messageDelete</sub_options>
+    <relation group_id="xfdev_hitnrun_settings" display_order="10"/>
+  </option>
+  <option option_id="xfdev_hitnrun_zap_multiplier" edit_format="spinbox" data_type="positive_integer">
+    <default_value>1</default_value>
+    <relation group_id="xfdev_hitnrun_settings" display_order="8"/>
+  </option>
+</options>

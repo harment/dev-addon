@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<code_event_listeners>
+  <listener event_id="entity_structure" execute_order="10" callback_class="XFDev\HitnRun\Listener" callback_method="peerEntityStructure" active="1" hint="TorrentTracker\Entity\Peer" description="Add Hit and Run Entity to Peers Entity"/>
+  <listener event_id="entity_structure" execute_order="10" callback_class="XFDev\HitnRun\Listener" callback_method="userUpgradeEntityStructure" active="1" hint="XF\Entity\UserUpgrade" description="Adds Reset Users Hit and Runs Structure for Upgraded Users"/>
+</code_event_listeners>

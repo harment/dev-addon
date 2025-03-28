@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="admin" title="option_template_xendev_hnrBlockLeech" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[<xf:checkboxrow
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:option name="{$inputName}[xendevHitnRunBlockLeechEnabled]" selected="$option.option_value.xendevHitnRunBlockLeechEnabled" data-hide="true"
+		label="Disable Download on X Hit & Run">
+		
+		<xf:dependent>
+			<div class="inputChoices-spacer">{{ phrase('No. of Hit & Run after which Download will be disabled') }}</div>
+			<xf:numberbox name="{$inputName}[disableLeech_hnr]" value="{$option.option_value.disableLeech_hnr}" min="0" default="5"/> 
+			<xf:comment><div class="formRow-explain">Upload Multiplier</div></xf:comment>
+			
+			<div class="inputChoices-spacer">{{ phrase('Tolerance Days after which Download will be disabled (In Hours)') }}</div>
+			<xf:numberbox name="{$inputName}[disableLeech_tolerance]" value="{$option.option_value.disableLeech_tolerance}" min="0" default="168"/> 
+			<xf:comment><div class="formRow-explain">Download Multiplier</div></xf:comment>
+		</xf:dependent>
+	</xf:option>
+</xf:checkboxrow>]]></template>
+  <template type="admin" title="xfdev_hitnrun_leech_block_conversation" version_id="1000033" version_string="1.0.0 Beta 3"><![CDATA[<xf:checkboxrow
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:option name="{$inputName}[messageEnabled]" selected="$option.option_value.messageEnabled" data-hide="true"
+		label="{{ phrase('option.xfdev_hitnrun_send_conversation_on_block_leech') }}">
+
+		<xf:dependent>
+			<div>{{ phrase('other_participants:') }}</div>
+			<xf:if is="$option.option_value.messageParticipants AND is_array($option.option_value.messageParticipants)">
+				<xf:set var="$users" value="{{ $xf.app.em.getRepository('XF:User').getUsersByIdsOrdered($option.option_value.messageParticipants) }}" />
+				<xf:set var="$value" value="{$users.pluckNamed('username')|join(', ')}" />
+			<xf:else />
+				<xf:set var="$value">{$xf.visitor.username}</xf:set>
+			</xf:if>
+			<xf:tokeninput name="{$inputName}[messageParticipants]" value="{$value}" href="{{ link('users/find') }}">
+				<xf:explain>{{ phrase('list_usernames_of_users_who_will_be_invited_to_this_conversation') }}</xf:explain>
+			</xf:tokeninput>
+		</xf:dependent>
+
+		<xf:dependent>
+			<div>{{ phrase('conversation_title:') }}</div>
+			<xf:textbox name="{$inputName}[messageTitle]" value="{$option.option_value.messageTitle}" placeholder="{{ phrase('conversation_title...') }}" maxlength="100" />
+		</xf:dependent>
+
+		<xf:dependent>
+			<div>{{ phrase('conversation_message:') }}</div>
+			<xf:textarea name="{$inputName}[messageBody]" value="{$option.option_value.messageBody}" rows="5" autosize="true" />
+			<p class="formRow-explain">{{ phrase('following_placeholders_will_be_replaced_in_message_for_conversation') }} {{ phrase('you_may_also_use_phrase_title_which_will_be_replaced') }}</p>
+		</xf:dependent>
+
+		<xf:dependent>
+			<div>{{ phrase('conversation_options:') }}</div>
+			<xf:checkbox>
+				<xf:option name="{$inputName}[messageOpenInvite]" value="1" selected="$option.option_value.messageOpenInvite">
+					{{ phrase('allow_anyone_in_conversation_to_invite_others') }}
+				</xf:option>
+				<xf:option name="{$inputName}[messageLocked]" value="1" selected="$option.option_value.messageLocked">
+					{{ phrase('lock_conversation_no_responses_will_be_allowed') }}
+				</xf:option>
+			</xf:checkbox>
+		</xf:dependent>
+
+		<xf:dependent>
+			<div>{{ phrase('future_message_handling:') }}</div>
+			<xf:radio name="{$inputName}[messageDelete]">
+				<xf:option value="delete" selected="!$option.option_value.messageDelete OR $option.option_value.messageDelete == 'delete'"
+					label="{{ phrase('leave_conversation_and_accept_future_messages') }}"
+					explain="{{ phrase('should_conversation_receive_responses_restored_to_inbox') }}" />
+
+				<xf:option value="delete_ignore" selected="$option.option_value.messageDelete == 'delete_ignore'"
+					label="{{ phrase('leave_conversation_and_ignore_future_messages') }}"
+					explain="{{ phrase('not_notified_of_responses_conversation_remain_deleted') }}" />
+
+				<xf:option value="no_delete" selected="$option.option_value.messageDelete == 'no_delete'"
+					label="{{ phrase('do_not_leave_conversation') }}"
+					explain="{{ phrase('remain_in_inbox_and_notified_of_replies') }}" />
+			</xf:radio>
+		</xf:dependent>
+
+	</xf:option>
+</xf:checkboxrow>]]></template>
+  <template type="admin" title="xfdev_hitnrun_reset_users_hnr" version_id="1000012" version_string="1.0.0 Alpha 2"><![CDATA[<xf:form> 
+	<xf:checkboxrow explain="{{ phrase('reset_users_hnr_explain') }}">
+		<xf:option name="xfdev_hnr_reset" selected="$upgrade.xfdev_hnr_reset">
+			{{ phrase('reset_users_hnr') }}
+		</xf:option>
+	</xf:checkboxrow>
+</xf:form>]]></template>
+  <template type="admin" title="xfdev_xftt_hitnrun_members_list" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[<xf:title>{{ phrase('hitnrun_members_list') }}</xf:title>
+
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist data-xf-init="responsive-data-list">
+
+			<colgroup>
+				<col style="width: 15%">
+				<col style="width: 30%">
+				<col style="width: 20%">
+				<col style="width: 12%">
+				<col style="width: 12%">
+				<col style="width: 11%">
+			</colgroup>
+
+			<thread>
+				<xf:datarow rowtype="header">
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_last_checked') }}</xf:cell>
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_torrent') }}</xf:cell>
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_user') }}</xf:cell>
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_downloaded') }}</xf:cell>
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_uploaded') }}</xf:cell>
+					<xf:cell>{{ phrase('xfdev_xftt_hitnrun_left') }}</xf:cell>
+				</xf:datarow>
+			</thread>
+
+			<xf:foreach loop="$hitnrunList" key="$hitnrunId" value="$hitnrun">
+				<xf:datarow>
+					<xf:cell>
+						<xf:date time="{$hitnrun.hnr_last_checked}"/>
+					</xf:cell>
+					<xf:cell>
+						<a href="{{ link_type('public','threads',$hitnrun.Torrent.Thread) }}" target="_blank">{$hitnrun.Torrent.Thread.title}</a>
+					</xf:cell>
+					<xf:cell>
+						<xf:username user="{$hitnrun.User}" />
+					</xf:cell>
+					<xf:cell>
+						{{ $hitnrun.downloaded|file_size }}
+					</xf:cell>
+					<xf:cell>
+						{{ $hitnrun.uploaded|file_size }}
+					</xf:cell>
+					<xf:cell>
+						{{ ($hitnrun.downloaded-$hitnrun.uploaded)|file_size }}
+					</xf:cell>
+				</xf:datarow>
+			</xf:foreach>
+		</xf:datalist>
+	</div>
+	
+	<div class="block-footer block-footer--split">
+		<span class="block-footer-counter">
+			{{ display_totals($hnr_count, $total) }}
+		</span>
+		
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+				link="hitnrun/list"
+				wrapperclass="js-filterHide block-outer block-outer--after" />
+	</div>
+</div>]]></template>
+  <template type="public" title="alert_hitnrun_disabled" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[{{ phrase('your_download_access_disabled_due_to_hnr', {
+	'user':username_link($user, false, {'defaultname': $alert.username}),
+	'title': '<a href="' . link('members/my-hnr', $user) . '" class="fauxBlockLink-blockLink">Hit & Run</a>',
+	'date': date($xf.time)
+}) }}]]></template>
+  <template type="public" title="remove_users_hitnrun" version_id="1000032" version_string="1.0.0 Beta 2"><![CDATA[<xf:title>{{ phrase('remove_users_hitnrun') }}</xf:title>
+
+<xf:form action="{{ link('members/hitnrun-delete', $user, {'peer':$peer}) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('remove_users_hitnrun_ques') }}
+			</xf:inforow>
+			<xf:submitrow submit="{{ phrase('remove_hnr') }}" />
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="xfdev_member_my_hnr" version_id="1000037" version_string="1.0.0 Beta 7"><![CDATA[<xf:title>{{ phrase('your_hnr') }}</xf:title>
+<xf:css src="xfdev_member_my_hnr.less"  />
+<div class="user_info-block">
+	<span class="username">{{ $xf.visitor.username }}, </span> 
+	<span class="uploaded-data">(Current Uploaded Data: {{ $xf.visitor.uploaded|file_size }})</span> 
+	<span class="bonus-points">(Current Bonus Points: {{ $xf.visitor.seedbonus }})</span>
+</div>
+<div class="block-container">
+	<div class="block-body">
+			<xf:datalist>
+				<caption>Currently you have {{$count}} Hit & Run! </caption>
+				<xf:datarow rowtype="header">
+					<xf:cell>{{ phrase('torrent') }}</xf:cell>
+					<xf:cell>{{ phrase('size') }}</xf:cell>
+					<xf:cell>{{ phrase('downloaded') }}</xf:cell>				
+					<xf:cell>{{ phrase('uploaded') }}</xf:cell>
+					<xf:cell>{{ phrase('ratio') }}</xf:cell>
+					<xf:cell>{{ phrase('seedtime') }}</xf:cell>
+					<xf:cell>{{ phrase('action') }}</xf:cell>
+				</xf:datarow> 
+				
+				<tbody class="dataList-rowGroup">
+					<xf:if is="{{ {$count} == 0}}">
+						<xf:datarow> 
+							<xf:cell> {{ phrase('you_dont_have_any_hnrs') }}</xf:cell>
+						</xf:datarow>
+					<xf:else /> 
+						<xf:foreach loop="$options" key="$points" value="$hnr">
+							<xf:datarow> 
+
+								<xf:cell> 
+									<a href="{{ link('threads', $hnr.Torrent.Thread) }}">
+										<div>{{ $hnr.Torrent.Thread.title }}</div>
+									</a>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.Torrent.size|file_size}</div>
+								</xf:cell>
+
+								<xf:cell> 
+									<div>{$hnr.downloaded|file_size}</div>
+								</xf:cell>
+
+								<xf:cell> 
+									<div>{$hnr.uploaded|file_size}</div>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.ratio}</div>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.seed_timespent}</div>
+								</xf:cell>
+								<xf:cell>
+									<xf:set var="$left" value="{{ ({$hnr.downloaded} - {$hnr.uploaded})*$xf.options.xfdev_hitnrun_zap_multiplier }}" />
+									<xf:comment>Converting Megabytes to Bytes</xf:comment>
+									<xf:set var="$points" value="{{ floor(($left/1048576)*$xf.options.xfdev_hitnrun_1mbtobonus) }}" />
+								
+									<xf:form action="{{ link('members/my-hnr', $xf.visitor) }}" ajax="true" data-force-flash-message="true">
+										<xf:hiddenval name="upload" value="1" />
+										<xf:hiddenval name="peer" value="{$hnr.id}" />
+										<xf:button class="tradeButton {{ {$left} > $xf.visitor.uploaded ? 'tradeDisabled':''  }}" type="submit">{{ phrase('zap') }} (costs {{ {$left|file_size} }} upload credit)</xf:button>
+									</xf:form>
+									
+									<xf:form action="{{ link('members/my-hnr', $xf.visitor) }}" ajax="true" data-force-flash-message="true">
+										<xf:hiddenval name="bonus" value="1" />
+										<xf:hiddenval name="peer" value="{$hnr.id}" />
+										<xf:button class="tradeButton {{{$points} > $xf.visitor.seedbonus ? 'tradeDisabled':''  }}" type="submit">{{ phrase('zap') }} (costs {$points} Bonus Points)</xf:button>
+									</xf:form>
+									
+								</xf:cell>
+							</xf:datarow>
+						</xf:foreach>
+					</xf:if>
+				</tbody>
+			</xf:datalist>
+	</div>
+</div>
+<div class="block-outer block-outer--after">
+				<xf:pagenav
+							page="{$page}" perpage="{$perPage}" total="{$count}"
+							link="members/my-hnr" data="{$user}"
+							wrapperclass="block-outer-main" />
+			</div>
+
+<xf:set var="$hnr_method_value">
+	<xf:if is="{$hnrSettings.hnr_method} == 'seed_only'">
+		{{ phrase('seed_only') }}
+		<xf:elseif is="{$hnrSettings.hnr_method} == 'ratio_only'" />
+		{{ phrase('ratio_only') }}
+		<xf:elseif is="{$hnrSettings.hnr_method} =='seed_or_ratio'" />
+		{{ phrase('seed_or_ratio') }}
+		<xf:else />
+		{{ phrase('seed_and_ratio') }}
+	</xf:if>
+</xf:set>
+
+<div class="block-container" style="margin-top:10px;">
+	<div class="block-body">
+		<xf:datalist>
+		<caption>{{ phrase('xfdev_hnr_rules') }}</caption>
+			<xf:datarow>
+			
+				<xf:cell> 
+					<div>{{ phrase('xfdev_currently_enabled_hnr',{'hnr_method':$hnr_method_value}) }}</div>
+				</xf:cell>
+			</xf:datarow>
+			
+			<xf:if is="{$hnrSettings.hnr_method} == 'seed_only'">
+				<xf:datarow>
+					<xf:cell> 
+						<div>
+							{{ phrase('you_must_seed_for_x_hours',{'min_seed_hours':$hnrSettings.min_seed_hours}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+				
+			<xf:elseif is="{$hnrSettings.hnr_method} == 'ratio_only'" />
+				<xf:datarow>
+					<xf:cell>
+						<div>
+							{{ phrase('you_must_upload_for_x_ratio',{'min_ratio':$hnrSettings.min_ratio}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+				
+			<xf:elseif is="{$hnrSettings.hnr_method} == 'seed_or_ratio'" />
+				<xf:datarow>
+					<xf:cell>
+						<div>
+							{{ phrase('you_must_seed_for_x_hours_or_upload_for_x_ratio',{'min_ratio':$hnrSettings.min_ratio,'min_seed_hours':$hnrSettings.min_seed_hours}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+				
+			<xf:else />
+				<xf:datarow>
+					<xf:cell>
+						<div>
+							{{ phrase('you_must_seed_for_x_hours_and_upload_for_x_ratio',{'min_ratio':$hnrSettings.min_ratio,'min_seed_hours':$hnrSettings.min_seed_hours}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+			</xf:if>
+			
+			<xf:if is="{$hnrSettings.download_trigger} > 0">
+			<xf:datarow>
+				<xf:cell>
+					<div>
+					{{ phrase('hnr_will_be_checked_after_trigger_bytes',{'down_trigger_bytes':{$hnrSettings.download_trigger|file_size}}) }}
+					</div>
+				</xf:cell>
+			</xf:datarow>
+			</xf:if>
+		
+			<xf:if is="{$hnrSettings.tolerance_period}">
+				<xf:datarow>
+					<xf:cell>
+						<div>
+							{{ phrase('hnr_will_be_checked_after_x_tolerance_period',{'tolerance_period': $hnrSettings.tolerance_period}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+			</xf:if>
+			
+			<xf:if is="{$hnrSettings.disable_leech_hnrs_enabled}">
+				<xf:datarow>
+					<xf:cell> 
+						<div>
+							{{ phrase('download_will_disable_after_x_hnrs_for_x_tolerance_period',{'disable_leech_hnrs':$hnrSettings.disable_leech_hnrs,'disable_leech_hnrs_tolerance':$hnrSettings.disable_leech_hnrs_tolerance}) }}
+						</div>
+					</xf:cell>
+				</xf:datarow>
+			</xf:if>
+		</xf:datalist>
+	</div>
+</div>]]></template>
+  <template type="public" title="xfdev_member_my_hnr.less" version_id="1000012" version_string="1.0.0 Alpha 2"><![CDATA[.user_info-block{
+	text-align:center;
+	padding:10px;
+	font-size:20px;
+	font-weight:bold;
+}
+
+.uploaded-data{
+	color:green;
+}
+
+.bonus-points{
+	color:rgb(37, 119, 177);
+}
+
+@media only screen and (max-width: 600px) {
+	.user_info-block{
+		display:block;
+	}
+	
+	.uploaded-data{
+		display:block;
+	}
+	
+	.bonus-points{
+		display:block;
+	}
+}
+
+
+.tradeButton.button, .tradeButton.button:hover {
+	background-color: green;
+	border: 1px solid;
+	border-radius: 8px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+	display: block;
+	height: auto;
+	line-height: normal;
+	margin: 0 auto;
+	padding: 3px;
+	text-align: center;
+	width:100%
+}
+
+.tradeButton.tradeDisabled.button, .tradeButton.tradeDisabled.button:hover {
+	background-color: rgb(150, 150, 150);
+	color: white;
+}
+
+.dataList-table caption {
+	background-color: #65a5d1;
+	border-bottom: 1px solid #176093;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	color: #f0f7fc;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 3px;
+	padding: 5px 10px;
+}]]></template>
+  <template type="public" title="xfdev_members_hitnrun" version_id="1000036" version_string="1.0.0 Beta 6"><![CDATA[<xf:title>{{ phrase('hitnrun_of_x', {'name': $user.username}) }}</xf:title>
+
+<xf:if is="{{ $xf.visitor.hasPermission('xfdevHitandRunModerator', 'canSeeOthersHnr') }}">
+
+<xf:css>
+.deleteHnr{
+	background-color:red;
+	}
+</xf:css>
+
+<div class="block-container">
+	<div class="block-body">
+			<xf:datalist>
+				<xf:datarow rowtype="header">
+					<xf:cell>{{ phrase('torrent') }}</xf:cell>
+					<xf:cell>{{ phrase('size') }}</xf:cell>
+					<xf:cell>{{ phrase('downloaded') }}</xf:cell>				
+					<xf:cell>{{ phrase('uploaded') }}</xf:cell>
+					<xf:cell>{{ phrase('ratio') }}</xf:cell>
+					<xf:cell>{{ phrase('seedtime') }}</xf:cell>
+					<xf:if is="{{ $xf.visitor.hasPermission('xfdevHitandRunModerator', 'canDeleteOthersHnr') }}">
+					<xf:cell>{{ phrase('action') }}</xf:cell>
+					</xf:if>
+				</xf:datarow> 
+				
+				<tbody class="dataList-rowGroup">
+					<xf:if is="{{ {$total} == 0}}">
+						<xf:datarow> 
+							<xf:cell> {{ phrase('user_dont_have_any_hnrs') }}</xf:cell>
+						</xf:datarow>
+					<xf:else /> 
+						<xf:foreach loop="$hitnruns" key="$points" value="$hnr">
+							<xf:datarow> 
+
+								<xf:cell> 
+									<a href="{{ link('threads', $hnr.Torrent.Thread) }}">
+										<div>{{ $hnr.Torrent.Thread.title }}</div>
+									</a>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.Torrent.size|file_size}</div>
+								</xf:cell>
+
+								<xf:cell> 
+									<div>{$hnr.downloaded|file_size}</div>
+								</xf:cell>
+
+								<xf:cell> 
+									<div>{$hnr.uploaded|file_size}</div>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.ratio}</div>
+								</xf:cell>
+								<xf:cell> 
+									<div>{$hnr.seed_timespent}</div>
+								</xf:cell>
+
+								<xf:if is="{{ $xf.visitor.hasPermission('xfdevHitandRunModerator', 'canDeleteOthersHnr') }}">
+									<xf:cell>
+										<xf:button icon="delete" class="deleteHnr" href="{{ link('members/hitnrun-delete', $user, {'peer':$hnr.id}) }}" data-xf-click="overlay" data-follow-redirects="true" data-force-flash-message="true">{{ phrase('delete') }}</xf:button>
+									</xf:cell>
+								</xf:if>
+							</xf:datarow>
+						</xf:foreach>
+					</xf:if>
+				</tbody>
+			</xf:datalist>
+	</div>
+</div>
+	<div class="block-outer block-outer--after">
+			<xf:pagenav
+						page="{$page}" perpage="{$perPage}" total="{$total}"
+						link="members/hitnrun" data="{$user}"
+						wrapperclass="block-outer-main" />
+		</div>
+	
+</xf:if>]]></template>
+</templates>
