@@ -1,13 +1,56 @@
 <?php
-// src/addons/XBTTracker/Entity/Torrent.php
+
 namespace XBTTracker\Entity;
 
-use XF\Mvc\Entity\Structure;
 use XF\Mvc\Entity\Entity;
+use XF\Mvc\Entity\Structure;
 
-class Torrent extends \XF\Mvc\Entity\Entity
+/**
+ * كيان التورنت
+ * يستخدم لتخزين وإدارة جميع المعلومات المتعلقة بملفات التورنت
+ *
+ * @property int $torrent_id
+ * @property string $title
+ * @property string $description
+ * @property string $info_hash
+ * @property string $file_path
+ * @property string $poster_path
+ * @property int $size
+ * @property int $category_id
+ * @property int $user_id
+ * @property string $video_quality
+ * @property string $audio_format
+ * @property string $audio_channels
+ * @property int $tmdb_id
+ * @property int $seeders
+ * @property int $leechers
+ * @property int $completed
+ * @property bool $is_freeleech
+ * @property int $creation_date
+ * @property int $view_count
+ *
+ * @property-read string $url
+ * @property-read string $poster_url
+ * @property-read array $video_quality_badge
+ * @property-read array $audio_format_badge
+ * @property-read array $audio_channels_badge
+ * @property-read string $size_formatted
+ * @property-read float $ratio
+ *
+ * @property-read \XF\Entity\User $User
+ * @property-read \XBTTracker\Entity\Category $Category
+ * @property-read \XBTTracker\Entity\TmdbData|null $TmdbData
+ * @property-read \XF\Mvc\Entity\ArrayCollection $Peers
+ */
+class Torrent extends Entity
 {
-    public static function getStructure(Structure $structure)
+    /**
+     * تعريف هيكل الكيان
+     *
+     * @param Structure $structure
+     * @return Structure
+     */
+    public static function getStructure(Structure $structure): Structure
     {
         $structure->table = 'xf_xbt_torrents';
         $structure->shortName = 'XBTTracker:Torrent';
@@ -76,11 +119,11 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get URL parameters for this torrent
+     * الحصول على معلمات URL للتورنت
      *
      * @return array
      */
-    public function getUrlParams()
+    public function getUrlParams(): array
     {
         return [
             'torrent_id' => $this->torrent_id,
@@ -89,11 +132,11 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get torrent ratio (seeders/leechers)
+     * الحصول على نسبة البذور إلى المحملين (الريشيو)
      *
      * @return float
      */
-    public function getRatio()
+    public function getRatio(): float
     {
         if ($this->leechers == 0) {
             return $this->seeders > 0 ? 999 : 0;
@@ -103,28 +146,28 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get formatted size
+     * الحصول على حجم التورنت بصيغة مقروءة
      *
      * @return string
      */
-    public function getSizeFormatted()
+    public function getSizeFormatted(): string
     {
         return \XF::language()->fileSizeFormat($this->size);
     }
     
     /**
-     * Get poster URL
+     * الحصول على عنوان URL لصورة البوستر
      *
      * @return string
      */
-    public function getPosterUrl()
+    public function getPosterUrl(): string
     {
         if (!$this->poster_path) {
             if ($this->tmdb_id && $this->TmdbData && $this->TmdbData->poster_path) {
                 return $this->TmdbData->poster_url;
             }
             
-            // Return default poster
+            // إرجاع بوستر افتراضي
             return \XF::app()->templater()->getTemplateUrl('public:xbt_default_poster.png');
         }
         
@@ -134,11 +177,11 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get video quality badge
+     * الحصول على شارة جودة الفيديو
      *
      * @return array
      */
-    public function getVideoQualityBadge()
+    public function getVideoQualityBadge(): array
     {
         $qualities = [
             'DVBTV' => 'fa-tv',
@@ -163,11 +206,11 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get audio format badge
+     * الحصول على شارة صيغة الصوت
      *
      * @return array
      */
-    public function getAudioFormatBadge()
+    public function getAudioFormatBadge(): array
     {
         $formats = [
             'AAC' => 'fa-volume-up',
@@ -188,18 +231,214 @@ class Torrent extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get audio channels badge
+     * الحصول على شارة قنوات الصوت
      *
      * @return array
      */
-    public function getAudioChannelsBadge()
+    public function getAudioChannelsBadge(): array
     {
         $channels = $this->audio_channels;
+        
+        if (empty($channels)) {
+            return [
+                'icon' => 'fa-volume-up',
+                'text' => '',
+                'class' => 'audioChannels--unknown'
+            ];
+        }
         
         return [
             'icon' => 'fa-volume-up',
             'text' => $channels,
             'class' => 'audioChannels--' . strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $channels))
         ];
+    }
+    
+    /**
+     * التحقق مما إذا كان التورنت فعالًا (يوجد بذور)
+     *
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->seeders > 0;
+    }
+    
+    /**
+     * التحقق مما إذا كان التورنت مجانيًا (بدون احتساب التحميل)
+     *
+     * @return bool
+     */
+    public function isFreeLeech(): bool
+    {
+        if ($this->is_freeleech) {
+            return true;
+        }
+        
+        // التحقق من الإعدادات العامة للتراكر
+        return \XF::options()->xbtTrackerGlobalFreeleech ?? false;
+    }
+    
+    /**
+     * الحصول على عدد الملفات في التورنت
+     *
+     * @return int|null
+     */
+    public function getFileCount(): ?int
+    {
+        try {
+            $filePath = $this->file_path;
+            
+            if (!file_exists($filePath) || !is_readable($filePath)) {
+                return null;
+            }
+            
+            $content = file_get_contents($filePath);
+            if (!$content) {
+                return null;
+            }
+            
+            $bencode = new \XBTTracker\Util\Bencode();
+            $torrentData = $bencode->decode($content);
+            
+            if (!$torrentData || !isset($torrentData['info'])) {
+                return null;
+            }
+            
+            if (isset($torrentData['info']['files']) && is_array($torrentData['info']['files'])) {
+                return count($torrentData['info']['files']);
+            }
+            
+            // إذا لم توجد قائمة ملفات، فهذا تورنت ملف واحد
+            return 1;
+        } catch (\Exception $e) {
+            \XF::logException($e);
+            return null;
+        }
+    }
+    
+    /**
+     * التحقق من صحة الكيان قبل الحفظ
+     *
+     * @return bool
+     */
+    protected function _preSave(): bool
+    {
+        if ($this->isInsert() && !$this->creation_date) {
+            $this->creation_date = \XF::$time;
+        }
+        
+        if (empty($this->title)) {
+            $this->error(\XF::phrase('xbt_torrent_title_required'), 'title');
+            return false;
+        }
+        
+        // التحقق من تنسيق info_hash
+        if ($this->isChanged('info_hash')) {
+            $infoHash = $this->info_hash;
+            if (!preg_match('/^[0-9a-f]{40}$/i', $infoHash)) {
+                $this->error(\XF::phrase('xbt_invalid_info_hash_format'), 'info_hash');
+                return false;
+            }
+            
+            // التحقق مما إذا كان هناك تورنت آخر بنفس قيمة info_hash
+            if ($this->isInsert() || ($this->isUpdate() && $this->isChanged('info_hash'))) {
+                $existing = \XF::finder('XBTTracker:Torrent')
+                    ->where('info_hash', $infoHash)
+                    ->where('torrent_id', '<>', $this->torrent_id)
+                    ->fetchOne();
+                    
+                if ($existing) {
+                    $this->error(\XF::phrase('xbt_torrent_with_info_hash_already_exists'), 'info_hash');
+                    return false;
+                }
+            }
+        }
+        
+        return parent::_preSave();
+    }
+    
+    /**
+     * الإجراءات بعد الحفظ
+     */
+    protected function _postSave(): void
+    {
+        parent::_postSave();
+        
+        // إذا كان هذا إدراج جديد، قم بتحديث إحصائيات الفئة
+        if ($this->isInsert()) {
+            $this->updateCategoryStats();
+        } 
+        // إذا تم تغيير الفئة، قم بتحديث إحصائيات الفئات القديمة والجديدة
+        else if ($this->isChanged('category_id')) {
+            $oldCategoryId = $this->getExistingValue('category_id');
+            $this->updateCategoryStats($oldCategoryId);
+            $this->updateCategoryStats();
+        }
+    }
+    
+    /**
+     * الإجراءات بعد الحذف
+     */
+    protected function _postDelete(): void
+    {
+        parent::_postDelete();
+        
+        $db = $this->db();
+        
+        // حذف السجلات المرتبطة
+        $db->delete('xf_xbt_peers', 'torrent_id = ?', $this->torrent_id);
+        $db->delete('xf_xbt_user_completed', 'torrent_id = ?', $this->torrent_id);
+        
+        // تحديث إحصائيات الفئة
+        $this->updateCategoryStats();
+        
+        // حذف ملف التورنت وصورة البوستر
+        $this->deleteTorrentFiles();
+    }
+    
+    /**
+     * حذف ملفات التورنت
+     */
+    protected function deleteTorrentFiles(): void
+    {
+        try {
+            // حذف ملف التورنت
+            if ($this->file_path && file_exists($this->file_path)) {
+                @unlink($this->file_path);
+            }
+            
+            // حذف صورة البوستر
+            if ($this->poster_path && file_exists($this->poster_path)) {
+                @unlink($this->poster_path);
+            }
+        } catch (\Exception $e) {
+            \XF::logException($e);
+        }
+    }
+    
+    /**
+     * تحديث إحصائيات الفئة
+     *
+     * @param int|null $categoryId معرف الفئة (إذا كان مختلفًا عن الفئة الحالية)
+     */
+    protected function updateCategoryStats(?int $categoryId = null): void
+    {
+        $categoryId = $categoryId ?: $this->category_id;
+        if (!$categoryId) {
+            return;
+        }
+        
+        $category = \XF::em()->find('XBTTracker:Category', $categoryId);
+        if (!$category) {
+            return;
+        }
+        
+        // تحديث الإحصائيات (يمكن تنفيذ هذا بشكل أكثر تفصيلًا حسب الحاجة)
+        // هذا مجرد مثال بسيط لتحديث عدد التورنت
+        $db = $this->db();
+        $torrentCount = $db->fetchOne('SELECT COUNT(*) FROM xf_xbt_torrents WHERE category_id = ?', $categoryId);
+        
+        // يمكنك هنا تحديث أي إحصائيات إضافية للفئة
     }
 }

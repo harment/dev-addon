@@ -189,7 +189,38 @@
       <day_of_week>*</day_of_week>
     </entry>
   </cron>
-  <templates/>
+  <templates>
+  <template type="public" title="xbt_torrent_list" template_file="public/xbt_torrent_list.html"/>
+  <template type="public" title="xbt_torrent_view" template_file="public/xbt_torrent_view.html"/>
+  <template type="public" title="xbt_torrent_upload" template_file="public/xbt_torrent_upload.html"/>
+  
+  <template type="public" title="xbt_tmdb_info" template_file="public/xbt_tmdb_info.html"/>
+  <template type="public" title="xbt_forum_torrents.html" template_file="public/xbt_forum_torrents.html"/>
+  <template type="public" title="xbt_torrent_edit" template_file="public/xbt_torrent_edit.html"/>
+  <template type="public" title="xbt_tmdb_search_results" template_file="public/xbt_tmdb_search_results.html"/>
+  <template type="public" title="xbt_widget_top_torrents" template_file="public/xbt_widget_top_torrents.html"/>
+  <template type="public" title="xbt_widget_user_stats.html" template_file="public/xbt_widget_user_stats.html"/>
+  <template type="public" title="xbt_widget_latest_torrents" template_file="public/xbt_widget_latest_torrents.html"/>
+  <template type="public" title="xbt_widget_tracker_stats" template_file="public/xbt_widget_tracker_stats.html"/>
+  <template type="public" title="xbt_torrent_delete" template_file="public/xbt_torrent_delete.html"/>
+  <template type="public" title="xbt_forum_tab" template_file="public/xbt_forum_tab.html"/>
+  
+  <template type="email" title="xbt_bonus_notification" template_file="email/xbt_bonus_notification.html"/>
+  <template type="email" title="xbt_hit_and_run_warning" template_file="email/xbt_hit_and_run_warning.html"/>
+  
+  <template type="admin" title="xbt_admin_categories" template_file="admin/xbt_admin_categories.html"/>
+  <template type="admin" title="xbt_admin_category_add" template_file="admin/xbt_admin_category_add.html"/>
+  <template type="admin" title="xbt_admin_category_delete" template_file="admin/xbt_admin_category_delete.html"/>
+  <template type="admin" title="xbt_admin_category_edit" template_file="admin/xbt_admin_category_edit.html"/>
+  <template type="admin" title="xbt_admin_dashboard" template_file="admin/xbt_admin_dashboard.html"/>
+  <template type="admin" title="xbt_admin_torrent_delete" template_file="admin/xbt_admin_torrent_delete.html"/>
+  <template type="admin" title="xbt_admin_torrent_edit" template_file="admin/xbt_admin_torrent_edit.html"/>
+  <template type="admin" title="xbt_admin_torrents" template_file="admin/xbt_admin_torrents.html"/>
+  <template type="admin" title="xbt_admin_user_stats" template_file="admin/xbt_admin_user_stats.html"/>
+  <template type="admin" title="xbt_admin_user_stats_edit" template_file="admin/xbt_admin_user_stats_edit.html"/>
+  <template type="admin" title="xbt_admin_user_stats_reset_passkey" template_file="admin/xbt_admin_user_stats_reset_passkey.html"/>
+
+</templates>
   <widget_definitions>
     <widget_definition definition_id="xbt_latest_torrents" definition_class="XBTTracker\Widget\LatestTorrents"/>
     <widget_definition definition_id="xbt_tracker_stats" definition_class="XBTTracker\Widget\TrackerStats"/>

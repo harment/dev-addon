@@ -9,7 +9,7 @@ use XF\AddOn\StepRunnerUninstallTrait;
 use XF\Db\Schema\Create;
 use XF\Db\Schema\Alter;
 
-class install extends AbstractSetup
+class Setup extends AbstractSetup
 {
     use StepRunnerInstallTrait;
     use StepRunnerUpgradeTrait;
