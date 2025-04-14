@@ -1,0 +1,18 @@
+{
+  "additional_files": [
+    "js/",
+    "styles/"
+  ],
+  "minify": [
+    "js/",
+    "styles/"
+  ],
+  "rollup": {
+    "js/xbt-tracker.js": [
+      "js/xbt/uploader.js",
+      "js/xbt/tmdb.js",
+      "js/xbt/torrent-list.js",
+      "js/xbt/slider.js"
+    ]
+  }
+}
