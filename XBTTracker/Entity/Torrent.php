@@ -3,6 +3,7 @@
 namespace XBTTracker\Entity;
 
 use XF\Mvc\Entity\Structure;
+use XF\Mvc\Entity\Entity;
 
 class Torrent extends \XF\Mvc\Entity\Entity
 {

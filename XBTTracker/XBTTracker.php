@@ -104,17 +104,16 @@ class XBTTracker extends AbstractAddOn
     {
         $structure = [
             'XF:User' => function(\XF\Mvc\Entity\Manager $em, \XF\Mvc\Entity\Structure &$structure)
-            {
-                // إضافة علاقة بين المستخدم وإحصائيات التورنت
-                $structure->relations['XBTStats'] = [
-                    'entity' => 'XBTTracker:UserStats',
-                    'type' => 'one-to-one',
-                    'conditions' => [
-                        ['user_id', '=', '$user_id']
-                    ],
-                    'primary' => true
-                ];
-            },
+{
+    $structure->relations['XBTStats'] = [
+        'entity' => 'XBTTracker:UserStats',
+        'type' => \XF\Mvc\Entity\Entity::TO_ONE,
+        'conditions' => [
+            ['user_id', '=', '$user_id']
+        ],
+        'primary' => true
+    ];
+},
             
             'XF:Forum' => function(\XF\Mvc\Entity\Manager $em, \XF\Mvc\Entity\Structure &$structure)
             {

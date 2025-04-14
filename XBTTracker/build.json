@@ -1,7 +1,10 @@
 {
   "additional_files": [
     "js/",
-    "styles/"
+    "styles/",
+    "vendor/",
+    "composer.json",
+    "composer.lock"
   ],
   "minify": [
     "js/",

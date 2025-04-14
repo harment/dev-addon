@@ -4,6 +4,7 @@
   <extra_args/>
   <custom_ini/>
   <require>XF</require>
+  <composer_autoload>vendor/autoload.php</composer_autoload>
   <icon>fa-magnet</icon>
   <options>
     <option option_id="xbtTrackerAnnounceURL" edit_format="textbox" data_type="string" display_order="1">

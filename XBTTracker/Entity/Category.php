@@ -1,8 +1,13 @@
 <?php
 // src/addons/XBTTracker/Entity/Category.php
+
+
 namespace XBTTracker\Entity;
 
 use XF\Mvc\Entity\Structure;
+use XF\Mvc\Entity\Entity;
+
+
 
 class Category extends \XF\Mvc\Entity\Entity
 {

@@ -12,10 +12,10 @@ class Bencode
      * @param string $str
      * @return mixed
      */
-    public static function decode($str)
+    public function decode($str)
     {
         $pos = 0;
-        return self::bdecode($str, $pos);
+        return $this->bdecode($str, $pos);
     }
     
     /**
@@ -24,7 +24,7 @@ class Bencode
      * @param mixed $data
      * @return string
      */
-    public static function encode($data)
+    public function encode($data)
     {
         if (is_array($data))
         {
@@ -54,7 +54,7 @@ class Bencode
      * @param int &$pos
      * @return mixed
      */
-    private static function bdecode($str, &$pos)
+    private function bdecode($str, &$pos)
     {
         $strlen = strlen($str);
         if ($pos >= $strlen)
@@ -145,7 +145,7 @@ class Bencode
      * @param string $str
      * @return string
      */
-    private static function encodeString($str)
+    private function encodeString($str)
     {
         return strlen($str) . ':' . $str;
     }
@@ -156,7 +156,7 @@ class Bencode
      * @param int $int
      * @return string
      */
-    private static function encodeInteger($int)
+    private function encodeInteger($int)
     {
         return 'i' . $int . 'e';
     }
@@ -167,7 +167,7 @@ class Bencode
      * @param array $list
      * @return string
      */
-    private static function encodeList($list)
+    private function encodeList($list)
     {
         $result = 'l';
         foreach ($list as $value)
@@ -184,7 +184,7 @@ class Bencode
      * @param array $dict
      * @return string
      */
-    private static function encodeDict($dict)
+    private function encodeDict($dict)
     {
         // Sort keys for consistent encoding
         ksort($dict);
@@ -205,7 +205,7 @@ class Bencode
      * @param array $array
      * @return bool
      */
-    private static function isAssoc($array)
+    private function isAssoc($array)
     {
         if (!is_array($array))
         {
