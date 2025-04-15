@@ -1,0 +1,122 @@
+<xf:title>{{ phrase('xbt_torrent_list') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('torrents') }}">{{ phrase('xbt_torrent_list') }}</xf:breadcrumb>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <div class="block-row">
+                <form action="{{ link('torrents') }}" method="get" class="xf-search-form">
+                    <div class="inputGroup">
+                        <span class="inputGroup-text" id="ctrl_search_by_title">
+                            {{ phrase('search') }}:
+                        </span>
+                        <input type="text" name="q" value="{{ $searchQuery }}" class="input js-search-input" placeholder="{{ phrase('xbt_search_torrents') }}" aria-labelledby="ctrl_search_by_title">
+                        <span class="inputGroup-splitter"></span>
+                        
+                        <select name="category_id" class="input" aria-label="{{ phrase('category') }}">
+                            <option value="0">{{ phrase('all_categories') }}</option>
+                            <xf:foreach loop="$categories" value="$category">
+                                <option value="{{ $category.category_id }}" {{ $categoryId == $category.category_id ? 'selected' : '' }}>{{ $category.title }}</option>
+                            </xf:foreach>
+                        </select>
+                        <span class="inputGroup-splitter"></span>
+                        
+                        <select name="sort" class="input" aria-label="{{ phrase('xbt_sort_by') }}">
+                            <option value="creation_date" {{ $sortOrder == 'creation_date' ? 'selected' : '' }}>{{ phrase('date') }}</option>
+                            <option value="title" {{ $sortOrder == 'title' ? 'selected' : '' }}>{{ phrase('title') }}</option>
+                            <option value="size" {{ $sortOrder == 'size' ? 'selected' : '' }}>{{ phrase('xbt_size') }}</option>
+                            <option value="seeders" {{ $sortOrder == 'seeders' ? 'selected' : '' }}>{{ phrase('xbt_seeders') }}</option>
+                            <option value="leechers" {{ $sortOrder == 'leechers' ? 'selected' : '' }}>{{ phrase('xbt_leechers') }}</option>
+                            <option value="completed" {{ $sortOrder == 'completed' ? 'selected' : '' }}>{{ phrase('xbt_snatches') }}</option>
+                        </select>
+                        <span class="inputGroup-splitter"></span>
+                        
+                        <select name="direction" class="input" aria-label="{{ phrase('direction') }}">
+                            <option value="desc" {{ $sortDirection == 'desc' ? 'selected' : '' }}>{{ phrase('descending') }}</option>
+                            <option value="asc" {{ $sortDirection == 'asc' ? 'selected' : '' }}>{{ phrase('ascending') }}</option>
+                        </select>
+                        
+                        <span class="inputGroup-splitter"></span>
+                        
+                        <div class="inputGroup-buttonGroup">
+                            <button type="submit" class="button--primary button">{{ phrase('search') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_torrent_list') }}</h2>
+            <div class="block-header-controls">
+                <xf:if is="{{ XF.visitor.hasPermission('xbtTracker', 'upload') }}">
+                    <a href="{{ link('torrents/upload') }}" class="button--link button">
+                        <xf:fa icon="fa-upload" />
+                        {{ phrase('xbt_upload_torrent') }}
+                    </a>
+                </xf:if>
+            </div>
+        </div>
+        
+        <div class="block-body">
+            <div class="structItemContainer">
+                <xf:if is="{{ $torrents is empty }}">
+                    <div class="block-row">{{ phrase('xbt_no_torrents_found') }}</div>
+                <xf:else />
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{ phrase('title') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('xbt_category') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('xbt_size') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('xbt_seeders') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('xbt_leechers') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('xbt_snatches') }}</th>
+                                <th class="dataList-cell--min">{{ phrase('date') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xf:foreach loop="$torrents" value="$torrent">
+                                <tr>
+                                    <td>
+                                        <a href="{{ link('torrents/view', $torrent) }}" class="structItem-title">
+                                            {{ $torrent.title }}
+                                            <xf:if is="{{ $torrent.is_freeleech }}">
+                                                <span class="label label--success">{{ phrase('xbt_freeleech') }}</span>
+                                            </xf:if>
+                                        </a>
+                                    </td>
+                                    <td class="dataList-cell--min">
+                                        <a href="{{ link('torrents', {'category_id': $torrent.category_id}) }}">
+                                            {{ $torrent.Category.title }}
+                                        </a>
+                                    </td>
+                                    <td class="dataList-cell--min">{{ $torrent.formatted_size }}</td>
+                                    <td class="dataList-cell--min">{{ $torrent.seeders }}</td>
+                                    <td class="dataList-cell--min">{{ $torrent.leechers }}</td>
+                                    <td class="dataList-cell--min">{{ $torrent.completed }}</td>
+                                    <td class="dataList-cell--min" title="{{ date_time($torrent.creation_date) }}">
+                                        {{ time_diff($torrent.creation_date) }}
+                                    </td>
+                                </tr>
+                            </xf:foreach>
+                        </tbody>
+                    </table>
+                </xf:if>
+            </div>
+        </div>
+        
+        <xf:pagenav page="$page" perpage="$perPage" total="$totalTorrents" link="torrents" 
+                   params="{
+                       'q': $searchQuery,
+                       'category_id': $categoryId,
+                       'sort': $sortOrder,
+                       'direction': $sortDirection
+                   }" />
+    </div>
+</div>

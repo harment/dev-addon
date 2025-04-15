@@ -1,0 +1,66 @@
+[
+    {
+        "option_id": "xbtTrackerAnnounceURL",
+        "option_title": "رابط الإعلان",
+        "explain": "رابط التتبع الذي سيستخدمه العملاء.",
+        "edit_format": "textbox",
+        "data_type": "string",
+        "default_value": "http://arabicsource.ddns.net:2710/announce"
+    },
+    {
+        "option_id": "xbtTrackerRequiredRatio",
+        "option_title": "النسبة المطلوبة",
+        "explain": "النسبة الدنيا بين التحميل والتنزيل لتجنب العقوبات.",
+        "edit_format": "spinbox",
+        "data_type": "float",
+        "default_value": 0.7
+    },
+    {
+        "option_id": "xbtTrackerRatioExemptGroups",
+        "option_title": "المجموعات المعفاة",
+        "explain": "المجموعات التي لا تنطبق عليها قيود النسبة.",
+        "edit_format": "checkbox",
+        "data_type": "array",
+        "default_value": []
+    },
+    {
+        "option_id": "xbtTrackerHitAndRunHours",
+        "option_title": "فترة السماح",
+        "explain": "عدد الساعات المسموحة للتصيير قبل تطبيق عقوبة الهروب.",
+        "edit_format": "spinbox",
+        "data_type": "integer",
+        "default_value": 72
+    },
+    {
+        "option_id": "xbtTrackerTorrentPath",
+        "option_title": "مسار التورنتات",
+        "explain": "المسار الذي سيتم حفظ ملفات التورنت فيه (نسبيًا لمجلد XenForo).",
+        "edit_format": "textbox",
+        "data_type": "string",
+        "default_value": "data/torrents"
+    },
+    {
+        "option_id": "xbtTrackerTmdbApiKey",
+        "option_title": "مفتاح TMDB",
+        "explain": "المفتاح المستخدم لجلب بيانات الأفلام من TMDB.",
+        "edit_format": "textbox",
+        "data_type": "string",
+        "default_value": ""
+    },
+    {
+        "option_id": "xbtTrackerGlobalFreeleech",
+        "option_title": "التنزيل المجاني العام",
+        "explain": "تفعيل التنزيل المجاني لجميع التورنتات.",
+        "edit_format": "onoff",
+        "data_type": "boolean",
+        "default_value": false
+    },
+    {
+        "option_id": "xbtTrackerForceThankYou",
+        "option_title": "إجبار الشكر",
+        "explain": "إلزام المستخدمين بالضغط على زر الشكر قبل التنزيل.",
+        "edit_format": "onoff",
+        "data_type": "boolean",
+        "default_value": false
+    }
+]

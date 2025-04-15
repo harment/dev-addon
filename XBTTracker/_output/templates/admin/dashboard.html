@@ -1,0 +1,292 @@
+{% extends "admin/base.html" %}
+
+{% block title %}لوحة التحكم الرئيسية{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1 class="h3 mb-4">لوحة التحكم الرئيسية</h1>
+    
+    <!-- نظرة عامة على الإحصائيات -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-primary h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">المستخدمون النشطون</h6>
+                            <h2 class="mb-0">{{ stats.active_users }}</h2>
+                        </div>
+                        <div class="text-primary">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        <span class="{% if stats.users_trend > 0 %}text-success{% elif stats.users_trend < 0 %}text-danger{% endif %}">
+                            {% if stats.users_trend > 0 %}
+                                <i class="fas fa-arrow-up"></i> {{ stats.users_trend }}%
+                            {% elif stats.users_trend < 0 %}
+                                <i class="fas fa-arrow-down"></i> {{ stats.users_trend|abs }}%
+                            {% else %}
+                                <i class="fas fa-equals"></i> 0%
+                            {% endif %}
+                        </span>
+                        منذ الأسبوع الماضي
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-success h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">التورنتات النشطة</h6>
+                            <h2 class="mb-0">{{ stats.active_torrents }}</h2>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-file-download fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        <span class="{% if stats.torrents_trend > 0 %}text-success{% elif stats.torrents_trend < 0 %}text-danger{% endif %}">
+                            {% if stats.torrents_trend > 0 %}
+                                <i class="fas fa-arrow-up"></i> {{ stats.torrents_trend }}%
+                            {% elif stats.torrents_trend < 0 %}
+                                <i class="fas fa-arrow-down"></i> {{ stats.torrents_trend|abs }}%
+                            {% else %}
+                                <i class="fas fa-equals"></i> 0%
+                            {% endif %}
+                        </span>
+                        منذ الأسبوع الماضي
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-info h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">إجمالي التحميلات</h6>
+                            <h2 class="mb-0">{{ stats.total_downloads }}</h2>
+                        </div>
+                        <div class="text-info">
+                            <i class="fas fa-arrow-down fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        <span class="{% if stats.downloads_trend > 0 %}text-success{% elif stats.downloads_trend < 0 %}text-danger{% endif %}">
+                            {% if stats.downloads_trend > 0 %}
+                                <i class="fas fa-arrow-up"></i> {{ stats.downloads_trend }}%
+                            {% elif stats.downloads_trend < 0 %}
+                                <i class="fas fa-arrow-down"></i> {{ stats.downloads_trend|abs }}%
+                            {% else %}
+                                <i class="fas fa-equals"></i> 0%
+                            {% endif %}
+                        </span>
+                        منذ الأسبوع الماضي
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-warning h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">حجم البيانات</h6>
+                            <h2 class="mb-0">{{ stats.total_data_volume|filesizeformat }}</h2>
+                        </div>
+                        <div class="text-warning">
+                            <i class="fas fa-database fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        <span class="{% if stats.data_volume_trend > 0 %}text-success{% elif stats.data_volume_trend < 0 %}text-danger{% endif %}">
+                            {% if stats.data_volume_trend > 0 %}
+                                <i class="fas fa-arrow-up"></i> {{ stats.data_volume_trend }}%
+                            {% elif stats.data_volume_trend < 0 %}
+                                <i class="fas fa-arrow-down"></i> {{ stats.data_volume_trend|abs }}%
+                            {% else %}
+                                <i class="fas fa-equals"></i> 0%
+                            {% endif %}
+                        </span>
+                        منذ الأسبوع الماضي
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- الرسوم البيانية -->
+    <div class="row mb-4">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">نشاط المستخدمين</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="userActivityChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">توزيع التورنتات حسب الفئة</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="torrentCategoryChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- أحدث الأنشطة والتحديثات -->
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">أحدث التورنتات</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>اسم التورنت</th>
+                                    <th>الفئة</th>
+                                    <th>الرافع</th>
+                                    <th>التاريخ</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for torrent in latest_torrents %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('admin.torrent_details', info_hash=torrent.info_hash) }}">{{ torrent.name }}</a>
+                                    </td>
+                                    <td>{{ torrent.category.name }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin.user_details', user_id=torrent.uploader.id) }}">{{ torrent.uploader.username }}</a>
+                                    </td>
+                                    <td>{{ torrent.added_at|datetime }}</td>
+                                    <td>
+                                        {% if torrent.is_active %}
+                                            <span class="badge bg-success">نشط</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">غير نشط</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{{ url_for('admin.torrents') }}" class="btn btn-sm btn-primary">عرض كل التورنتات</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">أحدث المستخدمين</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>اسم المستخدم</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>تاريخ التسجيل</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in latest_users %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('admin.user_details', user_id=user.id) }}">{{ user.username }}</a>
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.registered_at|datetime }}</td>
+                                    <td>
+                                        {% if user.is_active %}
+                                            <span class="badge bg-success">نشط</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">محظور</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-primary">عرض كل المستخدمين</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // رسم بياني لنشاط المستخدمين
+    var userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+    var userActivityChart = new Chart(userActivityCtx, {
+        type: 'line',
+        data: {
+            labels: {{ activity_dates|safe }},
+            datasets: [{
+                label: 'المستخدمون النشطون',
+                data: {{ active_users_data|safe }},
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                tension: 0.1,
+                fill: true
+            }, {
+                label: 'التحميلات',
+                data: {{ download_data|safe }},
+                borderColor: '#36b9cc',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // رسم بياني لتوزيع التورنتات حسب الفئة
+    var torrentCategoryCtx = document.getElementById('torrentCategoryChart').getContext('2d');
+    var torrentCategoryChart = new Chart(torrentCategoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_names|safe }},
+            datasets: [{
+                data: {{ category_counts|safe }},
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                    '#6f42c1', '#5a5c69', '#20c9a6', '#2c9faf', '#fd7e14'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}نقاط المكافآت{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">نظام نقاط المكافآت</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">رصيدك الحالي</h5>
+                </div>
+                <div class="card-body">
+                    <h2 class="text-center">{{ user_points }} نقطة</h2>
+                    <p class="text-muted text-center">تحصل على النقاط من خلال عمل سييد للملفات</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">معدل الربح الحالي</h5>
+                </div>
+                <div class="card-body">
+                    <h2 class="text-center">{{ points_rate }} نقطة/ساعة</h2>
+                    <p class="text-muted text-center">بناءً على التورنتات التي تقوم بعمل سييد لها حالياً</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">كيفية الحصول على النقاط</h5>
+        </div>
+        <div class="card-body">
+            <p>تعتمد نقاط المكافآت على المدة والحجم ونشاط التورنت:</p>
+            <ul>
+                <li>كلما زادت مدة عمل السييد، زادت النقاط التي تحصل عليها</li>
+                <li>التورنتات الأكبر حجماً تمنحك نقاطاً أكثر</li>
+                <li>التورنتات الأقل شعبية تمنحك نقاطاً أكثر لتشجيع المشاركة</li>
+            </ul>
+            <div class="alert alert-success">
+                <strong>نصيحة:</strong> للحصول على أكبر عدد من النقاط، قم بالسييد لأكبر عدد من الملفات لفترات طويلة!
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-warning">
+            <h5 class="mb-0">استبدال النقاط</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ url_for('xbt.redeem_points') }}">
+                <h5>استبدال النقاط بـ:</h5>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="redemption_type" id="removeWarning" value="remove_warning">
+                    <label class="form-check-label" for="removeWarning">
+                        إزالة تحذير (100 نقطة)
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="redemption_type" id="uploadCredit" value="upload_credit">
+                    <label class="form-check-label" for="uploadCredit">
+                        إضافة 1GB إلى رصيد الرفع (150 نقطة)
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="redemption_type" id="vipStatus" value="vip_status">
+                    <label class="form-check-label" for="vipStatus">
+                        مستخدم VIP لمدة شهر (1000 نقطة)
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="redemption_type" id="customTitle" value="custom_title">
+                    <label class="form-check-label" for="customTitle">
+                        لقب مخصص (300 نقطة)
+                    </label>
+                    <input type="text" class="form-control mt-2" name="custom_title" placeholder="أدخل اللقب المخصص" disabled>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="redeemButton" disabled>استبدال النقاط</button>
+            </form>
+            
+            <script>
+                // تمكين/تعطيل حقل اللقب المخصص
+                document.querySelectorAll('input[name="redemption_type"]').forEach(function(radio) {
+                    radio.addEventListener('change', function() {
+                        const customTitleInput = document.querySelector('input[name="custom_title"]');
+                        customTitleInput.disabled = this.value !== 'custom_title';
+                        
+                        // تمكين زر الاستبدال
+                        document.getElementById('redeemButton').disabled = false;
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">سجل النقاط</h5>
+        </div>
+        <div class="card-body">
+            {% if points_history %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>النوع</th>
+                                <th>النقاط</th>
+                                <th>ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in points_history %}
+                            <tr>
+                                <td>{{ entry.timestamp|datetime }}</td>
+                                <td>{{ entry.type }}</td>
+                                <td class="{% if entry.points > 0 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ entry.points }}
+                                </td>
+                                <td>{{ entry.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    لا يوجد سجل للنقاط حتى الآن.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
