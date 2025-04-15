@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}ملفات التورنت الخاصة بك{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">ملفات التورنت الخاصة بك</h1>
+    
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="seeding-tab" data-bs-toggle="tab" data-bs-target="#seeding-content" type="button" role="tab" aria-controls="seeding-content" aria-selected="true">التورنتات التي تقوم بعمل سييد لها</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="downloading-tab" data-bs-toggle="tab" data-bs-target="#downloading-content" type="button" role="tab" aria-controls="downloading-content" aria-selected="false">التورنتات قيد التحميل</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed-content" type="button" role="tab" aria-controls="completed-content" aria-selected="false">التورنتات المكتملة</button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+        <!-- قائمة التورنتات التي يقوم المستخدم بعمل سييد لها -->
+        <div class="tab-pane fade show active" id="seeding-content" role="tabpanel" aria-labelledby="seeding-tab">
+            {% if seeding_torrents %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>اسم التورنت</th>
+                                <th>الحجم</th>
+                                <th>وقت البدء</th>
+                                <th>حجم التحميل</th>
+                                <th>حجم الرفع</th>
+                                <th>النسبة</th>
+                                <th>المدة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for torrent in seeding_torrents %}
+                            <tr>
+                                <td><a href="{{ url_for('xbt.torrent_details', info_hash=torrent.info_hash) }}">{{ torrent.name }}</a></td>
+                                <td>{{ torrent.size|filesizeformat }}</td>
+                                <td>{{ torrent.started_at|datetime }}</td>
+                                <td>{{ torrent.downloaded|filesizeformat }}</td>
+                                <td>{{ torrent.uploaded|filesizeformat }}</td>
+                                <td>{{ torrent.ratio|round(2) }}</td>
+                                <td>{{ torrent.duration|timeformat }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    لا توجد لديك حالياً أي ملفات تقوم بعمل سييد لها.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- قائمة التورنتات قيد التحميل -->
+        <div class="tab-pane fade" id="downloading-content" role="tabpanel" aria-labelledby="downloading-tab">
+            {% if downloading_torrents %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>اسم التورنت</th>
+                                <th>الحجم</th>
+                                <th>نسبة التحميل</th>
+                                <th>السرعة</th>
+                                <th>الوقت المتبقي</th>
+                                <th>المدة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for torrent in downloading_torrents %}
+                            <tr>
+                                <td><a href="{{ url_for('xbt.torrent_details', info_hash=torrent.info_hash) }}">{{ torrent.name }}</a></td>
+                                <td>{{ torrent.size|filesizeformat }}</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ torrent.progress }}%;" aria-valuenow="{{ torrent.progress }}" aria-valuemin="0" aria-valuemax="100">{{ torrent.progress }}%</div>
+                                    </div>
+                                </td>
+                                <td>{{ torrent.download_speed|filesizeformat }}/s</td>
+                                <td>{{ torrent.remaining_time|timeformat }}</td>
+                                <td>{{ torrent.duration|timeformat }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    لا توجد لديك حالياً أي ملفات قيد التحميل.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- قائمة التورنتات المكتملة -->
+        <div class="tab-pane fade" id="completed-content" role="tabpanel" aria-labelledby="completed-tab">
+            {% if completed_torrents %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>اسم التورنت</th>
+                                <th>الحجم</th>
+                                <th>تاريخ الاكتمال</th>
+                                <th>حجم الرفع</th>
+                                <th>النسبة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for torrent in completed_torrents %}
+                            <tr>
+                                <td><a href="{{ url_for('xbt.torrent_details', info_hash=torrent.info_hash) }}">{{ torrent.name }}</a></td>
+                                <td>{{ torrent.size|filesizeformat }}</td>
+                                <td>{{ torrent.completed_at|datetime }}</td>
+                                <td>{{ torrent.uploaded|filesizeformat }}</td>
+                                <td>{{ torrent.ratio|round(2) }}</td>
+                                <td>{% if torrent.is_active %}نشط{% else %}غير نشط{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    لا توجد لديك حالياً أي ملفات مكتملة.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

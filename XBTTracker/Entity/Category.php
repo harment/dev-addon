@@ -1,16 +1,37 @@
 <?php
 // src/addons/XBTTracker/Entity/Category.php
-
-
 namespace XBTTracker\Entity;
 
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\Entity\Entity;
 
-
-
-class Category extends \XF\Mvc\Entity\Entity
+/**
+ * كيان فئة التورنت
+ * يستخدم لتنظيم التورنتات في فئات وفئات فرعية
+ *
+ * @property int $category_id
+ * @property string $title
+ * @property string $description
+ * @property int $parent_id
+ * @property int $display_order
+ * @property int $node_id
+ *
+ * @property-read array $breadcrumb
+ * @property-read string $url
+ *
+ * @property-read Category|null $Parent
+ * @property-read \XF\Mvc\Entity\ArrayCollection|Category[] $Children
+ * @property-read \XF\Entity\Node|null $Node
+ * @property-read \XF\Mvc\Entity\ArrayCollection|Torrent[] $Torrents
+ */
+class Category extends Entity
 {
+    /**
+     * تعريف هيكل الكيان
+     *
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_xbt_categories';
@@ -27,8 +48,8 @@ class Category extends \XF\Mvc\Entity\Entity
         ];
         
         $structure->getters = [
-            'url' => true,
-            'breadcrumb' => true
+            'breadcrumb' => true,
+            'url' => true
         ];
         
         $structure->relations = [
@@ -51,7 +72,9 @@ class Category extends \XF\Mvc\Entity\Entity
             'Node' => [
                 'entity' => 'XF:Node',
                 'type' => self::TO_ONE,
-                'conditions' => 'node_id',
+                'conditions' => [
+                    ['node_id', '=', '$node_id']
+                ],
                 'primary' => true
             ],
             'Torrents' => [
@@ -66,7 +89,7 @@ class Category extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get URL parameters
+     * الحصول على معلمات URL للفئة
      *
      * @return array
      */
@@ -79,7 +102,8 @@ class Category extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Get breadcrumb for category
+     * الحصول على مسار التنقل (الفتات) للفئة
+     * يتضمن جميع الفئات الأم حتى الجذر
      *
      * @return array
      */
@@ -109,5 +133,61 @@ class Category extends \XF\Mvc\Entity\Entity
         }
         
         return $breadcrumb;
+    }
+    
+    /**
+     * دالة بديلة للتوافق مع الكود القديم
+     *
+     * @return array
+     */
+    public function getBreadcrumbs()
+    {
+        $output = [];
+        $breadcrumb = $this->getBreadcrumb();
+        
+        foreach ($breadcrumb as $item) {
+            $output[] = [
+                'value' => $item['value'],
+                'label' => $item['title']
+            ];
+        }
+        
+        return $output;
+    }
+    
+    /**
+     * الحصول على URL الفئة
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return \XF::app()->router()->buildLink('torrents', [
+            'category_id' => $this->category_id
+        ]);
+    }
+    
+    /**
+     * دالة بديلة للتوافق مع الكود القديم
+     *
+     * @return string
+     */
+    public function getCategoryUrl()
+    {
+        return $this->getUrl();
+    }
+    
+    /**
+     * الحصول على عدد التورنتات في هذه الفئة
+     *
+     * @return int
+     */
+    public function getTorrentCount()
+    {
+        return $this->db()->fetchOne('
+            SELECT COUNT(*)
+            FROM xf_xbt_torrents
+            WHERE category_id = ?
+        ', $this->category_id);
     }
 }

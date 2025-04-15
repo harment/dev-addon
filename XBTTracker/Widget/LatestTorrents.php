@@ -18,7 +18,8 @@ class LatestTorrents extends AbstractWidget
     {
         return [
             'limit' => 10,
-            'category_id' => 0
+            'category_id' => 0,
+            'style' => 'list' // list, grid
         ];
     }
     
@@ -29,11 +30,18 @@ class LatestTorrents extends AbstractWidget
      */
     public function render()
     {
+        $visitor = \XF::visitor();
+        
+        if (!$visitor->hasPermission('xbtTracker', 'view')) {
+            return '';
+        }
+        
         /** @var \XBTTracker\Repository\Torrent $torrentRepo */
         $torrentRepo = $this->repository('XBTTracker:Torrent');
         
-        $limit = $this->options['limit'];
-        $categoryId = $this->options['category_id'];
+        $limit = max(1, intval($this->options['limit']));
+        $categoryId = intval($this->options['category_id']);
+        $style = $this->options['style'];
         
         $finder = $torrentRepo->findLatestTorrents($limit);
         
@@ -45,18 +53,18 @@ class LatestTorrents extends AbstractWidget
         
         $viewParams = [
             'torrents' => $torrents,
-            'style' => $this->style,
-            'categoryId' => $categoryId
+            'categoryId' => $categoryId,
+            'style' => $style,
+            'widgetStyle' => $this->style
         ];
         
         return $this->renderer('xbt_widget_latest_torrents', $viewParams);
     }
     
     /**
-     * Get the admin edit form
+     * Get the admin options template
      *
-     * @param \XF\Http\Request $request
-     * @return \XF\Admin\View\Widget\Edit
+     * @return string
      */
     public function getOptionsTemplate()
     {

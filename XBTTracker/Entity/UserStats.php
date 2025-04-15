@@ -5,8 +5,36 @@ namespace XBTTracker\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Mvc\Entity\Entity;
 
-class UserStats extends \XF\Mvc\Entity\Entity
+/**
+ * كيان إحصائيات المستخدم
+ * يتتبع إحصائيات التحميل والرفع والنقاط وغيرها لكل مستخدم
+ *
+ * @property int $user_id
+ * @property string $passkey
+ * @property int $uploaded
+ * @property int $downloaded
+ * @property int $bonus_points
+ * @property int $warnings
+ * @property int $active_seeds
+ * @property int $active_leech
+ *
+ * @property-read float $ratio
+ * @property-read string $uploaded_formatted
+ * @property-read string $downloaded_formatted
+ * @property-read string $formatted_ratio
+ *
+ * @property-read \XF\Entity\User $User
+ * @property-read \XF\Mvc\Entity\ArrayCollection|\XBTTracker\Entity\BonusHistory[] $BonusHistory
+ * @property-read \XF\Mvc\Entity\ArrayCollection|\XBTTracker\Entity\UserCompleted[] $CompletedTorrents
+ */
+class UserStats extends Entity
 {
+    /**
+     * تعريف هيكل الكيان
+     *
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_xbt_user_stats';
@@ -27,7 +55,8 @@ class UserStats extends \XF\Mvc\Entity\Entity
         $structure->getters = [
             'ratio' => true,
             'uploaded_formatted' => true,
-            'downloaded_formatted' => true
+            'downloaded_formatted' => true,
+            'formatted_ratio' => true
         ];
         
         $structure->relations = [
@@ -56,7 +85,7 @@ class UserStats extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Calculate user ratio
+     * حساب نسبة الرفع إلى التحميل (الريشيو)
      *
      * @return float
      */
@@ -70,7 +99,24 @@ class UserStats extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Format uploaded amount
+     * الحصول على نسبة الرفع إلى التحميل بتنسيق مناسب للعرض
+     * دالة للتوافق مع الكود القديم
+     *
+     * @return string
+     */
+    public function getFormattedRatio()
+    {
+        $ratio = $this->getRatio();
+        
+        if ($ratio >= 999) {
+            return '∞';
+        }
+        
+        return number_format($ratio, 2);
+    }
+    
+    /**
+     * تنسيق حجم الملفات المرفوعة
      *
      * @return string
      */
@@ -80,7 +126,7 @@ class UserStats extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Format downloaded amount
+     * تنسيق حجم الملفات المحملة
      *
      * @return string
      */
@@ -90,7 +136,20 @@ class UserStats extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Generate passkey
+     * دوال بديلة للتوافق مع الكود القديم
+     */
+    public function getFormattedUploaded()
+    {
+        return $this->getUploadedFormatted();
+    }
+    
+    public function getFormattedDownloaded()
+    {
+        return $this->getDownloadedFormatted();
+    }
+    
+    /**
+     * إنشاء مفتاح مرور جديد
      *
      * @return string
      */
@@ -101,7 +160,7 @@ class UserStats extends \XF\Mvc\Entity\Entity
     }
     
     /**
-     * Add bonus points
+     * إضافة نقاط مكافأة للمستخدم
      *
      * @param int $points
      * @param string $reason
@@ -124,5 +183,35 @@ class UserStats extends \XF\Mvc\Entity\Entity
         $bonusHistory->save();
         
         return $this->save();
+    }
+    
+    /**
+     * إنشاء إحصائيات للمستخدم
+     * 
+     * @param int $userId
+     * @return UserStats
+     */
+    public static function createForUser($userId)
+    {
+        $userStats = \XF::em()->create('XBTTracker:UserStats');
+        $userStats->user_id = $userId;
+        $userStats->generatePasskey();
+        $userStats->save();
+        
+        return $userStats;
+    }
+    
+    /**
+     * الحصول على عدد التورنتات المكتملة للمستخدم
+     *
+     * @return int
+     */
+    public function getCompletedCount()
+    {
+        return $this->db()->fetchOne('
+            SELECT COUNT(*)
+            FROM xf_xbt_user_completed
+            WHERE user_id = ?
+        ', $this->user_id);
     }
 }

@@ -20,8 +20,15 @@ class Setup extends AbstractSetup
      */
     public function installStep1()
     {
-        // إنشاء الجداول الرئيسية
-        $this->createStructure();
+        // تسجيل الخيارات أولاً
+        $this->addOption('xbtTrackerAnnounceURL', 'http://arabicsource.ddns.net:2710/announce');
+        $this->addOption('xbtTrackerRequiredRatio', 0.7);
+        $this->addOption('xbtTrackerRatioExemptGroups', []);
+        $this->addOption('xbtTrackerHitAndRunHours', 72);
+        $this->addOption('xbtTrackerTorrentPath', 'data/torrents');
+        $this->addOption('xbtTrackerTmdbApiKey', '');
+        $this->addOption('xbtTrackerGlobalFreeleech', false);
+        $this->addOption('xbtTrackerForceThankYou', false);
     }
 
     public function installStep2()
@@ -29,14 +36,20 @@ class Setup extends AbstractSetup
         // إنشاء المجلدات اللازمة
         $this->createDirectories();
     }
-
+    
     public function installStep3()
+    {
+        // إنشاء الجداول الرئيسية
+        $this->createStructure();
+    }
+
+    public function installStep4()
     {
         // إنشاء محتوى البيانات الأولي
         $this->createInitialData();
     }
 
-    public function installStep4()
+    public function installStep5()
     {
         // إنشاء الإذونات الافتراضية
         $this->setupDefaultPermissions();
@@ -71,6 +84,23 @@ class Setup extends AbstractSetup
     {
         // إزالة البيانات المتعلقة بالإضافة من الجداول الأخرى
         $this->deleteRelatedData();
+    }
+
+    /**
+     * إنشاء المجلدات اللازمة
+     * ملاحظة: تم نقلها قبل createStructure للتأكد من وجود المجلدات قبل إنشاء هياكل البيانات
+     */
+    protected function createDirectories()
+    {
+        $options = \XF::app()->options();
+        $torrentsPath = $options->xbtTrackerTorrentPath;
+        
+        if (!$torrentsPath || !strlen($torrentsPath)) {
+            $torrentsPath = 'data/torrents';
+        }
+
+        \XF\Util\File::createDirectory($torrentsPath);
+        \XF\Util\File::createDirectory($torrentsPath . '/posters');
     }
 
     /**
@@ -212,21 +242,6 @@ class Setup extends AbstractSetup
             $table->addKey('torrent_id');
         });
     }
-
-    /**
-     * إنشاء المجلدات اللازمة
-     */
-    protected function createDirectories()
-    {
-        $torrentsPath = \XF::app()->options()->xbtTrackerTorrentPath;
-        
-        if (!$torrentsPath || !strlen($torrentsPath)) {
-            $torrentsPath = 'data/torrents';
-        }
-
-        \XF\Util\File::createDirectory($torrentsPath);
-        \XF\Util\File::createDirectory($torrentsPath . '/posters');
-    }
     
     /**
      * إنشاء البيانات الأولية
@@ -326,13 +341,13 @@ class Setup extends AbstractSetup
     {
         $sm = $this->schemaManager();
         
-        $sm->dropTable('xf_xbt_torrents');
-        $sm->dropTable('xf_xbt_categories');
-        $sm->dropTable('xf_xbt_user_stats');
-        $sm->dropTable('xf_xbt_peers');
-        $sm->dropTable('xf_xbt_tmdb_data');
-        $sm->dropTable('xf_xbt_user_bonus_history');
-        $sm->dropTable('xf_xbt_user_completed');
+        $sm->dropTableIfExists('xf_xbt_torrents');
+        $sm->dropTableIfExists('xf_xbt_categories');
+        $sm->dropTableIfExists('xf_xbt_user_stats');
+        $sm->dropTableIfExists('xf_xbt_peers');
+        $sm->dropTableIfExists('xf_xbt_tmdb_data');
+        $sm->dropTableIfExists('xf_xbt_user_bonus_history');
+        $sm->dropTableIfExists('xf_xbt_user_completed');
     }
     
     /**
@@ -340,7 +355,8 @@ class Setup extends AbstractSetup
      */
     protected function deleteDirectories()
     {
-        $torrentsPath = \XF::app()->options()->xbtTrackerTorrentPath;
+        $options = \XF::app()->options();
+        $torrentsPath = $options->xbtTrackerTorrentPath;
         
         if (!$torrentsPath || !strlen($torrentsPath)) {
             $torrentsPath = 'data/torrents';

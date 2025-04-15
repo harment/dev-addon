@@ -4,101 +4,158 @@ namespace XBTTracker\Repository;
 
 use XF\Mvc\Entity\Repository;
 
+/**
+ * مستودع فئات التورنت
+ * يوفر طرق للوصول إلى وإدارة فئات التورنت
+ */
 class Category extends Repository
 {
     /**
-     * Get root categories (no parent)
+     * الحصول على finder للفئات
+     *
+     * @return \XF\Mvc\Entity\Finder
+     */
+    public function getCategoryFinder()
+    {
+        return $this->finder('XBTTracker:Category');
+    }
+    
+    /**
+     * العثور على الفئات للقائمة
+     *
+     * @return \XF\Mvc\Entity\Finder
+     */
+    public function findCategoriesForList()
+    {
+        return $this->getCategoryFinder()
+            ->order(['parent_id', 'display_order']);
+    }
+    
+    /**
+     * الحصول على الفئات الرئيسية (بدون أب)
      *
      * @return \XF\Mvc\Entity\Finder
      */
     public function getRootCategories()
     {
-        return $this->finder('XBTTracker:Category')
+        return $this->getCategoryFinder()
             ->where('parent_id', 0)
             ->order('display_order');
     }
     
     /**
-     * Get child categories for a parent
+     * الحصول على الفئات الفرعية لفئة أب
      *
-     * @param int $parentId
+     * @param int $parentId معرف الفئة الأب
      * @return \XF\Mvc\Entity\Finder
      */
     public function getChildCategories($parentId)
     {
-        return $this->finder('XBTTracker:Category')
+        return $this->getCategoryFinder()
             ->where('parent_id', $parentId)
             ->order('display_order');
     }
     
     /**
-     * Get category tree
+     * الحصول على شجرة الفئات
      *
      * @return array
      */
     public function getCategoryTree()
     {
-        $rootCategories = $this->getRootCategories()->fetch();
-        $tree = [];
+        $categories = $this->findCategoriesForList()->fetch();
         
-        foreach ($rootCategories as $rootCategory) {
-            $tree[$rootCategory->category_id] = [
-                'category' => $rootCategory,
-                'children' => $this->getChildCategoriesTree($rootCategory->category_id)
-            ];
+        $tree = [];
+        $descendantsMap = [];
+        
+        // بناء خريطة الفئات حسب الأب
+        foreach ($categories as $category) {
+            $parentId = $category->parent_id;
+            
+            if (!isset($descendantsMap[$parentId])) {
+                $descendantsMap[$parentId] = [];
+            }
+            
+            $descendantsMap[$parentId][$category->category_id] = $category;
         }
+        
+        // دالة تكرارية لبناء الشجرة
+        $populateTree = function($parentId) use (&$populateTree, $descendantsMap) {
+            $output = [];
+            
+            if (isset($descendantsMap[$parentId])) {
+                foreach ($descendantsMap[$parentId] as $childId => $child) {
+                    $childTree = [
+                        'record' => $child,
+                        'children' => $populateTree($childId)
+                    ];
+                    
+                    $output[$childId] = $childTree;
+                }
+            }
+            
+            return $output;
+        };
+        
+        $tree = $populateTree(0);
         
         return $tree;
     }
     
     /**
-     * Get child categories tree
+     * الحصول على شجرة فئات مسطحة للاستخدام في خيارات القائمة المنسدلة
      *
-     * @param int $parentId
      * @return array
      */
-    protected function getChildCategoriesTree($parentId)
+    public function getFlattenedCategoryTree()
     {
-        $childCategories = $this->getChildCategories($parentId)->fetch();
-        $tree = [];
+        $tree = $this->getCategoryTree();
+        $flattened = [];
         
-        foreach ($childCategories as $childCategory) {
-            $tree[$childCategory->category_id] = [
-                'category' => $childCategory,
-                'children' => $this->getChildCategoriesTree($childCategory->category_id)
-            ];
-        }
+        $flatten = function($tree, $depth = 0) use (&$flatten, &$flattened) {
+            foreach ($tree as $categoryId => $data) {
+                $category = $data['record'];
+                
+                $flattened[$categoryId] = [
+                    'record' => $category,
+                    'depth' => $depth
+                ];
+                
+                if ($data['children']) {
+                    $flatten($data['children'], $depth + 1);
+                }
+            }
+        };
         
-        return $tree;
+        $flatten($tree);
+        
+        return $flattened;
     }
     
     /**
-     * Get categories for select options
+     * الحصول على خيارات الفئات للقائمة المنسدلة
      *
      * @return array
      */
     public function getCategoryOptions()
     {
-        $categories = $this->finder('XBTTracker:Category')
-            ->order(['parent_id', 'display_order'])
-            ->fetch();
-            
+        $categories = $this->findCategoriesForList()->fetch();
         $options = [];
         $categoryTree = [];
         
-        // Build a nested tree
+        // بناء شجرة متداخلة
         foreach ($categories as $category) {
             $categoryTree[$category->parent_id][$category->category_id] = $category;
         }
         
-        // Build options with indent
+        // بناء الخيارات مع المسافات البادئة
         $this->buildCategoryOptionsRecursive($categoryTree, 0, $options);
         
         return $options;
     }
     
     /**
-     * Build category options array recursively
+     * بناء مصفوفة خيارات الفئات بشكل متكرر
      *
      * @param array $categoryTree
      * @param int $parentId
@@ -118,7 +175,7 @@ class Category extends Repository
     }
     
     /**
-     * Get category breadcrumb
+     * الحصول على فتات الخبز للفئة
      *
      * @param \XBTTracker\Entity\Category $category
      * @return array
@@ -144,5 +201,18 @@ class Category extends Repository
         }
         
         return $breadcrumb;
+    }
+    
+    /**
+     * احتساب عدد التورنتات في الفئة
+     *
+     * @param int $categoryId
+     * @return int
+     */
+    public function countTorrentsInCategory($categoryId)
+    {
+        return $this->finder('XBTTracker:Torrent')
+            ->where('category_id', $categoryId)
+            ->total();
     }
 }

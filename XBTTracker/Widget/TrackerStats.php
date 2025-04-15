@@ -16,7 +16,9 @@ class TrackerStats extends AbstractWidget
      */
     protected function getDefaultOptions()
     {
-        return [];
+        return [
+            'show_status' => true
+        ];
     }
     
     /**
@@ -26,24 +28,42 @@ class TrackerStats extends AbstractWidget
      */
     public function render()
     {
+        $visitor = \XF::visitor();
+        
+        if (!$visitor->hasPermission('xbtTracker', 'view')) {
+            return '';
+        }
+        
         /** @var \XBTTracker\Repository\Torrent $torrentRepo */
         $torrentRepo = $this->repository('XBTTracker:Torrent');
         
         $trackerStats = $torrentRepo->getTorrentStats();
-        
-        // Get tracker status
         $status = 'offline';
-        $announceUrl = \XF::options()->xbtTrackerAnnounceURL;
+        $showStatus = (bool)$this->options['show_status'];
         
-        if ($announceUrl) {
-            $parsedUrl = parse_url($announceUrl);
-            if (isset($parsedUrl['host']) && isset($parsedUrl['port'])) {
-                $host = $parsedUrl['host'];
-                $port = $parsedUrl['port'];
-                $connection = @fsockopen($host, $port, $errno, $errstr, 5);
-                if ($connection) {
-                    $status = 'online';
-                    fclose($connection);
+        if ($showStatus) {
+            // Check if tracker service exists first
+            if (\XF::app()->offsetExists('xbt.tracker.service')) {
+                /** @var \XBTTracker\Service\Tracker $trackerService */
+                $trackerService = \XF::app()->get('xbt.tracker.service');
+                if (method_exists($trackerService, 'getTrackerStatus')) {
+                    $status = $trackerService->getTrackerStatus() ? 'online' : 'offline';
+                }
+            } else {
+                // Fallback to manual check
+                $announceUrl = \XF::options()->xbtTrackerAnnounceURL;
+                
+                if ($announceUrl) {
+                    $parsedUrl = parse_url($announceUrl);
+                    if (isset($parsedUrl['host']) && isset($parsedUrl['port'])) {
+                        $host = $parsedUrl['host'];
+                        $port = $parsedUrl['port'];
+                        $connection = @fsockopen($host, $port, $errno, $errstr, 5);
+                        if ($connection) {
+                            $status = 'online';
+                            fclose($connection);
+                        }
+                    }
                 }
             }
         }
@@ -51,9 +71,22 @@ class TrackerStats extends AbstractWidget
         $viewParams = [
             'trackerStats' => $trackerStats,
             'trackerStatus' => $status,
+            'showStatus' => $showStatus,
             'style' => $this->style
         ];
         
         return $this->renderer('xbt_widget_tracker_stats', $viewParams);
+    }
+    
+    /**
+     * Get the admin options template
+     *
+     * @return string
+     */
+    public function getOptionsTemplate()
+    {
+        return $this->renderer('admin:xbt_widget_tracker_stats_options', [
+            'options' => $this->options
+        ]);
     }
 }

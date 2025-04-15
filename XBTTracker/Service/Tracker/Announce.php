@@ -2,9 +2,7 @@
 // src/addons/XBTTracker/Service/Tracker/Announce.php
 namespace XBTTracker\Service\Tracker;
 
-use XF\Service\AbstractService;
-
-class Announce extends AbstractService
+class Announce extends Base
 {
     /**
      * Handle announce request from a BitTorrent client
@@ -198,8 +196,8 @@ class Announce extends AbstractService
         
         // Prepare response
         $response = [
-            'interval' => 60,  // Announce interval in seconds
-            'min interval' => 60,
+            'interval' => self::TRACKER_INTERVAL,
+            'min interval' => self::TRACKER_INTERVAL,
             'complete' => $torrent->seeders,
             'incomplete' => $torrent->leechers,
             'peers' => $peers
@@ -219,138 +217,6 @@ class Announce extends AbstractService
         return [
             'failure reason' => $message
         ];
-    }
-    
-    /**
-     * Get client IP address
-     *
-     * @return string
-     */
-    protected function getClientIp()
-    {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR']) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $ip = trim($ips[0]);
-        } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-        
-        return $ip;
-    }
-    
-    /**
-     * Check if user can download the torrent
-     *
-     * @param \XBTTracker\Entity\Torrent $torrent
-     * @param \XBTTracker\Entity\UserStats $userStats
-     * @return bool
-     */
-    protected function canDownload(\XBTTracker\Entity\Torrent $torrent, \XBTTracker\Entity\UserStats $userStats)
-    {
-        // Check if global freeleech is enabled
-        if ($this->app->options()->xbtTrackerGlobalFreeleech) {
-            return true;
-        }
-        
-        // Check if torrent is freeleech
-        if ($torrent->is_freeleech) {
-            return true;
-        }
-        
-        // Check user ratio
-        $requiredRatio = $this->app->options()->xbtTrackerRequiredRatio;
-        if ($requiredRatio > 0 && $userStats->ratio < $requiredRatio) {
-            // Check if user is in an exempt group
-            $user = $userStats->User;
-            $exemptGroups = $this->app->options()->xbtTrackerRatioExemptGroups;
-            
-            if (!$exemptGroups || !$user || !array_intersect($user->secondary_group_ids, $exemptGroups)) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Update user statistics
-     *
-     * @param \XBTTracker\Entity\UserStats $userStats
-     * @param int $uploadDiff
-     * @param int $downloadDiff
-     * @param bool $isSeeder
-     * @param int $seedChange
-     */
-    protected function updateUserStats(\XBTTracker\Entity\UserStats $userStats, $uploadDiff, $downloadDiff, $isSeeder, $seedChange = 0)
-    {
-        if ($uploadDiff > 0) {
-            $userStats->uploaded += $uploadDiff;
-        }
-        
-        if ($downloadDiff > 0) {
-            $userStats->downloaded += $downloadDiff;
-        }
-        
-        if ($isSeeder) {
-            $userStats->active_seeds += $seedChange;
-            if ($userStats->active_seeds < 0) {
-                $userStats->active_seeds = 0;
-            }
-        } else {
-            $userStats->active_leech += $seedChange;
-            if ($userStats->active_leech < 0) {
-                $userStats->active_leech = 0;
-            }
-        }
-        
-        $userStats->save();
-    }
-    
-    /**
-     * Record torrent completion by user
-     *
-     * @param \XBTTracker\Entity\Torrent $torrent
-     * @param int $userId
-     */
-    protected function recordCompletion(\XBTTracker\Entity\Torrent $torrent, $userId)
-    {
-        // Check if there's already a completion record
-        $completion = $this->finder('XBTTracker:UserCompleted')
-            ->where([
-                'user_id' => $userId,
-                'torrent_id' => $torrent->torrent_id
-            ])
-            ->fetchOne();
-            
-        if (!$completion) {
-            $completion = $this->em()->create('XBTTracker:UserCompleted');
-            $completion->user_id = $userId;
-            $completion->torrent_id = $torrent->torrent_id;
-            $completion->date = \XF::$time;
-            $completion->save();
-        }
-    }
-    
-    /**
-     * Update torrent statistics
-     *
-     * @param \XBTTracker\Entity\Torrent $torrent
-     */
-    protected function updateTorrentStats(\XBTTracker\Entity\Torrent $torrent)
-    {
-        $db = $this->db();
-        
-        $stats = $db->fetchRow("
-            SELECT
-                SUM(IF(seeder = 1, 1, 0)) AS seeders,
-                SUM(IF(seeder = 0, 1, 0)) AS leechers
-            FROM xf_xbt_peers
-            WHERE torrent_id = ?
-        ", [$torrent->torrent_id]);
-        
-        $torrent->seeders = isset($stats['seeders']) ? $stats['seeders'] : 0;
-        $torrent->leechers = isset($stats['leechers']) ? $stats['leechers'] : 0;
-        $torrent->save();
     }
     
     /**

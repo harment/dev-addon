@@ -16,7 +16,13 @@ class UserStats extends AbstractWidget
      */
     protected function getDefaultOptions()
     {
-        return [];
+        return [
+            'show_ratio' => true,
+            'show_upload_download' => true,
+            'show_seeds_leech' => true,
+            'show_bonus' => true,
+            'show_warnings' => true
+        ];
     }
     
     /**
@@ -28,15 +34,20 @@ class UserStats extends AbstractWidget
     {
         $visitor = \XF::visitor();
         
-        if (!$visitor->user_id) {
+        if (!$visitor->hasPermission('xbtTracker', 'view') || !$visitor->user_id) {
             return '';
         }
         
         /** @var \XBTTracker\Repository\UserStats $userStatsRepo */
         $userStatsRepo = $this->repository('XBTTracker:UserStats');
+        
         $userStats = $userStatsRepo->getUserStats($visitor->user_id);
         
-        // Get active downloads and seeds
+        if (!$userStats) {
+            $userStats = $userStatsRepo->getOrCreateUserStats($visitor->user_id);
+        }
+        
+        // Get active downloads and seeds for more accurate data
         $activeSeeds = $this->finder('XBTTracker:Peer')
             ->where([
                 'user_id' => $visitor->user_id,
@@ -55,9 +66,22 @@ class UserStats extends AbstractWidget
             'userStats' => $userStats,
             'activeSeeds' => $activeSeeds,
             'activeDownloads' => $activeDownloads,
+            'options' => $this->options,
             'style' => $this->style
         ];
         
         return $this->renderer('xbt_widget_user_stats', $viewParams);
+    }
+    
+    /**
+     * Get the admin options template
+     *
+     * @return string
+     */
+    public function getOptionsTemplate()
+    {
+        return $this->renderer('admin:xbt_widget_user_stats_options', [
+            'options' => $this->options
+        ]);
     }
 }

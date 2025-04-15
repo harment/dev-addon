@@ -1,5 +1,5 @@
 <?php
-
+// src/addons/XBTTracker/Entity/Torrent.php
 namespace XBTTracker\Entity;
 
 use XF\Mvc\Entity\Entity;
@@ -30,17 +30,21 @@ use XF\Mvc\Entity\Structure;
  * @property int $view_count
  *
  * @property-read string $url
+ * @property-read string $torrent_url
  * @property-read string $poster_url
+ * @property-read string $size_formatted
+ * @property-read string $formatted_size
+ * @property-read string $creation_date_formatted
  * @property-read array $video_quality_badge
  * @property-read array $audio_format_badge
  * @property-read array $audio_channels_badge
- * @property-read string $size_formatted
  * @property-read float $ratio
  *
  * @property-read \XF\Entity\User $User
  * @property-read \XBTTracker\Entity\Category $Category
  * @property-read \XBTTracker\Entity\TmdbData|null $TmdbData
- * @property-read \XF\Mvc\Entity\ArrayCollection $Peers
+ * @property-read \XF\Mvc\Entity\ArrayCollection|\XBTTracker\Entity\Peer[] $Peers
+ * @property-read \XF\Mvc\Entity\ArrayCollection|\XBTTracker\Entity\UserCompleted[] $Completions
  */
 class Torrent extends Entity
 {
@@ -54,6 +58,7 @@ class Torrent extends Entity
     {
         $structure->table = 'xf_xbt_torrents';
         $structure->shortName = 'XBTTracker:Torrent';
+        $structure->contentType = 'xbt_torrent';
         $structure->primaryKey = 'torrent_id';
         
         $structure->columns = [
@@ -80,11 +85,14 @@ class Torrent extends Entity
         
         $structure->getters = [
             'url' => true,
+            'torrent_url' => true,
             'poster_url' => true,
+            'size_formatted' => true,
+            'formatted_size' => true,
+            'creation_date_formatted' => true,
             'video_quality_badge' => true,
             'audio_format_badge' => true,
             'audio_channels_badge' => true,
-            'size_formatted' => true,
             'ratio' => true
         ];
         
@@ -112,6 +120,12 @@ class Torrent extends Entity
                 'type' => self::TO_MANY,
                 'conditions' => 'torrent_id',
                 'key' => 'peer_id'
+            ],
+            'Completions' => [
+                'entity' => 'XBTTracker:UserCompleted',
+                'type' => self::TO_MANY,
+                'conditions' => 'torrent_id',
+                'key' => 'completed_id'
             ]
         ];
         
@@ -129,6 +143,26 @@ class Torrent extends Entity
             'torrent_id' => $this->torrent_id,
             'title' => \XF::app()->stringFormatter->wholeWordTrim($this->title, 30, 0, '')
         ];
+    }
+    
+    /**
+     * الحصول على عنوان URL للتورنت
+     *
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return \XF::app()->router()->buildLink('torrents/view', $this);
+    }
+    
+    /**
+     * دالة بديلة للتوافق مع الكود القديم
+     *
+     * @return string
+     */
+    public function getTorrentUrl(): string
+    {
+        return $this->getUrl();
     }
     
     /**
@@ -153,6 +187,26 @@ class Torrent extends Entity
     public function getSizeFormatted(): string
     {
         return \XF::language()->fileSizeFormat($this->size);
+    }
+    
+    /**
+     * دالة بديلة للتوافق مع الكود القديم
+     *
+     * @return string
+     */
+    public function getFormattedSize(): string
+    {
+        return $this->getSizeFormatted();
+    }
+    
+    /**
+     * الحصول على تاريخ الإنشاء بتنسيق مقروء
+     *
+     * @return string
+     */
+    public function getCreationDateFormatted(): string
+    {
+        return \XF::language()->dateTime($this->creation_date);
     }
     
     /**
@@ -318,6 +372,50 @@ class Torrent extends Entity
     }
     
     /**
+     * التحقق من إمكانية تحرير التورنت
+     * 
+     * @return bool
+     */
+    public function canEdit(): bool
+    {
+        $visitor = \XF::visitor();
+        
+        // السماح بالتحرير إذا كان مشرفًا
+        if ($visitor->hasPermission('xbtTracker', 'moderateTorrents')) {
+            return true;
+        }
+        
+        // السماح بالتحرير إذا كان المالك
+        if ($visitor->user_id == $this->user_id && $visitor->hasPermission('xbtTracker', 'edit')) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * التحقق من إمكانية حذف التورنت
+     * 
+     * @return bool
+     */
+    public function canDelete(): bool
+    {
+        $visitor = \XF::visitor();
+        
+        // السماح بالحذف إذا كان مشرفًا
+        if ($visitor->hasPermission('xbtTracker', 'moderateTorrents')) {
+            return true;
+        }
+        
+        // السماح بالحذف إذا كان المالك
+        if ($visitor->user_id == $this->user_id && $visitor->hasPermission('xbtTracker', 'delete')) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * التحقق من صحة الكيان قبل الحفظ
      *
      * @return bool
@@ -440,5 +538,139 @@ class Torrent extends Entity
         $torrentCount = $db->fetchOne('SELECT COUNT(*) FROM xf_xbt_torrents WHERE category_id = ?', $categoryId);
         
         // يمكنك هنا تحديث أي إحصائيات إضافية للفئة
+    }
+    
+    /**
+     * الحصول على ملف التورنت كمحتوى ثنائي
+     *
+     * @return string|null
+     */
+    public function getTorrentFileContent(): ?string
+    {
+        if (!$this->file_path || !file_exists($this->file_path)) {
+            return null;
+        }
+        
+        return file_get_contents($this->file_path);
+    }
+    
+    /**
+     * الحصول على معلومات إضافية للتورنت
+     *
+     * @return array|null
+     */
+    public function getAdditionalInfo(): ?array
+    {
+        try {
+            $content = $this->getTorrentFileContent();
+            if (!$content) {
+                return null;
+            }
+            
+            $bencode = new \XBTTracker\Util\Bencode();
+            $torrentData = $bencode->decode($content);
+            
+            if (!$torrentData) {
+                return null;
+            }
+            
+            $info = [];
+            
+            // معلومات أساسية
+            if (isset($torrentData['comment'])) {
+                $info['comment'] = $torrentData['comment'];
+            }
+            
+            if (isset($torrentData['created by'])) {
+                $info['created_by'] = $torrentData['created by'];
+            }
+            
+            if (isset($torrentData['creation date'])) {
+                $info['creation_date'] = date('Y-m-d H:i:s', $torrentData['creation date']);
+            }
+            
+            // معلومات الملفات
+            if (isset($torrentData['info']['files']) && is_array($torrentData['info']['files'])) {
+                $files = [];
+                $totalSize = 0;
+                
+                foreach ($torrentData['info']['files'] as $file) {
+                    if (isset($file['path']) && is_array($file['path'])) {
+                        $path = implode('/', $file['path']);
+                        $size = $file['length'] ?? 0;
+                        $totalSize += $size;
+                        
+                        $files[] = [
+                            'path' => $path,
+                            'size' => $size,
+                            'size_formatted' => \XF::language()->fileSizeFormat($size)
+                        ];
+                    }
+                }
+                
+                $info['files'] = $files;
+                $info['files_count'] = count($files);
+                $info['total_size'] = $totalSize;
+                $info['total_size_formatted'] = \XF::language()->fileSizeFormat($totalSize);
+            } else if (isset($torrentData['info']['name']) && isset($torrentData['info']['length'])) {
+                // تورنت ملف واحد
+                $info['files'] = [
+                    [
+                        'path' => $torrentData['info']['name'],
+                        'size' => $torrentData['info']['length'],
+                        'size_formatted' => \XF::language()->fileSizeFormat($torrentData['info']['length'])
+                    ]
+                ];
+                $info['files_count'] = 1;
+                $info['total_size'] = $torrentData['info']['length'];
+                $info['total_size_formatted'] = \XF::language()->fileSizeFormat($torrentData['info']['length']);
+            }
+            
+            return $info;
+        } catch (\Exception $e) {
+            \XF::logException($e);
+            return null;
+        }
+    }
+    
+    /**
+     * التحقق من إمكانية تحميل التورنت للمستخدم الحالي
+     *
+     * @return bool
+     */
+    public function canDownload(): bool
+    {
+        $visitor = \XF::visitor();
+        
+        // التحقق من إذن التحميل العام
+        if (!$visitor->hasPermission('xbtTracker', 'download')) {
+            return false;
+        }
+        
+        // التحقق إذا كان المستخدم مسجل الدخول
+        if (!$visitor->user_id) {
+            return false;
+        }
+        
+        // التحقق من حالة ريشيو المستخدم
+        if (!$this->isFreeLeech()) {
+            /** @var \XBTTracker\Entity\UserStats $userStats */
+            $userStats = \XF::em()->find('XBTTracker:UserStats', $visitor->user_id);
+            
+            if ($userStats) {
+                $minRatio = \XF::options()->xbtTrackerRequiredRatio ?? 0;
+                
+                if ($minRatio > 0 && $userStats->ratio < $minRatio) {
+                    // التحقق من المجموعات المعفاة
+                    $exemptGroups = \XF::options()->xbtTrackerRatioExemptGroups ?? [];
+                    
+                    if (!$exemptGroups || !array_intersect($visitor->secondary_group_ids, $exemptGroups)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
 }
