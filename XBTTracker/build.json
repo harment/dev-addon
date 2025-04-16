@@ -1,0 +1,9 @@
+{
+  "additional_files": [
+    "js/", 
+    "styles/",
+    "vendor/",
+    "composer.json",
+    "composer.lock"
+  ]
+}

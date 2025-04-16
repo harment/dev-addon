@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+    <option option_id="xbtTrackerAnnounceURL" edit_format="textbox" data_type="string" can_backup="1">
+        <default_value>http://arabicsource.ddns.net:2710/announce</default_value>
+        <title>رابط الإعلان</title>
+        <explain>رابط التتبع الذي سيستخدمه العملاء.</explain>
+    </option>
+
+    <option option_id="xbtTrackerRequiredRatio" edit_format="spinbox" data_type="float" can_backup="1">
+        <default_value>0.7</default_value>
+        <title>النسبة المطلوبة</title>
+        <explain>النسبة الدنيا بين التحميل والتنزيل لتجنب العقوبات.</explain>
+    </option>
+
+    <option option_id="xbtTrackerRatioExemptGroups" edit_format="checkbox" data_type="array" can_backup="1">
+        <default_value></default_value>
+        <title>المجموعات المعفاة</title>
+        <explain>المجموعات التي لا تنطبق عليها قيود النسبة.</explain>
+    </option>
+
+
+
+#<option option_id="xbtTrackerTorrentPath" edit_format="textbox" data_type="string" can_backup="1">
+ #       <default_value>data/torrents</default_value>
+  #      <title>مسار التورنتات</title>
+   #     <explain>المسار الذي سيتم حفظ ملفات التورنت فيه (نسبيًا لمجلد XenForo).</explain>
+    #</option>
+
+
+</options>

@@ -1,0 +1,19 @@
+{
+    "legacy_addon_id": "",
+    "title": "XBT Torrent Tracker Integration",
+    "description": "Integrates XBT Torrent Tracker with XenForo forums",
+    "version_id": 1000000,
+    "version_string": "1.0.0",
+    "dev": "ArabicSource",
+    "dev_url": "http://arabicsource.ddns.net/",
+    "faq_url": "",
+    "support_url": "",
+    "extra_urls": [],
+    "require": {
+        "XF": [
+            2000000,
+            "XenForo 2.0.0+"
+        ]
+    },
+    "icon": "fa-magnet"
+}
