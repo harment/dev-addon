@@ -1,0 +1,87 @@
+<!-- admin:xbt_admin_user_stats -->
+<xf:title>{{ phrase('xbt_manage_user_stats') }}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('search_users') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:form action="{{ link('torrents/user-stats') }}" class="block">
+                <div class="block-filterBar">
+                    <div class="filterBar">
+                        <xf:textbox name="search" value="{{ $search }}" placeholder="{{ phrase('search') }}..." />
+                        
+                        <xf:select name="sort" value="{{ $sort }}">
+                            <xf:option value="username">{{ phrase('username') }}</xf:option>
+                            <xf:option value="uploaded">{{ phrase('xbt_uploaded') }}</xf:option>
+                            <xf:option value="downloaded">{{ phrase('xbt_downloaded') }}</xf:option>
+                            <xf:option value="ratio">{{ phrase('xbt_ratio') }}</xf:option>
+                            <xf:option value="bonus_points">{{ phrase('xbt_bonus_points') }}</xf:option>
+                            <xf:option value="warnings">{{ phrase('xbt_warnings') }}</xf:option>
+                        </xf:select>
+                        
+                        <xf:select name="order" value="{{ $order }}">
+                            <xf:option value="desc">{{ phrase('desc') }}</xf:option>
+                            <xf:option value="asc">{{ phrase('asc') }}</xf:option>
+                        </xf:select>
+                        
+                        <xf:button type="submit" icon="search">{{ phrase('filter') }}</xf:button>
+                    </div>
+                </div>
+            </xf:form>
+        </div>
+    </div>
+</div>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_user_stats') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="{{ $userStats is empty }}">
+                <div class="block-row">{{ phrase('xbt_no_user_stats_found') }}</div>
+            <xf:else />
+                <div class="block-row">
+                    <table class="dataTable">
+                        <thead>
+                            <tr>
+                                <th>{{ phrase('username') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_uploaded') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_downloaded') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_ratio') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_bonus_points') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_active_seeds') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_active_leech') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('xbt_warnings') }}</th>
+                                <th class="dataTable-cell--min">{{ phrase('actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xf:foreach loop="$userStats" value="$stats">
+                                <tr>
+                                    <td><xf:username user="$stats.User" /></td>
+                                    <td>{$stats.uploaded_formatted}</td>
+                                    <td>{$stats.downloaded_formatted}</td>
+                                    <td class="dataTable-cell--{$stats.ratio < 1 ? 'highlighted' : ''}">{$stats.ratio}</td>
+                                    <td>{$stats.bonus_points}</td>
+                                    <td>{$stats.active_seeds}</td>
+                                    <td>{$stats.active_leech}</td>
+                                    <td class="dataTable-cell--highlighted">{$stats.warnings}</td>
+                                    <td class="dataTable-cell--action">
+                                        <a href="{{ link('torrents/user-stats/edit', $stats) }}" class="menu-linkRow" data-xf-click="overlay">{{ phrase('edit') }}</a>
+                                        <a href="{{ link('torrents/user-stats/reset-passkey', $stats) }}" class="menu-linkRow" data-xf-click="overlay">{{ phrase('xbt_reset_passkey') }}</a>
+                                    </td>
+                                </tr>
+                            </xf:foreach>
+                        </tbody>
+                    </table>
+                </div>
+            </xf:if>
+        </div>
+        
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents/user-stats" 
+                   params="{{'search': $search, 'sort': $sort, 'order': $order}}" />
+    </div>
+</div>
