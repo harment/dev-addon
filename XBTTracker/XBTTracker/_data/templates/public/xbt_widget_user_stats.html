@@ -1,0 +1,80 @@
+<!-- public:xbt_widget_user_stats -->
+<xf:if is="{{ $userStats }}">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-header">
+                <h3 class="block-header-title">{{ phrase('xbt_user_stats') }}</h3>
+            </div>
+            <div class="block-body">
+                <div class="userStats">
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_uploaded') }}</dt>
+                        <dd>{$userStats.uploaded_formatted}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_downloaded') }}</dt>
+                        <dd>{$userStats.downloaded_formatted}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_ratio') }}</dt>
+                        <dd class="userStats-ratio userStats-ratio--{$userStats.ratio < 1 ? 'bad' : ($userStats.ratio < 2 ? 'neutral' : 'good')}">
+                            {$userStats.ratio}
+                        </dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_bonus_points') }}</dt>
+                        <dd>{$userStats.bonus_points}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_active_seeds') }}</dt>
+                        <dd>{$activeSeeds.count}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_active_downloads') }}</dt>
+                        <dd>{$activeDownloads.count}</dd>
+                    </dl>
+                    <xf:if is="{{ $userStats.warnings > 0 }}">
+                        <dl class="pairs pairs--justified">
+                            <dt>{{ phrase('xbt_warnings') }}</dt>
+                            <dd class="userStats-warnings">{$userStats.warnings}</dd>
+                        </dl>
+                    </xf:if>
+                </div>
+                
+                <xf:if is="{{ $activeSeeds.count > 0 }}">
+                    <h4 class="block-minorHeader">{{ phrase('xbt_active_seeds') }}</h4>
+                    <div class="torrentMiniList">
+                        <xf:foreach loop="$activeSeeds" value="$seed">
+                            <div class="torrentMiniList-item">
+                                <a href="{{ link('torrents', $seed.Torrent) }}" class="torrentMiniList-link">
+                                    {$seed.Torrent.title}
+                                </a>
+                            </div>
+                        </xf:foreach>
+                    </div>
+                </xf:if>
+                
+                <xf:if is="{{ $activeDownloads.count > 0 }}">
+                    <h4 class="block-minorHeader">{{ phrase('xbt_active_downloads') }}</h4>
+                    <div class="torrentMiniList">
+                        <xf:foreach loop="$activeDownloads" value="$download">
+                            <div class="torrentMiniList-item">
+                                <a href="{{ link('torrents', $download.Torrent) }}" class="torrentMiniList-link">
+                                    {$download.Torrent.title}
+                                </a>
+                                <div class="torrentMiniList-progress">
+                                    <div class="torrentMiniList-progressBar">
+                                        <div class="torrentMiniList-progressFill" style="width: {{ round(100 - ($download.left_bytes / $download.Torrent.size * 100)) }}%"></div>
+                                    </div>
+                                    <div class="torrentMiniList-progressText">
+                                        {{ round(100 - ($download.left_bytes / $download.Torrent.size * 100)) }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </xf:foreach>
+                    </div>
+                </xf:if>
+            </div>
+        </div>
+    </div>
+</xf:if>

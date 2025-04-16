@@ -1,0 +1,424 @@
+{% extends "admin/base.html" %}
+
+{% block title %}إدارة الفئات{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">إدارة فئات التورنت</h1>
+        
+        <div>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <i class="fas fa-plus"></i> إضافة فئة جديدة
+            </button>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- قائمة الفئات -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th style="width: 60px;">الأيقونة</th>
+                                    <th>اسم الفئة</th>
+                                    <th>الوصف</th>
+                                    <th>عدد التورنتات</th>
+                                    <th>الترتيب</th>
+                                    <th>الحالة</th>
+                                    <th style="width: 150px;">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                {% for category in categories %}
+                                <tr data-id="{{ category.id }}">
+                                    <td>{{ category.id }}</td>
+                                    <td>
+                                        <i class="fas fa-{{ category.icon }} fa-2x text-{{ category.color or 'primary' }}"></i>
+                                    </td>
+                                    <td>{{ category.name }}</td>
+                                    <td>{{ category.description }}</td>
+                                    <td>{{ category.torrents_count }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-secondary move-up" {% if loop.first %}disabled{% endif %}>
+                                                <i class="fas fa-arrow-up"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary move-down" {% if loop.last %}disabled{% endif %}>
+                                                <i class="fas fa-arrow-down"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if category.is_active %}
+                                            <span class="badge bg-success">نشطة</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">غير نشطة</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-primary edit-category" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editCategoryModal"
+                                                    data-id="{{ category.id }}"
+                                                    data-name="{{ category.name }}"
+                                                    data-description="{{ category.description }}"
+                                                    data-icon="{{ category.icon }}"
+                                                    data-color="{{ category.color }}"
+                                                    data-active="{{ category.is_active|int }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger delete-category" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#deleteCategoryModal"
+                                                    data-id="{{ category.id }}"
+                                                    data-name="{{ category.name }}"
+                                                    data-torrents-count="{{ category.torrents_count }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- معاينة الفئات -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">معاينة الفئات</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cols-2 row-cols-md-3 g-3">
+                        {% for category in categories %}
+                        {% if category.is_active %}
+                        <div class="col">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-{{ category.icon }} fa-3x text-{{ category.color or 'primary' }} mb-3"></i>
+                                    <h6 class="card-title">{{ category.name }}</h6>
+                                    <span class="badge bg-secondary">{{ category.torrents_count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>* هذه معاينة لكيفية ظهور الفئات للمستخدمين</small>
+                </div>
+            </div>
+            
+            <!-- إحصائيات الفئات -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">إحصائيات الفئات</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriesChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال إضافة فئة -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">إضافة فئة جديدة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm" method="post" action="{{ url_for('admin.add_category') }}">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">اسم الفئة</label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label">الوصف</label>
+                        <textarea class="form-control" id="categoryDescription" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="categoryIcon" class="form-label">الأيقونة</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i id="iconPreview" class="fas fa-film"></i></span>
+                                <select class="form-select" id="categoryIcon" name="icon">
+                                    <option value="film" selected>film (فيلم)</option>
+                                    <option value="tv">tv (تلفزيون)</option>
+                                    <option value="music">music (موسيقى)</option>
+                                    <option value="book">book (كتاب)</option>
+                                    <option value="gamepad">gamepad (ألعاب)</option>
+                                    <option value="laptop-code">laptop-code (برامج)</option>
+                                    <option value="photo-video">photo-video (صور وفيديو)</option>
+                                    <option value="globe">globe (متنوع)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="categoryColor" class="form-label">اللون</label>
+                            <select class="form-select" id="categoryColor" name="color">
+                                <option value="primary" selected>أزرق</option>
+                                <option value="secondary">رمادي</option>
+                                <option value="success">أخضر</option>
+                                <option value="danger">أحمر</option>
+                                <option value="warning">أصفر</option>
+                                <option value="info">سماوي</option>
+                                <option value="dark">أسود</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="categoryActive" name="is_active" checked>
+                        <label class="form-check-label" for="categoryActive">فئة نشطة</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="submit" form="addCategoryForm" class="btn btn-primary">إضافة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تعديل فئة -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">تعديل الفئة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCategoryForm" method="post" action="{{ url_for('admin.update_category') }}">
+                    <input type="hidden" id="editCategoryId" name="category_id">
+                    
+                    <div class="mb-3">
+                        <label for="editCategoryName" class="form-label">اسم الفئة</label>
+                        <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editCategoryDescription" class="form-label">الوصف</label>
+                        <textarea class="form-control" id="editCategoryDescription" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editCategoryIcon" class="form-label">الأيقونة</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i id="editIconPreview" class="fas fa-film"></i></span>
+                                <select class="form-select" id="editCategoryIcon" name="icon">
+                                    <option value="film">film (فيلم)</option>
+                                    <option value="tv">tv (تلفزيون)</option>
+                                    <option value="music">music (موسيقى)</option>
+                                    <option value="book">book (كتاب)</option>
+                                    <option value="gamepad">gamepad (ألعاب)</option>
+                                    <option value="laptop-code">laptop-code (برامج)</option>
+                                    <option value="photo-video">photo-video (صور وفيديو)</option>
+                                    <option value="globe">globe (متنوع)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editCategoryColor" class="form-label">اللون</label>
+                            <select class="form-select" id="editCategoryColor" name="color">
+                                <option value="primary">أزرق</option>
+                                <option value="secondary">رمادي</option>
+                                <option value="success">أخضر</option>
+                                <option value="danger">أحمر</option>
+                                <option value="warning">أصفر</option>
+                                <option value="info">سماوي</option>
+                                <option value="dark">أسود</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="editCategoryActive" name="is_active">
+                        <label class="form-check-label" for="editCategoryActive">فئة نشطة</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="submit" form="editCategoryForm" class="btn btn-primary">حفظ التغييرات</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال حذف فئة -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCategoryModalLabel">تأكيد حذف الفئة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                <p>هل أنت متأكد من حذف الفئة "<span id="categoryNameToDelete"></span>"؟</p>
+                <div id="categoryHasTorrents" class="alert alert-warning d-none">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>تحذير:</strong> هذه الفئة تحتوي على <span id="torrentsCount"></span> تورنت. عند الحذف، سيتم نقل هذه التورنتات إلى الفئة الافتراضية.
+                </div>
+                <form id="deleteCategoryForm" method="post" action="{{ url_for('admin.delete_category') }}">
+                    <input type="hidden" id="deleteCategoryId" name="category_id">
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="confirmCategoryDelete" name="confirm" required>
+                        <label class="form-check-label" for="confirmCategoryDelete">
+                            أنا أفهم أن هذا الإجراء لا رجعة فيه
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="submit" form="deleteCategoryForm" class="btn btn-danger">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // تغيير أيقونة معاينة إضافة فئة
+    document.getElementById('categoryIcon').addEventListener('change', function() {
+        document.getElementById('iconPreview').className = 'fas fa-' + this.value;
+    });
+    
+    // تغيير أيقونة معاينة تعديل فئة
+    document.getElementById('editCategoryIcon').addEventListener('change', function() {
+        document.getElementById('editIconPreview').className = 'fas fa-' + this.value;
+    });
+    
+    // تهيئة مودال تعديل الفئة
+    const editCategoryModal = document.getElementById('editCategoryModal');
+    editCategoryModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const description = button.getAttribute('data-description');
+        const icon = button.getAttribute('data-icon');
+        const color = button.getAttribute('data-color');
+        const active = button.getAttribute('data-active') === '1';
+        
+        document.getElementById('editCategoryId').value = id;
+        document.getElementById('editCategoryName').value = name;
+        document.getElementById('editCategoryDescription').value = description;
+        document.getElementById('editCategoryIcon').value = icon;
+        document.getElementById('editIconPreview').className = 'fas fa-' + icon;
+        document.getElementById('editCategoryColor').value = color || 'primary';
+        document.getElementById('editCategoryActive').checked = active;
+    });
+    
+    // تهيئة مودال حذف الفئة
+    const deleteCategoryModal = document.getElementById('deleteCategoryModal');
+    deleteCategoryModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const torrentsCount = parseInt(button.getAttribute('data-torrents-count'));
+        
+        document.getElementById('deleteCategoryId').value = id;
+        document.getElementById('categoryNameToDelete').textContent = name;
+        
+        // إظهار تحذير إذا كانت الفئة تحتوي على تورنتات
+        const hasTorrentsWarning = document.getElementById('categoryHasTorrents');
+        if (torrentsCount > 0) {
+            hasTorrentsWarning.classList.remove('d-none');
+            document.getElementById('torrentsCount').textContent = torrentsCount;
+        } else {
+            hasTorrentsWarning.classList.add('d-none');
+        }
+    });
+    
+    // ترتيب الفئات (نقل لأعلى/أسفل)
+    document.querySelectorAll('.move-up').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const prevRow = row.previousElementSibling;
+            if (prevRow) {
+                moveCategory(row.getAttribute('data-id'), 'up');
+            }
+        });
+    });
+    
+    document.querySelectorAll('.move-down').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const nextRow = row.nextElementSibling;
+            if (nextRow) {
+                moveCategory(row.getAttribute('data-id'), 'down');
+            }
+        });
+    });
+    
+    function moveCategory(categoryId, direction) {
+        fetch("{{ url_for('admin.move_category') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `category_id=${categoryId}&direction=${direction}`
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('حدث خطأ أثناء تغيير ترتيب الفئة.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء تغيير ترتيب الفئة.');
+        });
+    }
+    
+    // رسم بياني لإحصائيات الفئات
+    const ctx = document.getElementById('categoriesChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [{% for category in categories %}'{{ category.name }}',{% endfor %}],
+            datasets: [{
+                data: [{% for category in categories %}{{ category.torrents_count }},{% endfor %}],
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                    '#6f42c1', '#5a5c69', '#20c9a6', '#2c9faf', '#fd7e14'
+                ]
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}
