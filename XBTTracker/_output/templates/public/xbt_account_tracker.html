@@ -1,0 +1,54 @@
+<xf:title>{{ phrase('xbt_account_tracker') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('account/tracker') }}">{{ phrase('xbt_account_tracker') }}</xf:breadcrumb>
+
+<xf:form action="{{ link('account/tracker/save') }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_account_tracker') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="passkey" value="$user.xbt_passkey" readonly="true" label="{{ phrase('xbt_passkey') }}" 
+                explain="{{ phrase('xbt_passkey_explain') }}" />
+            
+            <xf:if is="$user_stats AND !$user_stats|empty">
+                <hr class="formRowSep" />
+                
+                <h3 class="block-formSectionHeader">{{ phrase('xbt_your_stats') }}</h3>
+                
+                <xf:formrow label="{{ phrase('xbt_active_torrents') }}">
+                    {$user_stats.active_torrents}
+                </xf:formrow>
+                
+                <xf:formrow label="{{ phrase('xbt_uploaded') }}">
+                    {$user_stats.uploaded|file_size}
+                </xf:formrow>
+                
+                <xf:formrow label="{{ phrase('xbt_downloaded') }}">
+                    {$user_stats.downloaded|file_size}
+                </xf:formrow>
+                
+                <xf:if is="$user_stats.downloaded > 0">
+                    <xf:formrow label="{{ phrase('xbt_ratio') }}">
+                        {$user_stats.ratio|number(2)}
+                    </xf:formrow>
+                </xf:if>
+            </xf:if>
+            
+            <xf:formrow>
+                <xf:set var="$announceUrl">{{ option('xbtTrackerAnnounceUrl') }}</xf:set>
+                {{ phrase('xbt_announce_url') }}: {$announceUrl}?passkey={$user.xbt_passkey}
+            </xf:formrow>
+        </div>
+        <div class="block-footer">
+            <span class="block-footer-controls">
+                <xf:button class="button--primary" 
+                           href="{{ link('account/tracker/regenerate-passkey') }}" 
+                           overlay="true" 
+                           icon="sync">
+                    {{ phrase('xbt_regenerate_passkey') }}
+                </xf:button>
+            </span>
+        </div>
+    </div>
+</xf:form>

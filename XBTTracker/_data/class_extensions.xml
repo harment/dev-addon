@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class_extensions>
+  <!-- User Entity Extension - إضافة حقل passkey للمستخدمين -->
+  <extension from_class="XF\Entity\User" to_class="Harment\XBTTracker\XF\Entity\User" execute_order="10" active="1"/>
+  
+  <!-- User Repository Extension - للتعامل مع عمليات passkey -->
+  <extension from_class="XF\Repository\User" to_class="Harment\XBTTracker\XF\Repository\User" execute_order="10" active="1"/>
+  
+  <!-- Account Controller Extension - لإضافة إعدادات التراكر في حساب المستخدم -->
+  <extension from_class="XF\Pub\Controller\Account" to_class="Harment\XBTTracker\XF\Pub\Controller\Account" execute_order="10" active="1"/>
+  
+  <!-- Admin User Controller Extension - للتحكم بإعدادات passkey في لوحة الإدارة -->
+  <extension from_class="XF\Admin\Controller\User" to_class="Harment\XBTTracker\XF\Admin\Controller\User" execute_order="10" active="1"/>
+</class_extensions>

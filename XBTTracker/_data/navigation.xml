@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation>
+  <!-- إضافة قسم رئيسي للتراكر في قائمة التنقل الرئيسية -->
+  <navigation navigation_id="xbtTracker" parent_navigation_id="" display_order="450" link="tracker" icon="fa-magnet" admin_permission="" debug_only="0" hide_no_children="0"/>
+  
+  <!-- إضافة صفحات فرعية تحت قسم التراكر -->
+  <navigation navigation_id="xbtTrackerStats" parent_navigation_id="xbtTracker" display_order="100" link="tracker/stats" icon="fa-chart-line" admin_permission="" debug_only="0" hide_no_children="0"/>
+  <navigation navigation_id="xbtTrackerTorrents" parent_navigation_id="xbtTracker" display_order="200" link="tracker/torrents" icon="fa-file" admin_permission="" debug_only="0" hide_no_children="0"/>
+  
+  <!-- أو إضافة رابط تحت قسم المساعدة كما في المثال السابق -->
+  <navigation navigation_id="xbtTrackerHelp" parent_navigation_id="help" display_order="100" link="tracker/help" icon="fa-question-circle" admin_permission="" debug_only="0" hide_no_children="0"/>
+</navigation>

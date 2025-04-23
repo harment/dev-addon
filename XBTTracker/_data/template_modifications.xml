@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <!-- إضافة رابط إعدادات التراكر في قائمة حساب المستخدم -->
+  <modification type="public" template="account_wrapper" modification_key="harment_xbttracker_account_navigation" description="Add tracker settings to account navigation" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[<xf:navigation>]]></find>
+    <replace><![CDATA[<xf:navigation>
+    <xf:navitem href="{{ link('account/tracker') }}" selected="{$selectedTab == 'tracker'}">{{ phrase('harment_xbttracker_account_tracker') }}</xf:navitem>]]></replace>
+  </modification>
+  
+  <!-- إضافة علامة تبويب التراكر في صفحة تحرير المستخدم في لوحة الإدارة -->
+  <modification type="admin" template="user_edit" modification_key="harment_xbttracker_user_edit_tab" description="Add tracker tab to user edit page" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[<xf:if is="$fieldSet == 'custom_fields'">]]></find>
+    <replace><![CDATA[<xf:if is="$fieldSet == 'tracker'">
+    <xf:include template="harment_xbttracker_user_edit_tab" />
+</xf:if>
+<xf:if is="$fieldSet == 'custom_fields'">]]></replace>
+  </modification>
+  
+  <!-- إضافة علامة تبويب التراكر في قائمة علامات تبويب تحرير المستخدم -->
+  <modification type="admin" template="user_edit_tabs" modification_key="harment_xbttracker_user_edit_tabs" description="Add tracker tab to user edit tabs" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[<a class="tabs-tab {{ $selectedTab == 'custom_fields' ? 'is-active' : '' }}" role="tab" tabindex="0"
+    aria-controls="{{ unique_id('userEditFieldSet') }}_custom_fields">]]></find>
+    <replace><![CDATA[<a class="tabs-tab {{ $selectedTab == 'tracker' ? 'is-active' : '' }}" role="tab" tabindex="0"
+    aria-controls="{{ unique_id('userEditFieldSet') }}_tracker">
+    {{ phrase('harment_xbttracker_account_tracker') }}</a>
+
+<a class="tabs-tab {{ $selectedTab == 'custom_fields' ? 'is-active' : '' }}" role="tab" tabindex="0"
+    aria-controls="{{ unique_id('userEditFieldSet') }}_custom_fields">]]></replace>
+  </modification>
+  
+  <!-- إضافة معلومات التراكر في ملف تعريف المستخدم (اختياري) -->
+  <modification type="public" template="member_view" modification_key="harment_xbttracker_member_view" description="Add tracker information to member profiles" execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[<xf:if is="$user.Profile.signature">]]></find>
+    <replace><![CDATA[<xf:if is="\XF::options()->xbtTrackerEnabled && $user.xbt_passkey && $xf.visitor.hasPermission('xbtTracker', 'xbtTrackerView')">
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-minorHeader">{{ phrase('harment_xbttracker_tracker_statistics') }}</h3>
+            <div class="block-body block-row">
+                <xf:if is="!empty($xbtStats)">
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('harment_xbttracker_active_torrents') }}</dt>
+                        <dd>{$xbtStats.active_torrents}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('harment_xbttracker_uploaded') }}</dt>
+                        <dd>{$xbtStats.uploaded|file_size}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('harment_xbttracker_downloaded') }}</dt>
+                        <dd>{$xbtStats.downloaded|file_size}</dd>
+                    </dl>
+                    <xf:if is="$xbtStats.downloaded > 0">
+                        <dl class="pairs pairs--justified">
+                            <dt>{{ phrase('harment_xbttracker_ratio') }}</dt>
+                            <dd>{$xbtStats.ratio|number:2}</dd>
+                        </dl>
+                    </xf:if>
+                <xf:else />
+                    <div class="blockMessage">{{ phrase('harment_xbttracker_no_stats') }}</div>
+                </xf:if>
+            </div>
+        </div>
+    </div>
+</xf:if>
+
+<xf:if is="$user.Profile.signature">]]></replace>
+  </modification>
+</template_modifications>

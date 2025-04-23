@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template title="public:harment_xbttracker_bb_code_torrent" version_id="1000170" version_string="1.0.1">
+<![CDATA[
+<div class="bbCodeTorrent">
+    <div class="bbCodeTorrent-info">
+        <div class="bbCodeTorrent-title">{$info.name}</div>
+        <div class="bbCodeTorrent-details">
+            <div class="bbCodeTorrent-stats">
+                <span class="bbCodeTorrent-seeders">
+                    <i class="fa fa-arrow-up"></i> {$info.seeders} {{ phrase('harment_xbttracker_seeders') }}
+                </span>
+                <span class="bbCodeTorrent-leechers">
+                    <i class="fa fa-arrow-down"></i> {$info.leechers} {{ phrase('harment_xbttracker_leechers') }}
+                </span>
+                <span class="bbCodeTorrent-completed">
+                    <i class="fa fa-check"></i> {$info.completed} {{ phrase('harment_xbttracker_completed') }}
+                </span>
+                <span class="bbCodeTorrent-size">
+                    <i class="fa fa-hdd-o"></i> {$info.size|file_size}
+                </span>
+            </div>
+            <div class="bbCodeTorrent-hash">
+                {{ phrase('harment_xbttracker_info_hash') }}: {$info.info_hash}
+            </div>
+            <div class="bbCodeTorrent-links">
+                <a href="{{ link('tracker/download', {'info_hash': $info.info_hash}) }}" class="button button--icon button--icon--download">
+                    <span class="button-text">{{ phrase('download') }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+]]>
+</template>

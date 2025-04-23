@@ -1,0 +1,87 @@
+<!-- public:xbt_torrent_upload -->
+<xf:title>{{ phrase('xbt_upload_torrent') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('torrents') }}">{{ phrase('xbt_torrents') }}</xf:breadcrumb>
+<xf:breadcrumb>{{ phrase('xbt_upload_torrent') }}</xf:breadcrumb>
+
+<xf:form action="{{ link('torrents/upload') }}" class="block" upload="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h1 class="block-header-title">{{ phrase('xbt_upload_torrent') }}</h1>
+        </div>
+        
+        <div class="block-body">
+            <xf:formrow label="{{ phrase('title') }}:" required="required">
+                <xf:textbox name="title" value="{$title}" maxlength="255" required="required" />
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_torrent_file') }}:" required="required">
+                <xf:upload name="torrent_file" accept=".torrent" required="true" />
+                <div class="formRow-explain">{{ phrase('xbt_torrent_file_explain') }}</div>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_poster_image') }}:">
+                <xf:upload name="poster_file" accept=".jpg, .jpeg, .png, .gif" />
+                <div class="formRow-explain">{{ phrase('xbt_poster_image_explain') }}</div>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('category') }}:" required="required">
+                <xf:select name="category_id" value="{$category_id}" required="required">
+                    <xf:option value="0">{{ phrase('select_category') }}</xf:option>
+                    <xf:foreach loop="$categories" value="$category">
+                        <xf:option value="{$category.category_id}">{$category.title}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_video_quality') }}:">
+                <xf:select name="video_quality" value="{$video_quality}">
+                    <xf:option value="">{{ phrase('select_quality') }}</xf:option>
+                    <xf:foreach loop="$videoQualities" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_audio_format') }}:">
+                <xf:select name="audio_format" value="{$audio_format}">
+                    <xf:option value="">{{ phrase('select_format') }}</xf:option>
+                    <xf:foreach loop="$audioFormats" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_audio_channels') }}:">
+                <xf:select name="audio_channels" value="{$audio_channels}">
+                    <xf:option value="">{{ phrase('select_channels') }}</xf:option>
+                    <xf:foreach loop="$audioChannels" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_tmdb_id') }}:">
+                <div class="inputGroup">
+                    <xf:textbox name="tmdb_id" value="{$tmdb_id}" placeholder="0" />
+                    <xf:button data-xf-click="overlay" href="{{ link('torrents/tmdb-search') }}">{{ phrase('xbt_search_tmdb') }}</xf:button>
+                </div>
+                <div class="formRow-explain">{{ phrase('xbt_tmdb_id_explain') }}</div>
+            </xf:formrow>
+            
+            <xf:if is="\XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents')">
+                <xf:formrow label="{{ phrase('xbt_freeleech') }}:">
+                    <xf:checkbox name="is_freeleech" value="1">
+                        <xf:option value="1" label="{{ phrase('xbt_enable_freeleech') }}" />
+                    </xf:checkbox>
+                </xf:formrow>
+            </xf:if>
+            
+            <xf:formrow label="{{ phrase('description') }}:">
+                <xf:editor name="description" value="{$description}" height="300" />
+            </xf:formrow>
+        </div>
+        
+        <xf:submitrow submit="{{ phrase('upload') }}" icon="upload" />
+    </div>
+</xf:form>

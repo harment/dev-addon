@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <!-- نص معالج الإعلانات - ملف PHP منفصل للمعالجة المباشرة -->
+  <template type="public" title="xbt_announce_php" version_id="1000170" version_string="1.0.1"><![CDATA[<?php
+// XBT Tracker Announce Script
+// This file should be accessed directly by BitTorrent clients
+
+require_once(__DIR__ . '/src/XF.php');
+
+XF::start($fileDir);
+$app = XF::setupApp('Harment\XBTTracker:Announce');
+$response = $app->run();
+$response->send();
+?>]]></template>
+
+  <!-- صفحة إحصائيات التراكر العامة -->
+  <template type="public" title="xbt_tracker_stats" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_tracker_stats') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('tracker/stats') }}">{{ phrase('xbt_tracker_stats') }}</xf:breadcrumb>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_tracker_stats') }}</h2>
+        </div>
+        <div class="block-body">
+            <div class="block-row">
+                <div class="pairJustifier">
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_total_torrents') }}</dt>
+                        <dd>{$stats.total_torrents}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_total_peers') }}</dt>
+                        <dd>{$stats.total_peers}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_total_seeders') }}</dt>
+                        <dd>{$stats.total_seeders}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_total_leechers') }}</dt>
+                        <dd>{$stats.total_leechers}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_downloaded_today') }}</dt>
+                        <dd>{$stats.downloaded_today|file_size}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_uploaded_today') }}</dt>
+                        <dd>{$stats.uploaded_today|file_size}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<xf:if is="$top_torrents AND !$top_torrents|empty">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-header">
+                <h2 class="block-header-title">{{ phrase('xbt_top_torrents') }}</h2>
+            </div>
+            <div class="block-body">
+                <div class="structItemContainer">
+                    <xf:foreach loop="$top_torrents" value="$torrent">
+                        <div class="structItem">
+                            <div class="structItem-cell structItem-cell--main">
+                                <div class="structItem-title">
+                                    {$torrent.name}
+                                </div>
+                                <div class="structItem-minor">
+                                    {{ phrase('xbt_info_hash') }}: {$torrent.info_hash|substring(0, 16)}...
+                                </div>
+                            </div>
+                            <div class="structItem-cell structItem-cell--meta">
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_seeders') }}</dt>
+                                    <dd>{$torrent.seeders}</dd>
+                                </dl>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_leechers') }}</dt>
+                                    <dd>{$torrent.leechers}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </xf:foreach>
+                </div>
+            </div>
+        </div>
+    </div>
+</xf:if>]]></template>
+
+  <!-- صفحة إعدادات حساب المستخدم للتراكر -->
+  <template type="public" title="xbt_account_tracker" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_account_tracker') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('account/tracker') }}">{{ phrase('xbt_account_tracker') }}</xf:breadcrumb>
+
+<xf:form action="{{ link('account/tracker/save') }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_account_tracker') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="passkey" value="$user.xbt_passkey" readonly="true" label="{{ phrase('xbt_passkey') }}" 
+                explain="{{ phrase('xbt_passkey_explain') }}" />
+            
+            <xf:if is="$user_stats AND !$user_stats|empty">
+                <hr class="formRowSep" />
+                
+                <h3 class="block-formSectionHeader">{{ phrase('xbt_your_stats') }}</h3>
+                
+                <xf:formrow label="{{ phrase('xbt_active_torrents') }}">
+                    {$user_stats.active_torrents}
+                </xf:formrow>
+                
+                <xf:formrow label="{{ phrase('xbt_uploaded') }}">
+                    {$user_stats.uploaded|file_size}
+                </xf:formrow>
+                
+                <xf:formrow label="{{ phrase('xbt_downloaded') }}">
+                    {$user_stats.downloaded|file_size}
+                </xf:formrow>
+                
+                <xf:if is="$user_stats.downloaded > 0">
+                    <xf:formrow label="{{ phrase('xbt_ratio') }}">
+                        {$user_stats.ratio|number(2)}
+                    </xf:formrow>
+                </xf:if>
+            </xf:if>
+            
+            <xf:formrow>
+                <xf:set var="$announceUrl">{{ option('xbtTrackerAnnounceUrl') }}</xf:set>
+                {{ phrase('xbt_announce_url') }}: {$announceUrl}?passkey={$user.xbt_passkey}
+            </xf:formrow>
+        </div>
+        <div class="block-footer">
+            <span class="block-footer-controls">
+                <xf:button class="button--primary" 
+                         href="{{ link('account/tracker/regenerate-passkey') }}" 
+                         overlay="true" 
+                         icon="sync">
+                    {{ phrase('xbt_regenerate_passkey') }}
+                </xf:button>
+            </span>
+        </div>
+    </div>
+</xf:form>]]></template>
+
+  <!-- صفحة قائمة التورنتات (إذا كانت متاحة) -->
+  <template type="public" title="xbt_torrents" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_torrents') }}</xf:title>
+
+<xf:breadcrumb href="{{ link('tracker/torrents') }}">{{ phrase('xbt_torrents') }}</xf:breadcrumb>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_torrents') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$torrents|count">
+                <div class="structItemContainer">
+                    <xf:foreach loop="$torrents" value="$torrent">
+                        <div class="structItem">
+                            <div class="structItem-cell structItem-cell--main">
+                                <div class="structItem-title">
+                                    {$torrent.name}
+                                </div>
+                                <div class="structItem-minor">
+                                    {{ phrase('xbt_info_hash') }}: {$torrent.info_hash|substring(0, 16)}...
+                                    <span class="structItem-minor-detail">
+                                        {{ phrase('xbt_added') }}: {$torrent.added|date_time}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="structItem-cell structItem-cell--meta">
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_seeders') }}</dt>
+                                    <dd>{$torrent.seeders}</dd>
+                                </dl>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_leechers') }}</dt>
+                                    <dd>{$torrent.leechers}</dd>
+                                </dl>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_completed') }}</dt>
+                                    <dd>{$torrent.completed}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </xf:foreach>
+                </div>
+                
+                <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="tracker/torrents" wrapperclass="block-outer block-outer--after" />
+            <xf:else />
+                <div class="block-row">{{ phrase('xbt_no_torrents') }}</div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <!-- صفحة تفاصيل التورنت (إذا كانت متاحة) -->
+  <template type="public" title="xbt_torrent_details" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{$torrent.name}</xf:title>
+
+<xf:breadcrumb href="{{ link('tracker/torrents') }}">{{ phrase('xbt_torrents') }}</xf:breadcrumb>
+<xf:breadcrumb href="{{ link('tracker/torrent', {'info_hash': $torrent.info_hash}) }}">{$torrent.name}</xf:breadcrumb>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{$torrent.name}</h2>
+        </div>
+        <div class="block-body">
+            <div class="block-row">
+                <div class="pairJustifier">
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_info_hash') }}</dt>
+                        <dd>{$torrent.info_hash}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_size') }}</dt>
+                        <dd>{$torrent.size|file_size}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_added') }}</dt>
+                        <dd>{$torrent.added|date_time}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_seeders') }}</dt>
+                        <dd>{$torrent.seeders}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_leechers') }}</dt>
+                        <dd>{$torrent.leechers}</dd>
+                    </dl>
+                    <dl class="pairs pairs--justified">
+                        <dt>{{ phrase('xbt_completed') }}</dt>
+                        <dd>{$torrent.completed}</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <xf:if is="$xf.visitor.user_id AND $xf.visitor.hasPermission('xbtTracker', 'download')">
+                <div class="block-row">
+                    <h3>{{ phrase('xbt_download_torrent') }}</h3>
+                    <xf:set var="$announceUrl">{{ option('xbtTrackerAnnounceUrl') }}</xf:set>
+                    {{ phrase('xbt_announce_url') }}: {$announceUrl}?passkey={$xf.visitor.xbt_passkey}
+                </div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <!-- علامة تبويب تحرير المستخدم في لوحة الإدارة -->
+  <template type="admin" title="xbt_user_edit_tab" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:formrow rowtype="input"
+    label="{{ phrase('xbt_passkey') }}">
+    
+    <div class="inputGroup">
+        <xf:textbox name="xbt_passkey" value="{$user.xbt_passkey}" readonly="true" />
+        <span class="inputGroup-splitter"></span>
+        <xf:button href="{{ link('users/generate-passkey', $user) }}" 
+            icon="sync" 
+            overlay="true">{{ phrase('xbt_generate_new') }}</xf:button>
+    </div>
+    <div class="formRow-explain">
+        {{ phrase('xbt_passkey_admin_explain') }}
+    </div>
+</xf:formrow>
+
+<xf:if is="$xbtUserStats AND !$xbtUserStats|empty">
+    <hr class="formRowSep" />
+    
+    <xf:formrow label="{{ phrase('xbt_user_stats') }}">
+        <div class="pairJustifier">
+            <dl class="pairs pairs--justified">
+                <dt>{{ phrase('xbt_active_torrents') }}</dt>
+                <dd>{$xbtUserStats.active_torrents}</dd>
+            </dl>
+            <dl class="pairs pairs--justified">
+                <dt>{{ phrase('xbt_uploaded') }}</dt>
+                <dd>{$xbtUserStats.uploaded|file_size}</dd>
+            </dl>
+            <dl class="pairs pairs--justified">
+                <dt>{{ phrase('xbt_downloaded') }}</dt>
+                <dd>{$xbtUserStats.downloaded|file_size}</dd>
+            </dl>
+            <xf:if is="$xbtUserStats.downloaded > 0">
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_ratio') }}</dt>
+                    <dd>{$xbtUserStats.ratio|number(2)}</dd>
+                </dl>
+            </xf:if>
+        </div>
+    </xf:formrow>
+</xf:if>]]></template>
+
+  <!-- صفحة إدارة التراكر في لوحة التحكم -->
+  <template type="admin" title="xbt_dashboard" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_dashboard') }}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_tracker_stats') }}</h2>
+        </div>
+        <div class="block-body">
+            <div class="pairJustifier">
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_tracker_status') }}</dt>
+                    <dd><xf:if is="$trackerStatus.connected">
+                        <span class="text-success">{{ phrase('xbt_connected') }}</span>
+                    <xf:else />
+                        <span class="text-danger">{{ phrase('xbt_disconnected') }}</span>
+                    </xf:if></dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_database') }}</dt>
+                    <dd>{$trackerStatus.database}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_version') }}</dt>
+                    <dd>{$trackerStatus.version}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_statistics') }}</h2>
+        </div>
+        <div class="block-body">
+            <div class="pairJustifier">
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_total_torrents') }}</dt>
+                    <dd>{$stats.total_torrents}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_total_peers') }}</dt>
+                    <dd>{$stats.total_peers}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_total_seeders') }}</dt>
+                    <dd>{$stats.total_seeders}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_total_leechers') }}</dt>
+                    <dd>{$stats.total_leechers}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_users_with_passkeys') }}</dt>
+                    <dd>{$stats.users_with_passkeys}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_downloaded_today') }}</dt>
+                    <dd>{$stats.downloaded_today|file_size}</dd>
+                </dl>
+                <dl class="pairs pairs--justified">
+                    <dt>{{ phrase('xbt_uploaded_today') }}</dt>
+                    <dd>{$stats.uploaded_today|file_size}</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="block-footer">
+            <span class="block-footer-counter">{{ phrase('xbt_last_updated') }}: {$stats.last_updated|date_time}</span>
+        </div>
+    </div>
+</div>]]></template>
+
+  <!-- صفحة إدارة التورنتات في لوحة التحكم -->
+  <template type="admin" title="xbt_admin_torrents" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_torrents') }}</xf:title>
+
+<xf:pageaction>
+    <xf:button href="{{ link('tracker/torrents/add') }}" icon="add">{{ phrase('xbt_add_torrent') }}</xf:button>
+</xf:pageaction>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_torrents') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$torrents|count">
+                <div class="block-filterBar">
+                    <div class="filterBar">
+                        <xf:form action="{{ link('tracker/torrents') }}" class="float-right">
+                            <xf:textbox name="q" value="{$searchTerm}" placeholder="{{ phrase('xbt_search_torrents') }}" />
+                            <xf:button type="submit" icon="search" />
+                        </xf:form>
+                    </div>
+                </div>
+                
+                <div class="structItemContainer">
+                    <xf:foreach loop="$torrents" value="$torrent">
+                        <div class="structItem">
+                            <div class="structItem-cell structItem-cell--main">
+                                <div class="structItem-title">
+                                    <a href="{{ link('tracker/torrents/edit', {'info_hash': $torrent.info_hash}) }}">{$torrent.name}</a>
+                                </div>
+                                <div class="structItem-minor">
+                                    {{ phrase('xbt_info_hash') }}: {$torrent.info_hash}
+                                    <span class="structItem-minor-detail">
+                                        {{ phrase('xbt_added') }}: {$torrent.added|date_time}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="structItem-cell structItem-cell--meta">
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_seeders') }}</dt>
+                                    <dd>{$torrent.seeders}</dd>
+                                </dl>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_leechers') }}</dt>
+                                    <dd>{$torrent.leechers}</dd>
+                                </dl>
+                                <dl class="pairs pairs--inline">
+                                    <dt>{{ phrase('xbt_completed') }}</dt>
+                                    <dd>{$torrent.completed}</dd>
+                                </dl>
+                            </div>
+                            <div class="structItem-cell structItem-cell--action">
+                                <div class="structItem-actionRow">
+                                    <a href="{{ link('tracker/torrents/delete', {'info_hash': $torrent.info_hash}) }}" 
+                                       class="menu-linkRow" 
+                                       data-xf-click="overlay">{{ phrase('delete') }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </xf:foreach>
+                </div>
+                
+                <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="tracker/torrents" wrapperclass="block-outer block-outer--after" />
+            <xf:else />
+                <div class="block-row">{{ phrase('xbt_no_torrents') }}</div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <!-- نموذج تحرير التورنت في لوحة التحكم -->
+  <template type="admin" title="xbt_torrent_edit" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_edit_torrent') }}</xf:title>
+
+<xf:form action="{{ link('tracker/torrents/save', {'info_hash': $torrent.info_hash}) }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_edit_torrent') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="name" value="{$torrent.name}" label="{{ phrase('name') }}" maxlength="255" required="required" />
+            
+            <xf:textboxrow name="info_hash" value="{$torrent.info_hash}" label="{{ phrase('xbt_info_hash') }}" 
+                explain="{{ phrase('xbt_info_hash_explain') }}" readonly="true" />
+            
+            <xf:formrow label="{{ phrase('xbt_size') }}">
+                {$torrent.size|file_size}
+            </xf:formrow>
+            
+            <hr class="formRowSep" />
+            
+            <xf:formrow label="{{ phrase('xbt_announce_url') }}">
+                {$announceUrl}?passkey=xxx
+            </xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('save_changes') }}" icon="save" />
+    </div>
+</xf:form>]]></template>
+
+  <!-- نموذج إضافة تورنت في لوحة التحكم -->
+  <template type="admin" title="xbt_torrent_add" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_add_torrent') }}</xf:title>
+
+<xf:form action="{{ link('tracker/torrents/add') }}" class="block" upload="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_add_torrent') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="name" label="{{ phrase('name') }}" maxlength="255" required="required" />
+            
+            <xf:uploadrow name="torrent_file" label="{{ phrase('xbt_torrent_file') }}" 
+                explain="{{ phrase('xbt_torrent_file_explain') }}" required="required" accept=".torrent" />
+            
+            <xf:formrow label="{{ phrase('xbt_announce_url') }}">
+                {$announceUrl}?passkey=xxx
+            </xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('add') }}" icon="add" />
+    </div>
+</xf:form>]]></template>
+
+  <!-- صفحة إدارة مستخدمي التراكر في لوحة التحكم -->
+  <template type="admin" title="xbt_admin_users" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_users') }}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_users') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$users|count">
+                <div class="block-filterBar">
+                    <div class="filterBar">
+                        <xf:form action="{{ link('tracker/users') }}" class="float-right">
+                            <xf:textbox name="username" value="{$searchUsername}" placeholder="{{ phrase('search_members') }}" />
+                            <xf:button type="submit" icon="search" />
+                        </xf:form>
+                    </div>
+                </div>
+                
+                <div class="block-row">
+                    <div class="dataList">
+                        <div class="dataList-row dataList-row--header">
+                            <div class="dataList-cell dataList-cell--link" style="flex: 2">{{ phrase('user') }}</div>
+                            <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_passkey') }}</div>
+                            <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_active_torrents') }}</div>
+                            <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_uploaded') }}</div>
+                            <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_downloaded') }}</div>
+                            <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_ratio') }}</div>
+                            <div class="dataList-cell dataList-cell--action"></div>
+                        </div>
+                        
+                        <xf:foreach loop="$users" value="$user">
+                            <div class="dataList-row">
+                                <div class="dataList-cell dataList-cell--link" style="flex: 2">
+                                    <a href="{{ link('users/edit', $user) }}">{$user.username}</a>
+								</div>
+                                <div class="dataList-cell" style="flex: 1">
+                                    {$user.xbt_passkey|substring(0, 8)}...
+                                </div>
+                                <div class="dataList-cell" style="flex: 1">
+                                    {$user.xbt_stats.active_torrents}
+                                </div>
+								<div class="dataList-cell" style="flex: 1">
+                                    {$user.xbt_stats.uploaded|file_size}
+                                </div>
+                                <div class="dataList-cell" style="flex: 1">
+                                    {$user.xbt_stats.downloaded|file_size}
+                                </div>
+                                <div class="dataList-cell" style="flex: 1">
+                                    {$user.xbt_stats.ratio|number(2)}
+                                </div>
+                                <div class="dataList-cell dataList-cell--action">
+                                    <a href="{{ link('users/edit', $user, {'section': 'tracker'}) }}" 
+                                       class="menu-linkRow">{{ phrase('edit') }}</a>
+                                </div>
+                            </div>
+                        </xf:foreach>
+                    </div>
+                </div>
+                
+                <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="tracker/users" wrapperclass="block-outer block-outer--after" />
+            <xf:else />
+                <div class="block-row">{{ phrase('no_results_found') }}</div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <!-- نموذج توليد passkey جديد -->
+  <template type="admin" title="xbt_generate_passkey" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_generate_new') }}</xf:title>
+
+<xf:form action="{{ link('users/generate-passkey', $user, {'_xfResponseType': 'json'}) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:formrow>{{ phrase('xbt_generate_passkey_confirm', {'name': $user.username}) }}</xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('xbt_generate_new') }}" icon="sync" />
+    </div>
+</xf:form>]]></template>
+
+  <!-- نموذج حذف تورنت -->
+  <template type="admin" title="xbt_torrent_delete" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('delete') }}</xf:title>
+
+<xf:form action="{{ link('tracker/torrents/delete', {'info_hash': $torrent.info_hash, '_xfResponseType': 'json'}) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:formrow>{{ phrase('xbt_delete_torrent_confirm', {'name': $torrent.name}) }}</xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('delete') }}" icon="delete" />
+    </div>
+</xf:form>]]></template>
+
+  <!-- كود BB للتورنت -->
+  <template type="public" title="xbt_bb_code_torrent" version_id="1000170" version_string="1.0.1"><![CDATA[
+<div class="bbCodeTorrent">
+    <div class="bbCodeTorrent-info">
+        <div class="bbCodeTorrent-title">{$info.name}</div>
+        <div class="bbCodeTorrent-details">
+            <div class="bbCodeTorrent-stats">
+                <span class="bbCodeTorrent-seeders">
+                    <i class="fa fa-arrow-up"></i> {$info.seeders} {{ phrase('xbt_seeders') }}
+                </span>
+                <span class="bbCodeTorrent-leechers">
+                    <i class="fa fa-arrow-down"></i> {$info.leechers} {{ phrase('xbt_leechers') }}
+                </span>
+                <span class="bbCodeTorrent-completed">
+                    <i class="fa fa-check"></i> {$info.completed} {{ phrase('xbt_completed') }}
+                </span>
+                <span class="bbCodeTorrent-size">
+                    <i class="fa fa-hdd"></i> {$info.size|file_size}
+                </span>
+            </div>
+            <div class="bbCodeTorrent-hash">
+                {{ phrase('xbt_info_hash') }}: {$info.info_hash}
+            </div>
+            <div class="bbCodeTorrent-links">
+                <a href="{{ link('tracker/download', {'info_hash': $info.info_hash}) }}" class="button button--icon button--icon--download">
+                    <span class="button-text">{{ phrase('download') }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+]]></template>
+
+ <!-- قالب إعادة إنشاء passkey -->
+  <template type="public" title="xbt_regenerate_passkey" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_regenerate_passkey') }}</xf:title>
+
+<xf:form action="{{ link('account/tracker/regenerate-passkey') }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_regenerate_passkey') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:formrow>
+                <div class="blockMessage blockMessage--important">
+                    {{ phrase('xbt_regenerate_passkey_warning') }}
+                </div>
+                <p>{{ phrase('xbt_regenerate_passkey_explanation') }}</p>
+            </xf:formrow>
+        </div>
+        <div class="block-footer">
+            <span class="block-footer-controls">
+                <xf:button class="button--primary" type="submit">
+                    {{ phrase('xbt_regenerate_passkey') }}
+                </xf:button>
+                <xf:button class="button--link" href="{{ link('account/tracker') }}">
+                    {{ phrase('cancel') }}
+                </xf:button>
+            </span>
+        </div>
+    </div>
+</xf:form>]]></template>
+
+  <!-- Additional admin templates -->
+  <template type="admin" title="xbt_admin_categories" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_categories') }}</xf:title>
+
+<xf:pageaction>
+    <xf:button href="{{ link('tracker/categories/add') }}" icon="add">{{ phrase('xbt_add_category') }}</xf:button>
+</xf:pageaction>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_categories') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$categories|count">
+                <div class="dataList">
+                    <div class="dataList-row dataList-row--header">
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('display_order') }}</div>
+                        <div class="dataList-cell" style="flex: 3">{{ phrase('title') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('torrent_count') }}</div>
+                        <div class="dataList-cell dataList-cell--action"></div>
+                    </div>
+                    
+                    <xf:foreach loop="$categories" value="$category">
+                        <div class="dataList-row">
+                            <div class="dataList-cell" style="flex: 1">{$category.display_order}</div>
+                            <div class="dataList-cell" style="flex: 3">
+                                <a href="{{ link('tracker/categories/edit', $category) }}">{$category.title}</a>
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">{$category.torrent_count}</div>
+                            <div class="dataList-cell dataList-cell--action">
+                                <a href="{{ link('tracker/categories/edit', $category) }}" class="menu-linkRow">{{ phrase('edit') }}</a>
+                                <a href="{{ link('tracker/categories/delete', $category) }}" class="menu-linkRow" data-xf-click="overlay">{{ phrase('delete') }}</a>
+                            </div>
+                        </div>
+                    </xf:foreach>
+                </div>
+            <xf:else />
+                <div class="block-row">{{ phrase('no_categories_have_been_created_yet') }}</div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <template type="admin" title="xbt_admin_category_add" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_add_category') }}</xf:title>
+
+<xf:form action="{{ link('tracker/categories/add') }}" class="block" upload="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_add_category') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="title" label="{{ phrase('title') }}" />
+            
+            <xf:textarearow name="description" label="{{ phrase('description') }}" />
+            
+            <xf:spinboxrow name="display_order" value="10" label="{{ phrase('display_order') }}" />
+            
+            <xf:uploadrow name="category_icon" label="{{ phrase('xbt_category_icon') }}" 
+                explain="{{ phrase('xbt_category_icon_explain') }}" accept=".png,.jpg,.jpeg,.gif" />
+        </div>
+        <xf:submitrow submit="{{ phrase('add') }}" icon="add" />
+    </div>
+</xf:form>]]></template>
+
+  <template type="admin" title="xbt_admin_category_delete" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('delete_category') }}: {$category.title}</xf:title>
+
+<xf:form action="{{ link('tracker/categories/delete', $category) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:formrow>
+                {{ phrase('xbt_delete_category_confirm', {'title': $category.title}) }}
+            </xf:formrow>
+            
+            <xf:if is="$category.torrent_count > 0">
+                <div class="block-row block-row--warning">
+                    {{ phrase('xbt_delete_category_has_torrents_warning', {'count': $category.torrent_count}) }}
+                </div>
+                
+                <xf:selectrow name="reassign_category_id" value="0" label="{{ phrase('xbt_reassign_torrents_to_category') }}">
+                    <xf:option value="0">{{ phrase('xbt_do_not_reassign_delete_torrents') }}</xf:option>
+                    <xf:foreach loop="$categories" value="$otherCategory">
+                        <xf:if is="$otherCategory.category_id != $category.category_id">
+                            <xf:option value="{$otherCategory.category_id}">{$otherCategory.title}</xf:option>
+                        </xf:if>
+                    </xf:foreach>
+                </xf:selectrow>
+            </xf:if>
+        </div>
+        <xf:submitrow submit="{{ phrase('delete') }}" icon="delete" />
+    </div>
+</xf:form>]]></template>
+
+  <template type="admin" title="xbt_admin_category_edit" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('edit_category') }}: {$category.title}</xf:title>
+
+<xf:form action="{{ link('tracker/categories/edit', $category) }}" class="block" upload="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_edit_category') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:textboxrow name="title" label="{{ phrase('title') }}" value="{$category.title}" />
+            
+            <xf:textarearow name="description" label="{{ phrase('description') }}" value="{$category.description}" />
+            
+            <xf:spinboxrow name="display_order" value="{$category.display_order}" label="{{ phrase('display_order') }}" />
+            
+            <xf:if is="$category.icon_url">
+                <xf:formrow label="{{ phrase('xbt_current_icon') }}">
+                    <img src="{$category.icon_url}" alt="{$category.title}" class="categoryIcon" />
+                </xf:formrow>
+            </xf:if>
+            
+            <xf:uploadrow name="category_icon" label="{{ phrase('xbt_category_icon') }}" 
+                explain="{{ phrase('xbt_category_icon_explain') }}" accept=".png,.jpg,.jpeg,.gif" />
+        </div>
+        <xf:submitrow submit="{{ phrase('save_changes') }}" icon="save" />
+    </div>
+</xf:form>]]></template>
+
+  <template type="admin" title="xbt_admin_user_stats" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_user_stats') }}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_user_stats') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$users|count">
+                <div class="block-filterBar">
+                    <div class="filterBar">
+                        <xf:form action="{{ link('tracker/user-stats') }}" class="filterBar-filters">
+                            <div class="inputGroup">
+                                <xf:textbox name="username" value="{$searchUsername}" placeholder="{{ phrase('search_members') }}" />
+                                <span class="inputGroup-splitter"></span>
+                                <xf:select name="sort" value="{$sortBy}">
+                                    <xf:option value="ratio">{{ phrase('xbt_ratio') }}</xf:option>
+                                    <xf:option value="uploaded">{{ phrase('xbt_uploaded') }}</xf:option>
+                                    <xf:option value="downloaded">{{ phrase('xbt_downloaded') }}</xf:option>
+                                    <xf:option value="seeds">{{ phrase('xbt_active_torrents') }}</xf:option>
+                                </xf:select>
+                                <span class="inputGroup-splitter"></span>
+                                <xf:select name="order" value="{$sortOrder}">
+                                    <xf:option value="desc">{{ phrase('descending') }}</xf:option>
+                                    <xf:option value="asc">{{ phrase('ascending') }}</xf:option>
+                                </xf:select>
+                                <span class="inputGroup-splitter"></span>
+                                <xf:button type="submit" icon="search">{{ phrase('filter') }}</xf:button>
+                            </div>
+                        </xf:form>
+                    </div>
+                </div>
+                
+                <div class="dataList">
+                    <div class="dataList-row dataList-row--header">
+                        <div class="dataList-cell dataList-cell--link" style="flex: 2">{{ phrase('user') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_active_torrents') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_uploaded') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_downloaded') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_ratio') }}</div>
+                        <div class="dataList-cell" style="flex: 1">{{ phrase('xbt_bonus_points') }}</div>
+                        <div class="dataList-cell dataList-cell--action"></div>
+                    </div>
+                    
+                    <xf:foreach loop="$users" value="$user">
+                        <div class="dataList-row">
+                            <div class="dataList-cell dataList-cell--link" style="flex: 2">
+                                <a href="{{ link('users/edit', $user) }}">{$user.username}</a>
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">
+                                {$user.xbt_stats.active_torrents}
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">
+                                {$user.xbt_stats.uploaded|file_size}
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">
+                                {$user.xbt_stats.downloaded|file_size}
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">
+                                {$user.xbt_stats.ratio|number(2)}
+                            </div>
+                            <div class="dataList-cell" style="flex: 1">
+                                {$user.xbt_stats.bonus_points}
+                            </div>
+                            <div class="dataList-cell dataList-cell--action">
+                                <a href="{{ link('tracker/user-stats/edit', {'user_id': $user.user_id}) }}" class="menu-linkRow">{{ phrase('edit') }}</a>
+                                <a href="{{ link('tracker/user-stats/reset-passkey', {'user_id': $user.user_id}) }}" class="menu-linkRow" data-xf-click="overlay">{{ phrase('xbt_reset_passkey') }}</a>
+                            </div>
+                        </div>
+                    </xf:foreach>
+                </div>
+                
+                <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="tracker/user-stats"
+                    params="{'username': $searchUsername, 'sort': $sortBy, 'order': $sortOrder}" />
+            <xf:else />
+                <div class="block-row">{{ phrase('no_results_found') }}</div>
+            </xf:if>
+        </div>
+    </div>
+</div>]]></template>
+
+  <template type="admin" title="xbt_admin_user_stats_edit" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('edit_user_stats') }}: {$user.username}</xf:title>
+
+<xf:form action="{{ link('tracker/user-stats/edit', {'user_id': $user.user_id}) }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{{ phrase('xbt_edit_user_stats') }}</h2>
+        </div>
+        <div class="block-body">
+            <xf:formrow label="{{ phrase('user') }}">
+                <xf:username user="$user" />
+            </xf:formrow>
+            
+            <xf:textboxrow name="uploaded" value="{$userStats.uploaded}" label="{{ phrase('xbt_uploaded') }} ({{ phrase('bytes') }})"
+                explain="{{ phrase('xbt_current') }}: {$userStats.uploaded|file_size}" />
+            
+            <xf:textboxrow name="downloaded" value="{$userStats.downloaded}" label="{{ phrase('xbt_downloaded') }} ({{ phrase('bytes') }})"
+                explain="{{ phrase('xbt_current') }}: {$userStats.downloaded|file_size}" />
+            
+            <xf:textboxrow name="bonus_points" value="{$userStats.bonus_points}" label="{{ phrase('xbt_bonus_points') }}" />
+            
+            <xf:formrow label="{{ phrase('xbt_ratio') }}">
+                <xf:if is="$userStats.downloaded > 0">
+                    {$userStats.ratio|number(2)} ({{ phrase('calculated') }})
+                <xf:else />
+                    ∞ ({{ phrase('infinite') }})
+                </xf:if>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('xbt_active_torrents') }}">
+                {$userStats.active_torrents} ({{ phrase('calculated') }})
+            </xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('save_changes') }}" icon="save" />
+    </div>
+</xf:form>]]></template>
+
+  <template type="admin" title="xbt_admin_user_stats_reset_passkey" version_id="1000170" version_string="1.0.1"><![CDATA[<xf:title>{{ phrase('xbt_reset_passkey') }}: {$user.username}</xf:title>
+
+<xf:form action="{{ link('tracker/user-stats/reset-passkey', {'user_id': $user.user_id, '_xfResponseType': 'json'}) }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:formrow>
+                <div class="blockMessage blockMessage--important">
+                    {{ phrase('xbt_reset_passkey_warning') }}
+                </div>
+                <p>{{ phrase('xbt_reset_passkey_confirm', {'name': $user.username}) }}</p>
+            </xf:formrow>
+        </div>
+        <xf:submitrow submit="{{ phrase('xbt_reset_passkey') }}" icon="refresh" />
+    </div>
+</xf:form>]]></template>
+</templates>

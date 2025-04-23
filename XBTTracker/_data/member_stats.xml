@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<member_stats>
+  <!-- إحصائية نسبة التحميل/الرفع للمستخدم -->
+  <member_stat member_stat_key="harment_xbt_ratio" permission_group_id="general" user_criteria="" sort_order="desc" sort_direction="desc" callback_class="Harment\XBTTracker\Stats\User" callback_method="getRatioValue" show_value="1" user_limit="20" display_order="300" active="1">
+    <title>نسبة الرفع/التحميل (Ratio)</title>
+  </member_stat>
+  
+  <!-- إحصائية حجم الرفع للمستخدم -->
+  <member_stat member_stat_key="harment_xbt_uploaded" permission_group_id="general" user_criteria="" sort_order="desc" sort_direction="desc" callback_class="Harment\XBTTracker\Stats\User" callback_method="getUploadedValue" show_value="1" user_limit="20" display_order="310" active="1">
+    <title>حجم البيانات المرفوعة</title>
+  </member_stat>
+  
+  <!-- إحصائية حجم التحميل للمستخدم -->
+  <member_stat member_stat_key="harment_xbt_downloaded" permission_group_id="general" user_criteria="" sort_order="desc" sort_direction="desc" callback_class="Harment\XBTTracker\Stats\User" callback_method="getDownloadedValue" show_value="1" user_limit="20" display_order="320" active="1">
+    <title>حجم البيانات المحملة</title>
+  </member_stat>
+  
+  <!-- إحصائية نقاط المكافآت -->
+  <member_stat member_stat_key="harment_xbt_bonus" permission_group_id="general" user_criteria="" sort_order="desc" sort_direction="desc" callback_class="Harment\XBTTracker\Stats\User" callback_method="getBonusPointsValue" show_value="1" user_limit="20" display_order="330" active="1">
+    <title>نقاط المكافآت</title>
+  </member_stat>
+</member_stats>

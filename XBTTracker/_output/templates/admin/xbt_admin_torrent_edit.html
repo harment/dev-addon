@@ -1,0 +1,104 @@
+<!-- admin:xbt_admin_torrent_edit -->
+<xf:title>{phrase('edit_torrent')}: {$torrent.title}</xf:title>
+
+<xf:form action="{link('torrents/torrent-edit', $torrent)}" class="block" upload="true" ajax="true">
+    <div class="block-container">
+        <div class="block-header">
+            <h1 class="block-header-title">{phrase('edit_torrent')}</h1>
+        </div>
+        
+        <div class="block-body">
+            <xf:formrow label="{phrase('title')}:" required="required">
+                <xf:textbox name="title" value="{$torrent.title}" maxlength="255" required="required" />
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_poster_image')}:">
+                <div class="inputGroup">
+                    <xf:upload name="poster_file" accept=".jpg, .jpeg, .png, .gif" />
+                    <xf:if is="$torrent.poster_path">
+                        <img src="{$torrent.poster_url}" alt="{$torrent.title}" class="torrentEditPoster" />
+                    </xf:if>
+                </div>
+                <div class="formRow-explain">{phrase('xbt_poster_image_explain')}</div>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('info_hash')}:">
+                <code>{$torrent.info_hash}</code>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('category')}:" required="required">
+                <xf:select name="category_id" value="{$torrent.category_id}" required="required">
+                    <xf:option value="0">{phrase('select_category')}</xf:option>
+                    <xf:foreach loop="$categories" value="$category">
+                        <xf:option value="{$category.category_id}">{$category.title}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_video_quality')}:">
+                <xf:select name="video_quality" value="{$torrent.video_quality}">
+                    <xf:option value="">{phrase('select_quality')}</xf:option>
+                    <xf:foreach loop="$videoQualities" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_audio_format')}:">
+                <xf:select name="audio_format" value="{$torrent.audio_format}">
+                    <xf:option value="">{phrase('select_format')}</xf:option>
+                    <xf:foreach loop="$audioFormats" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_audio_channels')}:">
+                <xf:select name="audio_channels" value="{$torrent.audio_channels}">
+                    <xf:option value="">{phrase('select_channels')}</xf:option>
+                    <xf:foreach loop="$audioChannels" key="$key" value="$value">
+                        <xf:option value="{$key}">{$value}</xf:option>
+                    </xf:foreach>
+                </xf:select>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_tmdb_id')}:">
+                <xf:textbox name="tmdb_id" value="{$torrent.tmdb_id}" placeholder="0" />
+                <div class="formRow-explain">{phrase('xbt_tmdb_id_explain')}</div>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_freeleech')}:">
+                <xf:checkbox name="is_freeleech" value="1" checked="{$torrent.is_freeleech}">
+                    <xf:option value="1" label="{phrase('xbt_enable_freeleech')}" hint="{phrase('xbt_enable_freeleech_hint')}" />
+                </xf:checkbox>
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('description')}:">
+                <xf:editor name="description" value="{$torrent.description}" height="300" />
+            </xf:formrow>
+            
+            <xf:formrow label="{phrase('xbt_torrent_stats')}:">
+                <dl class="pairs pairs--columns pairs--fixedSmall">
+                    <dt>{phrase('xbt_size')}</dt>
+                    <dd>{$torrent.size_formatted}</dd>
+                    
+                    <dt>{phrase('xbt_seeders')}</dt>
+                    <dd>{$torrent.seeders}</dd>
+                    
+                    <dt>{phrase('xbt_leechers')}</dt>
+                    <dd>{$torrent.leechers}</dd>
+                    
+                    <dt>{phrase('xbt_completed')}</dt>
+                    <dd>{$torrent.completed}</dd>
+                    
+                    <dt>{phrase('xbt_uploaded_on')}</dt>
+                    <dd>{date_time($torrent.creation_date)}</dd>
+                </dl>
+            </xf:formrow>
+        </div>
+        
+        <xf:submitrow submit="{phrase('save_changes')}" icon="save" />
+    </div>
+    
+    <xf:redirect url="{link('torrents/torrents')}" />
+</xf:form>

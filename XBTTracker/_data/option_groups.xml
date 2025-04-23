@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<option_groups>
+  <!-- المجموعة الرئيسية للإعدادات -->
+  <group group_id="xbtTracker" display_order="47400" debug_only="0" icon="fa-magnet">
+    <title>XBT Torrent Tracker</title>
+    <description>الإعدادات الرئيسية للتراكر</description>
+  </group>
+  
+  <!-- مجموعة إعدادات نقاط المكافأة -->
+  <group group_id="xbtTrackerBonus" display_order="47410" debug_only="0" icon="fa-gift">
+    <title>نقاط المكافأة</title>
+    <description>إعدادات نظام نقاط المكافأة للتراكر</description>
+  </group>
+  
+  <!-- مجموعة الإعدادات المتقدمة -->
+  <group group_id="xbtTrackerAdvanced" display_order="47420" debug_only="0" icon="fa-cogs">
+    <title>إعدادات متقدمة</title>
+    <description>إعدادات متقدمة للتراكر</description>
+  </group>
+  
+  <!-- مجموعة إعدادات الأمان -->
+  <group group_id="xbtTrackerSecurity" display_order="47430" debug_only="0" icon="fa-shield">
+    <title>الأمان</title>
+    <description>إعدادات أمان التراكر</description>
+  </group>
+  
+  <!-- مجموعة إعدادات تكامل TMDB -->
+  <group group_id="xbtTrackerTmdb" display_order="47440" debug_only="0" icon="fa-film">
+    <title>تكامل TMDB</title>
+    <description>إعدادات تكامل التراكر مع قاعدة بيانات الأفلام</description>
+  </group>
+</option_groups>

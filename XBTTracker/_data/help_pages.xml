@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<help_pages>
+  <!-- صفحة مساعدة التراكر -->
+  <page page_id="harment_xbttracker_help" display_order="500" callback_class="Harment\XBTTracker\Help\Tracker" callback_method="render">
+    <title>Tracker Help</title>
+    <description>Information about using the BitTorrent tracker.</description>
+  </page>
+</help_pages>

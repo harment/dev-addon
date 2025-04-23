@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cron_entries>
+  <entry entry_id="harmentXbtUpdateStats" cron_class="Harment\XBTTracker\Cron\UpdateStats" cron_method="updateStats" active="1">
+    <title>تحديث إحصائيات التراكر</title>
+    <description>يقوم بتحديث إحصائيات المستخدمين والتورنت بناءً على نشاطات التراكر.</description>
+    <run_rules>
+      <run_rule run_type="hours">1</run_rule>
+    </run_rules>
+  </entry>
+  
+  <entry entry_id="harmentXbtBonusPoints" cron_class="Harment\XBTTracker\Cron\BonusPoints" cron_method="awardBonusPoints" active="1">
+    <title>حساب نقاط مكافآت التراكر</title>
+    <description>يقوم بحساب وإضافة نقاط المكافآت للمستخدمين بناءً على معدلات البذر والملفات المشاركة.</description>
+    <run_rules>
+      <run_rule run_type="hours">6</run_rule>
+    </run_rules>
+  </entry>
+  
+  <entry entry_id="harmentXbtHitAndRun" cron_class="Harment\XBTTracker\Cron\HitAndRun" cron_method="checkHitAndRun" active="1">
+    <title>التحقق من مخالفات الضرب والهروب</title>
+    <description>يتحقق من المستخدمين الذين قاموا بتحميل التورنت ولم يقوموا ببذره لفترة كافية.</description>
+    <run_rules>
+      <run_rule run_type="hours">12</run_rule>
+    </run_rules>
+  </entry>
+  
+  <entry entry_id="harmentXbtCleanup" cron_class="Harment\XBTTracker\Cron\Cleanup" cron_method="cleanup" active="1">
+    <title>تنظيف بيانات التراكر</title>
+    <description>يقوم بمهام التنظيف الدورية مثل إزالة الأقران غير النشطين والتورنتات اليتيمة وسجلات الإحصائيات القديمة.</description>
+    <run_rules>
+      <run_rule run_type="hours">6</run_rule>
+    </run_rules>
+  </entry>
+  
+  <entry entry_id="harmentXbtSyncUsers" cron_class="Harment\XBTTracker\Cron\SyncUsers" cron_method="syncUsers" active="1">
+    <title>مزامنة مستخدمي التراكر</title>
+    <description>يقوم بمزامنة بيانات المستخدمين بين XenForo والتراكر وإنشاء مفاتيح الوصول للمستخدمين الجدد.</description>
+    <run_rules>
+      <run_rule run_type="hours">24</run_rule>
+    </run_rules>
+  </entry>
+</cron_entries>

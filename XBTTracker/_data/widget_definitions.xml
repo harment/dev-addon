@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget_definitions>
+  <!-- وجيت إحصائيات التراكر -->
+  <widget_definition definition_id="harment_xbttracker_stats" definition_class="Harment\XBTTracker\Widget\TrackerStats">
+    <title>XBT Tracker Statistics</title>
+    <description>Displays statistics from the XBT Tracker.</description>
+    <options>
+      <option option_id="display_type" type="select" default="simple">
+        <option value="simple">Simple</option>
+        <option value="detailed">Detailed</option>
+      </option>
+      <option option_id="show_top_torrents" type="spinbox" default="5" />
+    </options>
+  </widget_definition>
+  
+  <!-- وجيت أحدث التورنتات -->
+  <widget_definition definition_id="harment_xbttracker_latest" definition_class="Harment\XBTTracker\Widget\LatestTorrents">
+    <title>Latest Torrents</title>
+    <description>Displays the latest torrents from the tracker.</description>
+    <options>
+      <option option_id="limit" type="spinbox" default="5" />
+      <option option_id="style" type="select" default="list">
+        <option value="list">List</option>
+        <option value="grid">Grid</option>
+      </option>
+    </options>
+  </widget_definition>
+</widget_definitions>

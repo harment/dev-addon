@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<api_scopes>
+  <!-- نطاق قراءة بيانات التراكر -->
+  <api_scope api_scope_id="tracker:read" addon_id="Harment/XBTTracker">Read tracker statistics and information</api_scope>
+  
+  <!-- نطاق إدارة التراكر والتورنتات -->
+  <api_scope api_scope_id="tracker:write" addon_id="Harment/XBTTracker">Manage tracker and torrents</api_scope>
+  
+  <!-- نطاق إدارة passkeys المستخدمين -->
+  <api_scope api_scope_id="tracker:passkeys" addon_id="Harment/XBTTracker">Manage user passkeys</api_scope>
+</api_scopes>

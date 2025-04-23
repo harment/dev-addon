@@ -1,0 +1,142 @@
+<!-- admin:xbt_admin_users -->
+<xf:title>{phrase('xbt_tracker_users')}</xf:title>
+
+<xf:pageaction>
+    <xf:button href="{link('members/add')}" icon="add" overlay="true">{phrase('add_user')}</xf:button>
+</xf:pageaction>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{phrase('search_users')}</h2>
+        </div>
+        <div class="block-body">
+            <xf:form action="{link('torrents/users')}" class="block">
+                <div class="block-filterBar">
+                    <div class="filterBar">
+                        <xf:textbox name="username" value="{$username}" placeholder="{phrase('username')}..." />
+                        
+                        <xf:select name="ratio" value="{$ratio}">
+                            <xf:option value="">{phrase('all_users')}</xf:option>
+                            <xf:option value="low">{phrase('xbt_low_ratio')} (< 0.5)</xf:option>
+                            <xf:option value="good">{phrase('xbt_good_ratio')} (> 1.0)</xf:option>
+                            <xf:option value="excellent">{phrase('xbt_excellent_ratio')} (> 2.0)</xf:option>
+                        </xf:select>
+                        
+                        <xf:select name="warnings" value="{$warnings}">
+                            <xf:option value="">{phrase('all_users')}</xf:option>
+                            <xf:option value="with">{phrase('xbt_with_warnings')}</xf:option>
+                            <xf:option value="without">{phrase('xbt_without_warnings')}</xf:option>
+                        </xf:select>
+                        
+                        <xf:select name="sort" value="{$sort}">
+                            <xf:option value="username">{phrase('username')}</xf:option>
+                            <xf:option value="upload">{phrase('xbt_uploaded')}</xf:option>
+                            <xf:option value="download">{phrase('xbt_downloaded')}</xf:option>
+                            <xf:option value="ratio">{phrase('xbt_ratio')}</xf:option>
+                            <xf:option value="warnings">{phrase('xbt_warnings')}</xf:option>
+                            <xf:option value="bonus_points">{phrase('xbt_bonus_points')}</xf:option>
+                        </xf:select>
+                        
+                        <xf:select name="order" value="{$order}">
+                            <xf:option value="desc">{phrase('desc')}</xf:option>
+                            <xf:option value="asc">{phrase('asc')}</xf:option>
+                        </xf:select>
+                        
+                        <xf:button type="submit" icon="search">{phrase('filter')}</xf:button>
+                    </div>
+                </div>
+            </xf:form>
+        </div>
+    </div>
+</div>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">
+            <h2 class="block-header-title">{phrase('xbt_tracker_users')}</h2>
+        </div>
+        <div class="block-body">
+            <xf:if is="$users is empty">
+                <div class="block-row">{phrase('no_users_matching_criteria')}</div>
+            <xf:else />
+                <div class="block-row">
+                    <div class="dataList">
+                        <div class="dataList-row dataList-row--header">
+                            <div class="dataList-cell dataList-cell--user">{phrase('username')}</div>
+                            <div class="dataList-cell dataList-cell--uploaded">{phrase('xbt_uploaded')}</div>
+                            <div class="dataList-cell dataList-cell--downloaded">{phrase('xbt_downloaded')}</div>
+                            <div class="dataList-cell dataList-cell--ratio">{phrase('xbt_ratio')}</div>
+                            <div class="dataList-cell dataList-cell--seeds">{phrase('xbt_active_seeds')}</div>
+                            <div class="dataList-cell dataList-cell--downloads">{phrase('xbt_active_downloads')}</div>
+                            <div class="dataList-cell dataList-cell--warnings">{phrase('xbt_warnings')}</div>
+                            <div class="dataList-cell dataList-cell--bonus">{phrase('xbt_bonus_points')}</div>
+                            <div class="dataList-cell dataList-cell--actions">{phrase('actions')}</div>
+                        </div>
+                        
+                        <xf:foreach loop="$users" value="$user">
+                            <div class="dataList-row">
+                                <div class="dataList-cell dataList-cell--user">
+                                    <xf:username user="$user" />
+                                    <xf:if is="$user.xbt_passkey">
+                                        <span class="label label--success" title="{phrase('xbt_has_passkey')}">
+                                            <i class="fa fa-key" aria-hidden="true"></i>
+                                        </span>
+                                    </xf:if>
+                                </div>
+                                <div class="dataList-cell dataList-cell--uploaded">
+                                    <span class="textHighlight">{$user.XBTUserStats.uploaded|file_size}</span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--downloaded">
+                                    <span class="textHighlight">{$user.XBTUserStats.downloaded|file_size}</span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--ratio">
+                                    <xf:if is="$user.XBTUserStats.downloaded > 0">
+                                       <span class="textHighlight {{ $user.XBTUserStats.ratio >= 1 ? 'textHighlight--good' : 'textHighlight--bad' }}">
+                                            {$user.XBTUserStats.ratio|number(2)}
+                                        </span>
+                                    <xf:else />
+                                        <span class="textHighlight">∞</span>
+                                    </xf:if>
+                                </div>
+                                <div class="dataList-cell dataList-cell--seeds">
+                                    <span class="textHighlight">{$user.XBTUserStats.active_torrents}</span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--downloads">
+                                    <span class="textHighlight">{$user.XBTUserStats.active_downloads}</span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--warnings">
+                                    <span class="textHighlight {{$user.XBTUserStats.warnings > 0 ? 'textHighlight--bad' : ''}}">
+                                        {$user.XBTUserStats.warnings}
+                                    </span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--bonus">
+                                    <span class="textHighlight">{$user.XBTUserStats.bonus_points|number(0)}</span>
+                                </div>
+                                <div class="dataList-cell dataList-cell--actions">
+                                    <div class="buttonGroup">
+                                        <a href="{link('torrents/users/edit-stats', $user)}" class="button--link button button--icon button--icon--edit"
+                                           data-xf-click="overlay" title="{phrase('xbt_edit_user_stats')}">
+                                            <span class="button-text">{phrase('edit')}</span>
+                                        </a>
+                                        <a href="{link('torrents/users/reset-passkey', $user)}" class="button--link button button--icon button--icon--key"
+                                           data-xf-click="overlay" title="{phrase('xbt_reset_passkey')}">
+                                            <span class="button-text">{phrase('reset')}</span>
+                                        </a>
+                                        <a href="{link('users/edit', $user, {'tab': 'xbt_tracker'})}" class="button--link button button--icon button--icon--user"
+                                           title="{phrase('view_user_profile')}">
+                                            <span class="button-text">{phrase('view')}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </xf:foreach>
+                    </div>
+                </div>
+            </xf:if>
+        </div>
+        
+        <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="torrents/users" 
+                   params="{'username': $username, 'ratio': $ratio, 'warnings': $warnings, 'sort': $sort, 'order': $order}" />
+    </div>
+</div>

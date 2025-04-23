@@ -1,0 +1,48 @@
+<!-- admin:xbt_admin_torrent_delete -->
+<xf:title>{{ phrase('delete_torrent') }}</xf:title>
+
+<xf:form action="{{ link('torrents/torrent-delete', $torrent) }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-body">
+            <div class="block-row">
+                {{ phrase('xbt_admin_delete_torrent_confirmation', {'title': $torrent.title}) }}
+            </div>
+            
+            <xf:if is="$torrent.seeders > 0 || $torrent.leechers > 0">
+                <div class="block-row block-row--warning">
+                    {{ phrase('xbt_admin_delete_torrent_has_peers_warning', {
+                        'seeders': $torrent.seeders,
+                        'leechers': $torrent.leechers
+                    }) }}
+                </div>
+            </xf:if>
+            
+            <div class="block-row">
+                <dl class="pairs pairs--columns">
+                    <dt>{{ phrase('title') }}</dt>
+                    <dd>{$torrent.title}</dd>
+                    
+                    <dt>{{ phrase('xbt_uploader') }}</dt>
+                    <dd><xf:username user="$torrent.User" /></dd>
+                    
+                    <dt>{{ phrase('xbt_uploaded_on') }}</dt>
+                    <dd>{{ date_time($torrent.creation_date) }}</dd>
+                    
+                    <dt>{{ phrase('category') }}</dt>
+                    <dd>{$torrent.Category.title}</dd>
+                </dl>
+            </div>
+            
+            <xf:formrow label="{{ phrase('xbt_delete_file') }}:">
+                <xf:checkbox name="delete_file" value="1" checked="1">
+                    <xf:option value="1" label="{{ phrase('xbt_delete_torrent_file') }}" />
+                </xf:checkbox>
+                <div class="formRow-explain">{{ phrase('xbt_delete_torrent_file_explain') }}</div>
+            </xf:formrow>
+        </div>
+        
+        <xf:submitrow icon="delete" submit="{{ phrase('delete') }}" />
+    </div>
+    
+    <xf:redirect url="{{ link('torrents/torrents') }}" />
+</xf:form>
