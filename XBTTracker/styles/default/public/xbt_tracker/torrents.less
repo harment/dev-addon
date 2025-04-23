@@ -1,0 +1,193 @@
+// styles/default/public/xbt_tracker/torrents.less
+
+// Main torrent listing page
+.xbt-torrent-list {
+  .xbt-filters {
+    .xbt-card();
+    margin-bottom: @xbt-spacing-xl;
+    background-color: @xbt-light-bg;
+    
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: @xbt-spacing-md;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .filter-label {
+        width: 120px;
+        font-weight: bold;
+      }
+      
+      .filter-control {
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      .filter-buttons {
+        margin-left: auto;
+        margin-top: @xbt-spacing-md;
+      }
+    }
+  }
+  
+  .xbt-category-info {
+    .xbt-card();
+    
+    .category-title {
+      font-size: @xf-fontSizeLarger;
+      font-weight: bold;
+      margin-bottom: @xbt-spacing-md;
+    }
+    
+    .category-description {
+      color: @xf-textColorMuted;
+      margin-bottom: @xbt-spacing-md;
+    }
+    
+    .category-stats {
+      .xbt-stats();
+    }
+  }
+  
+  .xbt-torrents {
+    margin-top: @xbt-spacing-xl;
+    
+    .xbt-torrent-item {
+      .xbt-card();
+      display: flex;
+      position: relative;
+      padding: @xbt-spacing-lg;
+      
+      &:hover {
+        background-color: @xf-contentHighlightBg;
+      }
+      
+      .xbt-poster {
+        width: 80px;
+        margin-right: @xbt-spacing-lg;
+        
+        img {
+          max-width: 100%;
+          border-radius: @xbt-border-radius;
+          border: 1px solid @xbt-border;
+        }
+      }
+      
+      .xbt-torrent-info {
+        flex: 1;
+        min-width: 0; // Fix for text-overflow in flexbox
+        
+        .xbt-title {
+          font-size: @xf-fontSizeLarge;
+          font-weight: bold;
+          margin-bottom: @xbt-spacing-sm;
+          
+          a {
+            text-decoration: none;
+            color: @xbt-primary;
+          }
+          
+          .xbt-freeleech {
+            .xbt-freeleech-badge();
+          }
+        }
+        
+        .xbt-meta {
+          font-size: @xf-fontSizeSmaller;
+          color: @xf-textColorMuted;
+          margin-bottom: @xbt-spacing-md;
+          
+          > span {
+            margin-right: @xbt-spacing-md;
+          }
+        }
+        
+        .xbt-description {
+          margin-bottom: @xbt-spacing-md;
+          max-height: 60px;
+          overflow: hidden;
+          position: relative;
+          
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), @xf-contentBg);
+          }
+        }
+        
+        .xbt-torrent-stats {
+          .xbt-stats();
+        }
+      }
+      
+      .xbt-torrent-actions {
+        margin-left: @xbt-spacing-lg;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+    
+    .xbt-grid-view {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -@xbt-spacing-md;
+      
+      .xbt-torrent-card {
+        width: calc(33.333% - @xbt-spacing-xl);
+        margin: 0 @xbt-spacing-md @xbt-spacing-xl;
+        .xbt-card();
+        
+        .xbt-poster {
+          margin-bottom: @xbt-spacing-md;
+          position: relative;
+          
+          img {
+            width: 100%;
+            border-radius: @xbt-border-radius;
+          }
+          
+          .xbt-freeleech {
+            .xbt-freeleech-badge();
+            position: absolute;
+            top: @xbt-spacing-sm;
+            right: @xbt-spacing-sm;
+          }
+        }
+        
+        .xbt-card-info {
+          .xbt-title {
+            font-weight: bold;
+            margin-bottom: @xbt-spacing-sm;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          
+          .xbt-meta {
+            font-size: @xf-fontSizeSmaller;
+            color: @xf-textColorMuted;
+            margin-bottom: @xbt-spacing-md;
+          }
+          
+          .xbt-torrent-stats {
+            .xbt-stats();
+            font-size: @xf-fontSizeSmaller;
+          }
+        }
+      }
+    }
+  }
+  
+  .xbt-pagination {
+    margin: @xbt-spacing-xl 0;
+  }
+}

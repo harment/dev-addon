@@ -1,0 +1,72 @@
+// styles/default/admin/xbt_tracker/dashboard.less
+
+.xbtTracker-dashboard {
+  margin-bottom: 20px;
+  
+  .xbtTracker-stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+    
+    .xbtTracker-stat-card {
+      flex: 1 1 200px;
+      margin: 10px;
+      padding: 15px;
+      background-color: @xf-contentBg;
+      border: 1px solid @xf-borderColor;
+      border-radius: @xf-borderRadiusMedium;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      
+      &.torrents {
+        border-top: 3px solid #3498db;
+      }
+      
+      &.seeders {
+        border-top: 3px solid #2ecc71;
+      }
+      
+      &.leechers {
+        border-top: 3px solid #e74c3c;
+      }
+      
+      &.snatches {
+        border-top: 3px solid #f39c12;
+      }
+      
+      .stat-title {
+        font-size: @xf-fontSizeSmall;
+        color: @xf-textColorMuted;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+      
+      .stat-value {
+        font-size: @xf-fontSizeLargest;
+        font-weight: bold;
+        color: @xf-textColor;
+      }
+      
+      .stat-icon {
+        float: right;
+        font-size: 24px;
+        color: @xf-textColorMuted;
+        opacity: 0.7;
+      }
+    }
+  }
+  
+  .xbtTracker-chart-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: @xf-contentBg;
+    border: 1px solid @xf-borderColor;
+    border-radius: @xf-borderRadiusMedium;
+    
+    .chart-title {
+      font-size: @xf-fontSizeLarge;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid @xf-borderColorLight;
+    }
+  }
+}

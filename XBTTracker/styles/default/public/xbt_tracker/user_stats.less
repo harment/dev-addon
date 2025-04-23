@@ -1,0 +1,286 @@
+// styles/default/public/xbt_tracker/user_stats.less
+
+.block--xbtUserStats {
+  .xbt-user-stats {
+    .xbt-stat-section {
+      margin-bottom: @xbt-spacing-md;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .section-title {
+        font-size: @xf-fontSizeSmall;
+        color: @xf-textColorMuted;
+        margin-bottom: 2px;
+      }
+      
+      .section-content {
+        display: flex;
+        
+        .xbt-stat-item {
+          flex: 1;
+          
+          .xbt-stat-value {
+            font-weight: bold;
+            
+            &.ratio-good {
+              color: @xbt-success;
+            }
+            
+            &.ratio-warning {
+              color: darken(#f39c12, 5%);
+            }
+            
+            &.ratio-bad {
+              color: @xbt-warning;
+            }
+          }
+          
+          .xbt-stat-label {
+            font-size: @xf-fontSizeSmaller;
+            color: @xf-textColorMuted;
+          }
+        }
+      }
+    }
+    
+    .xbt-progress-section {
+      margin-top: @xbt-spacing-md;
+      
+      .progress-title {
+        display: flex;
+        justify-content: space-between;
+        font-size: @xf-fontSizeSmaller;
+        margin-bottom: 2px;
+        
+        .ratio-target {
+          color: @xf-textColorMuted;
+        }
+      }
+      
+      .xbt-progress-bar {
+        height: 6px;
+        background-color: @xbt-light-bg;
+        border-radius: 3px;
+        overflow: hidden;
+        
+        .progress-fill {
+          height: 100%;
+          background-color: @xbt-primary;
+          border-radius: 3px;
+          
+          &.warning {
+            background-color: darken(#f39c12, 5%);
+          }
+          
+          &.danger {
+            background-color: @xbt-warning;
+          }
+        }
+      }
+    }
+    
+    .xbt-warnings {
+      margin-top: @xbt-spacing-md;
+      
+      .warning-count {
+        padding: @xbt-spacing-sm @xbt-spacing-md;
+        background-color: rgba(red(@xbt-warning), green(@xbt-warning), blue(@xbt-warning), 0.1);
+        border-radius: @xbt-border-radius;
+        color: @xbt-warning;
+        font-weight: bold;
+        font-size: @xf-fontSizeSmaller;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// styles/default/public/xbt_tracker/user_stats.less (continuación)
+
+.xbt-user-page {
+  .xbt-user-header {
+    .xbt-card();
+    display: flex;
+    align-items: center;
+    
+    .avatar {
+      margin-right: @xbt-spacing-xl;
+    }
+    
+    .xbt-user-info {
+      flex: 1;
+      
+      .username {
+        font-size: @xf-fontSizeLarger;
+        font-weight: bold;
+        margin-bottom: @xbt-spacing-sm;
+      }
+      
+      .xbt-stats-overview {
+        display: flex;
+        
+        .xbt-stat-group {
+          margin-right: @xbt-spacing-xl;
+          
+          .stat-label {
+            font-size: @xf-fontSizeSmaller;
+            color: @xf-textColorMuted;
+          }
+          
+          .stat-value {
+            font-weight: bold;
+            
+            &.ratio-good {
+              color: @xbt-success;
+            }
+            
+            &.ratio-warning {
+              color: darken(#f39c12, 5%);
+            }
+            
+            &.ratio-bad {
+              color: @xbt-warning;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .xbt-user-content {
+    display: flex;
+    margin-top: @xbt-spacing-xl;
+    
+    .xbt-main-content {
+      flex: 1;
+      margin-right: @xbt-spacing-xl;
+    }
+    
+    .xbt-sidebar {
+      width: 300px;
+      
+      .xbt-bonus-points {
+        .xbt-card();
+        
+        .block-header {
+          margin: -@xbt-spacing-lg -@xbt-spacing-lg @xbt-spacing-lg;
+          padding: @xbt-spacing-md @xbt-spacing-lg;
+          border-bottom: 1px solid @xbt-border;
+          font-size: @xf-fontSizeLarge;
+          font-weight: bold;
+        }
+        
+        .bonus-balance {
+          text-align: center;
+          margin-bottom: @xbt-spacing-lg;
+          
+          .balance-value {
+            font-size: @xf-fontSizeLargest;
+            font-weight: bold;
+            color: @xbt-success;
+          }
+          
+          .balance-label {
+            color: @xf-textColorMuted;
+          }
+        }
+        
+        .bonus-actions {
+          .button {
+            width: 100%;
+            margin-bottom: @xbt-spacing-md;
+          }
+        }
+      }
+      
+      .xbt-active-torrents {
+        .xbt-card();
+        margin-top: @xbt-spacing-xl;
+        
+        .block-header {
+          margin: -@xbt-spacing-lg -@xbt-spacing-lg @xbt-spacing-lg;
+          padding: @xbt-spacing-md @xbt-spacing-lg;
+          border-bottom: 1px solid @xbt-border;
+          font-size: @xf-fontSizeLarge;
+          font-weight: bold;
+        }
+        
+        .active-torrent {
+          padding: @xbt-spacing-md 0;
+          border-bottom: 1px solid @xbt-border;
+          
+          &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+          }
+          
+          .torrent-info {
+            display: flex;
+            align-items: center;
+            
+            .torrent-icon {
+              margin-right: @xbt-spacing-md;
+              color: @xf-textColorMuted;
+              font-size: @xf-fontSizeLarge;
+              
+              &.seeding {
+                color: @xbt-success;
+              }
+              
+              &.leeching {
+                color: @xbt-warning;
+              }
+            }
+            
+            .torrent-details {
+              flex: 1;
+              
+              .torrent-title {
+                font-weight: bold;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+              
+              .torrent-progress {
+                margin-top: @xbt-spacing-sm;
+                height: 4px;
+                background-color: @xbt-light-bg;
+                border-radius: 2px;
+                
+                .progress-fill {
+                  height: 100%;
+                  background-color: @xbt-primary;
+                  border-radius: 2px;
+                }
+              }
+              
+              .torrent-stats {
+                font-size: @xf-fontSizeSmaller;
+                color: @xf-textColorMuted;
+                margin-top: 2px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: @xf-responsiveMedium) {
+    .xbt-user-content {
+      flex-direction: column;
+      
+      .xbt-main-content {
+        margin-right: 0;
+        margin-bottom: @xbt-spacing-xl;
+      }
+      
+      .xbt-sidebar {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- src/addons/Harment/XBTTracker/addon.xml -->
+<addon addon_id="Harment/XBTTracker" title="XBT Torrent Tracker Integration" version_string="1.0.0" version_id="1" url="http://arabicsource.ddns.net/" install_callback_class="Harment\XBTTracker\Install" install_callback_method="install" uninstall_callback_class="Harment\XBTTracker\Install" uninstall_callback_method="uninstall">
+  <extra_args/>
+  <custom_ini/>
+  <require>XF</require>
+  <composer_autoload>vendor/autoload.php</composer_autoload>
+  <icon>fa-magnet</icon>
+  <options>
+    <option option_id="xbtTrackerAnnounceURL" edit_format="textbox" data_type="string" display_order="1">
+      <default_value>http://arabicsource.ddns.net:2710/announce</default_value>
+      <relation group_id="xbtTracker" display_order="1"/>
+    </option>
+    <option option_id="xbtTrackerRequiredRatio" edit_format="spinbox" data_type="float" display_order="10">
+      <default_value>0.7</default_value>
+      <relation group_id="xbtTracker" display_order="10"/>
+    </option>
+    <option option_id="xbtTrackerRatioExemptGroups" edit_format="callback" data_type="array" edit_format_params="Option\UserGroupChooser::renderOption" display_order="20">
+      <default_value>[]</default_value>
+      <relation group_id="xbtTracker" display_order="20"/>
+    </option>
+    <option option_id="xbtTrackerHitAndRunHours" edit_format="spinbox" data_type="integer" display_order="30">
+      <default_value>72</default_value>
+      <relation group_id="xbtTracker" display_order="30"/>
+    </option>
+    <option option_id="xbtTrackerTorrentPath" edit_format="textbox" data_type="string" display_order="40">
+      <default_value>data/torrents</default_value>
+      <relation group_id="xbtTracker" display_order="40"/>
+    </option>
+    <option option_id="xbtTrackerTmdbApiKey" edit_format="textbox" data_type="string" display_order="50">
+      <default_value></default_value>
+      <relation group_id="xbtTracker" display_order="50"/>
+    </option>
+    <option option_id="xbtTrackerGlobalFreeleech" edit_format="onoff" data_type="boolean" display_order="60">
+      <default_value>0</default_value>
+      <relation group_id="xbtTracker" display_order="60"/>
+    </option>
+    <option option_id="xbtTrackerForceThankYou" edit_format="onoff" data_type="boolean" display_order="70">
+      <default_value>0</default_value>
+      <relation group_id="xbtTracker" display_order="70"/>
+    </option>
+    <option option_id="xbtTrackerAutoUpdateStats" edit_format="onoff" data_type="boolean" display_order="80">
+      <default_value>1</default_value>
+      <relation group_id="xbtTracker" display_order="80"/>
+    </option>
+    <option option_id="xbtTrackerBonusPointsPerHour" edit_format="spinbox" data_type="integer" display_order="90">
+      <default_value>5</default_value>
+      <relation group_id="xbtTracker" display_order="90"/>
+    </option>
+  </options>
+  <permissions>
+    <permission_groups>
+      <permission_group permission_group_id="xbtTracker"/>
+    </permission_groups>
+    <permissions>
+      <permission permission_id="view" permission_type="flag" permission_group_id="xbtTracker" display_order="1"/>
+      <permission permission_id="download" permission_type="flag" permission_group_id="xbtTracker" display_order="10"/>
+      <permission permission_id="upload" permission_type="flag" permission_group_id="xbtTracker" display_order="20"/>
+      <permission permission_id="edit" permission_type="flag" permission_group_id="xbtTracker" display_order="30"/>
+      <permission permission_id="delete" permission_type="flag" permission_group_id="xbtTracker" display_order="40"/>
+      <permission permission_id="moderateTorrents" permission_type="flag" permission_group_id="xbtTracker" display_order="50"/>
+    </permissions>
+    <interface_groups>
+      <interface_group interface_group_id="xbtTracker" display_order="10"/>
+    </interface_groups>
+  </permissions>
+  <phrases>
+    <phrase title="admin_navigation.xbtTracker">XBT Tracker</phrase>
+    <phrase title="option_group.xbtTracker">XBT Torrent Tracker</phrase>
+    <phrase title="option_group_description.xbtTracker">Configure the XBT Torrent Tracker integration options.</phrase>
+    <phrase title="option.xbtTrackerAnnounceURL">Tracker Announce URL</phrase>
+    <phrase title="option_explain.xbtTrackerAnnounceURL">The announce URL for the XBT Tracker (including port number).</phrase>
+    <phrase title="option.xbtTrackerRequiredRatio">Required Ratio</phrase>
+    <phrase title="option_explain.xbtTrackerRequiredRatio">The minimum ratio required to download torrents (0 to disable).</phrase>
+    <phrase title="option.xbtTrackerRatioExemptGroups">Ratio Exempt Groups</phrase>
+    <phrase title="option_explain.xbtTrackerRatioExemptGroups">User groups that are exempt from ratio requirements.</phrase>
+    <phrase title="option.xbtTrackerHitAndRunHours">Hit and Run Hours</phrase>
+    <phrase title="option_explain.xbtTrackerHitAndRunHours">Number of hours a user must seed a torrent after completion (0 to disable).</phrase>
+    <phrase title="option.xbtTrackerTorrentPath">Torrent Files Path</phrase>
+    <phrase title="option_explain.xbtTrackerTorrentPath">Path where torrent files will be stored (relative to XF root).</phrase>
+    <phrase title="option.xbtTrackerTmdbApiKey">TMDB API Key</phrase>
+    <phrase title="option_explain.xbtTrackerTmdbApiKey">API key for The Movie Database integration.</phrase>
+    <phrase title="option.xbtTrackerGlobalFreeleech">Enable Global Freeleech</phrase>
+    <phrase title="option_explain.xbtTrackerGlobalFreeleech">If enabled, downloads will not count against user ratio.</phrase>
+    <phrase title="option.xbtTrackerForceThankYou">Force Thank You for Download</phrase>
+    <phrase title="option_explain.xbtTrackerForceThankYou">If enabled, users must thank the uploader before downloading.</phrase>
+    <phrase title="option.xbtTrackerAutoUpdateStats">Auto Update Stats</phrase>
+    <phrase title="option_explain.xbtTrackerAutoUpdateStats">Automatically update tracker and user statistics.</phrase>
+    <phrase title="option.xbtTrackerBonusPointsPerHour">Bonus Points Per Hour</phrase>
+    <phrase title="option_explain.xbtTrackerBonusPointsPerHour">Number of bonus points to award per hour of seeding.</phrase>
+    <phrase title="permission_group.xbtTracker">XBT Torrent Tracker</phrase>
+    <phrase title="permission_interface.xbtTracker">XBT Torrent Tracker</phrase>
+    <phrase title="permission.xbtTracker_view">View torrents</phrase>
+    <phrase title="permission.xbtTracker_download">Download torrents</phrase>
+    <phrase title="permission.xbtTracker_upload">Upload torrents</phrase>
+    <phrase title="permission.xbtTracker_edit">Edit own torrents</phrase>
+    <phrase title="permission.xbtTracker_delete">Delete own torrents</phrase>
+    <phrase title="permission.xbtTracker_moderateTorrents">Moderate torrents</phrase>
+    <phrase title="xbt_requested_torrent_not_found">The requested torrent could not be found.</phrase>
+    <phrase title="xbt_torrent_file_required">A torrent file is required.</phrase>
+    <phrase title="xbt_torrent_title_required">A title is required for this torrent.</phrase>
+    <phrase title="xbt_torrent_category_required">Please select a category for this torrent.</phrase>
+    <phrase title="xbt_error_saving_torrent_file">Error saving torrent file. Please try again later.</phrase>
+    <phrase title="xbt_invalid_torrent_file_extension">Invalid torrent file extension. Only .torrent files are allowed.</phrase>
+    <phrase title="xbt_invalid_torrent_file_format">Invalid torrent file format.</phrase>
+    <phrase title="xbt_invalid_torrent_file_missing_info">Invalid torrent file. Missing info section.</phrase>
+    <phrase title="xbt_poster_file_invalid">The uploaded poster file is invalid.</phrase>
+    <phrase title="xbt_invalid_poster_file_extension">Invalid poster file extension. Only jpg, jpeg, png and gif files are allowed.</phrase>
+    <phrase title="xbt_tmdb_search_query_required">Please enter a search query.</phrase>
+    <phrase title="xbt_tmdb_id_required">TMDB ID is required.</phrase>
+    <phrase title="xbt_tracker_stats">Tracker Statistics</phrase>
+    <phrase title="xbt_tracker_status">Tracker Status</phrase>
+    <phrase title="xbt_seeders">Seeders</phrase>
+    <phrase title="xbt_leechers">Leechers</phrase>
+    <phrase title="xbt_peers">Peers</phrase>
+    <phrase title="xbt_snatches">Completed</phrase>
+    <phrase title="xbt_torrents">Torrents</phrase>
+    <phrase title="xbt_torrent_details">Torrent Details</phrase>
+    <phrase title="xbt_upload_torrent">Upload Torrent</phrase>
+    <phrase title="xbt_torrent_list">Torrents</phrase>
+    <phrase title="xbt_latest_torrents">Latest Torrents</phrase>
+    <phrase title="xbt_most_downloaded">Most Downloaded</phrase>
+    <phrase title="xbt_most_seeded">Most Seeded</phrase>
+    <phrase title="xbt_most_viewed">Most Viewed</phrase>
+    <phrase title="xbt_ratio_too_low">Your ratio is too low to download this torrent.</phrase>
+    <phrase title="xbt_hit_and_run_warning">You have been warned for a hit and run on '{title}'.</phrase>
+    <phrase title="xbt_search_torrents">Search Torrents</phrase>
+    <phrase title="xbt_quality">Quality</phrase>
+    <phrase title="xbt_audio">Audio</phrase>
+    <phrase title="xbt_channels">Channels</phrase>
+    <phrase title="xbt_status">Status</phrase>
+    <phrase title="xbt_sort_by">Sort by</phrase>
+    <phrase title="xbt_user_stats">User Statistics</phrase>
+    <phrase title="xbt_uploaded">Uploaded</phrase>
+    <phrase title="xbt_downloaded">Downloaded</phrase>
+    <phrase title="xbt_ratio">Ratio</phrase>
+    <phrase title="xbt_bonus_points">Bonus Points</phrase>
+    <phrase title="xbt_active_seeds">Active Seeds</phrase>
+    <phrase title="xbt_active_downloads">Active Downloads</phrase>
+    <phrase title="xbt_warnings">Warnings</phrase>
+    <phrase title="xbt_download_torrent">Download Torrent</phrase>
+    <phrase title="xbt_thank_to_download">Thank the uploader to download</phrase>
+    <phrase title="xbt_freeleech">Freeleech</phrase>
+    <phrase title="xbt_size">Size</phrase>
+    <phrase title="xbt_uploaded_by">Uploaded by</phrase>
+    <phrase title="xbt_uploaded_on">Uploaded on</phrase>
+    <phrase title="xbt_completed_downloads">Completed downloads</phrase>
+    <phrase title="xbt_tmdb_information">TMDB Information</phrase>
+    <phrase title="xbt_search_tmdb">Search TMDB</phrase>
+    <phrase title="xbt_tmdb_not_found">No TMDB information found.</phrase>
+    <phrase title="xbt_cast">Cast</phrase>
+    <phrase title="xbt_crew">Crew</phrase>
+    <phrase title="xbt_release_date">Release Date</phrase>
+    <phrase title="xbt_vote_average">Vote Average</phrase>
+    <phrase title="xbt_no_torrents_found">No torrents found.</phrase>
+    <phrase title="xbt_no_info_hash_provided">No torrent info hash provided.</phrase>
+    <phrase title="xbt_torrent_not_found">The requested torrent could not be found.</phrase>
+    <phrase title="xbt_account_tracker">Tracker Account</phrase>
+    <phrase title="xbt_passkey">Passkey</phrase>
+    <phrase title="xbt_passkey_explain">Your unique tracker passkey is used to identify you when downloading torrents.</phrase>
+    <phrase title="xbt_your_stats">Your Statistics</phrase>
+    <phrase title="xbt_active_torrents">Active Torrents</phrase>
+    <phrase title="xbt_announce_url">Announce URL</phrase>
+    <phrase title="xbt_regenerate_passkey">Regenerate Passkey</phrase>
+    <phrase title="xbt_regenerate_passkey_warning">Warning: Regenerating your passkey will cause all your existing torrents to stop working until you update them with the new passkey.</phrase>
+    <phrase title="xbt_regenerate_passkey_explanation">Once a new passkey is created, you'll need to re-download or update all your torrent files to resume downloading and seeding. Are you sure you want to proceed?</phrase>
+    <phrase title="xbt_generate_passkey_confirm">Are you sure you want to generate a new passkey for user {name}?</phrase>
+    <phrase title="xbt_delete_torrent_confirm">Are you sure you want to delete the torrent "{name}"?</phrase>
+    <phrase title="xbt_dashboard">Tracker Dashboard</phrase>
+    <phrase title="xbt_statistics">Statistics</phrase>
+    <phrase title="xbt_connected">Connected</phrase>
+    <phrase title="xbt_disconnected">Disconnected</phrase>
+    <phrase title="xbt_database">Database</phrase>
+    <phrase title="xbt_version">Version</phrase>
+    <phrase title="xbt_total_torrents">Total Torrents</phrase>
+    <phrase title="xbt_total_peers">Total Peers</phrase>
+    <phrase title="xbt_total_seeders">Total Seeders</phrase>
+    <phrase title="xbt_total_leechers">Total Leechers</phrase>
+    <phrase title="xbt_users_with_passkeys">Users with Passkeys</phrase>
+    <phrase title="xbt_downloaded_today">Downloaded Today</phrase>
+    <phrase title="xbt_uploaded_today">Uploaded Today</phrase>
+    <phrase title="xbt_last_updated">Last Updated</phrase>
+    <phrase title="xbt_info_hash">Info Hash</phrase>
+    <phrase title="xbt_info_hash_explain">The SHA-1 hash that uniquely identifies this torrent.</phrase>
+    <phrase title="xbt_add_torrent">Add Torrent</phrase>
+    <phrase title="xbt_edit_torrent">Edit Torrent</phrase>
+    <phrase title="xbt_torrent_file">Torrent File</phrase>
+    <phrase title="xbt_torrent_file_explain">Upload a .torrent file to add to the tracker.</phrase>
+    <phrase title="xbt_generate_new">Generate New</phrase>
+    <phrase title="xbt_users">Users</phrase>
+    <phrase title="xbt_reset_passkey">Reset Passkey</phrase>
+    <phrase title="xbt_reset_passkey_warning">Warning: Resetting this user's passkey will cause all their existing torrents to stop working until they update with the new passkey.</phrase>
+    <phrase title="xbt_reset_passkey_confirm">Are you sure you want to reset the passkey for user {name}?</phrase>
+    <phrase title="xbt_categories">Categories</phrase>
+    <phrase title="xbt_add_category">Add Category</phrase>
+    <phrase title="xbt_edit_category">Edit Category</phrase>
+    <phrase title="xbt_category_icon">Category Icon</phrase>
+    <phrase title="xbt_category_icon_explain">Upload an icon image for this category.</phrase>
+    <phrase title="xbt_delete_category_confirm">Are you sure you want to delete the category "{title}"?</phrase>
+    <phrase title="xbt_delete_category_has_torrents_warning">This category contains {count} torrents. What would you like to do with these torrents?</phrase>
+    <phrase title="xbt_reassign_torrents_to_category">Reassign torrents to category</phrase>
+    <phrase title="xbt_do_not_reassign_delete_torrents">Do not reassign (delete torrents)</phrase>
+    <phrase title="xbt_edit_user_stats">Edit User Stats</phrase>
+    <phrase title="xbt_current">Current</phrase>
+    <phrase title="xbt_added">Added</phrase>
+    <phrase title="xbt_completed">Completed</phrase>
+  </phrases>
+  <class_extensions>
+    <extension from="XF\Entity\User" to="Harment\XBTTracker\XF\Entity\User" />
+  </class_extensions>
+  <route_prefixes>
+    <route_type type="public">
+      <prefix>torrents</prefix>
+    </route_type>
+    <route_type type="admin">
+      <prefix>torrents</prefix>
+    </route_type>
+  </route_prefixes>
+  <navigation>
+    <navigation_entry navigation_id="torrents" parent_navigation_id="forums" display_order="110" link="torrents" icon="fa-magnet" admin_permission="xbtTracker"/>
+    <navigation_entry navigation_id="uploadTorrent" parent_navigation_id="torrents" display_order="120" link="torrents/upload" icon="fa-upload" admin_permission="xbtTracker"/>
+  </navigation>
+  <admin_navigation>
+    <navigation_entry navigation_id="xbtTracker" parent_navigation_id="" display_order="110" link="tracker" icon="fa-magnet" admin_permission="xbtTracker"/>
+    <navigation_entry navigation_id="xbtTorrents" parent_navigation_id="xbtTracker" display_order="110" link="tracker/torrents" icon="fa-list" admin_permission="xbtTracker"/>
+    <navigation_entry navigation_id="xbtCategories" parent_navigation_id="xbtTracker" display_order="120" link="tracker/categories" icon="fa-folder" admin_permission="xbtTracker"/>
+    <navigation_entry navigation_id="xbtUserStats" parent_navigation_id="xbtTracker" display_order="130" link="tracker/users" icon="fa-user-chart" admin_permission="xbtTracker"/>
+    <navigation_entry navigation_id="xbtSettings" parent_navigation_id="xbtTracker" display_order="140" link="tracker/settings" icon="fa-cog" admin_permission="xbtTracker"/>
+  </admin_navigation>
+  <code_event_listeners>
+    <listener event_id="app_setup" callback_class="Harment\XBTTracker\Listener" callback_method="appSetup" active="1"/>
+    <listener event_id="entity_structure" callback_class="Harment\XBTTracker\Listener" callback_method="entityStructure" active="1"/>
+    <listener event_id="navigation_tabs" callback_class="Harment\XBTTracker\Listener" callback_method="navigationTabs" active="1"/>
+    <listener event_id="template_hook" callback_class="Harment\XBTTracker\Listener" callback_method="templateHook" active="1"/>
+  </code_event_listeners>
+  <cron>
+    <entry entry_id="xbtUpdateStats" cron_class="Harment\XBTTracker\Cron\UpdateStats" cron_method="updateStats" active="1">
+      <minute>*/15</minute>
+      <hour>*</hour>
+      <day>*</day>
+      <month>*</month>
+      <day_of_week>*</day_of_week>
+    </entry>
+    <entry entry_id="xbtCheckHitAndRun" cron_class="Harment\XBTTracker\Cron\HitAndRun" cron_method="checkHitAndRun" active="1">
+      <minute>0</minute>
+      <hour>*/6</hour>
+      <day>*</day>
+      <month>*</month>
+      <day_of_week>*</day_of_week>
+    </entry>
+    <entry entry_id="xbtAwardBonusPoints" cron_class="Harment\XBTTracker\Cron\BonusPoints" cron_method="awardBonusPoints" active="1">
+      <minute>0</minute>
+      <hour>*</hour>
+      <day>*</day>
+      <month>*</month>
+      <day_of_week>*</day_of_week>
+    </entry>
+  </cron>
+  <templates>
+  
+    <template type="public" title="xbt_torrent_view" template_file="public/xbt_torrent_view.html"/>
+    <template type="public" title="xbt_torrent_upload" template_file="public/xbt_torrent_upload.html"/>
+    <template type="public" title="xbt_tmdb_info" template_file="public/xbt_tmdb_info.html"/>
+    <template type="public" title="xbt_forum_torrents" template_file="public/xbt_forum_torrents.html"/>
+    <template type="public" title="xbt_torrent_edit" template_file="public/xbt_torrent_edit.html"/>
+    <template type="public" title="xbt_tmdb_search_results" template_file="public/xbt_tmdb_search_results.html"/>
+    <template type="public" title="xbt_widget_top_torrents" template_file="public/xbt_widget_top_torrents.html"/>
+    <template type="public" title="xbt_widget_user_stats" template_file="public/xbt_widget_user_stats.html"/>
+    <template type="public" title="xbt_widget_latest_torrents" template_file="public/xbt_widget_latest_torrents.html"/>
+    <template type="public" title="xbt_widget_tracker_stats" template_file="public/xbt_widget_tracker_stats.html"/>
+    <template type="public" title="xbt_torrent_delete" template_file="public/xbt_torrent_delete.html"/>
+    <template type="public" title="xbt_forum_tab" template_file="public/xbt_forum_tab.html"/>
+    <template type="public" title="xbt_account_tracker" template_file="public/xbt_account_tracker.html"/>
+    <template type="public" title="xbt_tracker_stats" template_file="public/xbt_tracker_stats.html"/>
+    <template type="public" title="xbt_bb_code_torrent" template_file="public/xbt_bb_code_torrent.html"/>
+    <template type="public" title="xbt_regenerate_passkey" template_file="public/xbt_regenerate_passkey.html"/>
+    <template type="public" title="xbt_announce_php" template_file="public/xbt_announce_php.html"/>
+    <template type="public" title="xbt_torrents" template_file="public/xbt_torrents.html"/>
+    <template type="public" title="xbt_torrent_details" template_file="public/xbt_torrent_details.html"/>
+    <template type="email" title="xbt_bonus_notification" template_file="email/xbt_bonus_notification.html"/>
+    <template type="email" title="xbt_hit_and_run_warning" template_file="email/xbt_hit_and_run_warning.html"/>
+    
+    <template type="admin" title="xbt_admin_categories" template_file="admin/xbt_admin_categories.html"/>
+    <template type="admin" title="xbt_admin_category_add" template_file="admin/xbt_admin_category_add.html"/>
+    <template type="admin" title="xbt_admin_category_delete" template_file="admin/xbt_admin_category_delete.html"/>
+    <template type="admin" title="xbt_admin_category_edit" template_file="admin/xbt_admin_category_edit.html"/>
+    <template type="admin" title="xbt_dashboard" template_file="admin/xbt_dashboard.html"/>
+    <template type="admin" title="xbt_torrent_delete" template_file="admin/xbt_torrent_delete.html"/>
+    <template type="admin" title="xbt_torrent_edit" template_file="admin/xbt_torrent_edit.html"/>
+    <template type="admin" title="xbt_admin_torrents" template_file="admin/xbt_admin_torrents.html"/>
+    <template type="admin" title="xbt_admin_user_stats" template_file="admin/xbt_admin_user_stats.html"/>
+    <template type="admin" title="xbt_admin_user_stats_edit" template_file="admin/xbt_admin_user_stats_edit.html"/>
+    <template type="admin" title="xbt_admin_user_stats_reset_passkey" template_file="admin/xbt_admin_user_stats_reset_passkey.html"/>
+    <template type="admin" title="xbt_user_edit_tab" template_file="admin/xbt_user_edit_tab.html"/>
+    <template type="admin" title="xbt_generate_passkey" template_file="admin/xbt_generate_passkey.html"/>
+    <template type="admin" title="xbt_torrent_add" template_file="admin/xbt_torrent_add.html"/>
+    <template type="admin" title="xbt_admin_users" template_file="admin/xbt_admin_users.html"/>
+  </templates>
+  <widget_definitions>
+    <widget_definition definition_id="xbt_latest_torrents" definition_class="Harment\XBTTracker\Widget\LatestTorrents"/>
+    <widget_definition definition_id="xbt_tracker_stats" definition_class="Harment\XBTTracker\Widget\TrackerStats"/>
+    <widget_definition definition_id="xbt_top_torrents" definition_class="Harment\XBTTracker\Widget\TopTorrents"/>
+    <widget_definition definition_id="xbt_user_stats" definition_class="Harment\XBTTracker\Widget\UserStats"/>
+  </widget_definitions>
+  <style title="XBT Tracker" version_string="1.0.0" version_id="1">
+      <templates>
+      <template type="public" title="xbt_tracker_less" addon_id="Harment/XBTTracker">
+        @import url('xbt_tracker/variables.less');
+        @import url('xbt_tracker/torrents.less');
+        @import url('xbt_tracker/torrent_view.less');
+        @import url('xbt_tracker/upload.less');
+        @import url('xbt_tracker/widgets.less');
+        @import url('xbt_tracker/user_stats.less');
+        @import url('xbt_tracker/tmdb.less');
+      </template>
+      <template type="admin" title="xbt_tracker_admin_less" addon_id="Harment/XBTTracker">
+        @import url('xbt_tracker/dashboard.less');
+        @import url('xbt_tracker/torrents.less');
+        @import url('xbt_tracker/categories.less');
+        @import url('xbt_tracker/user_stats.less');
+        @import url('xbt_tracker/settings.less');
+      </template>
+    </templates>
+  </style>
+</addon>

@@ -1,0 +1,148 @@
+// styles/default/public/xbt_tracker/upload.less
+
+.xbt-upload {
+  .xbt-card();
+  
+  .block-header {
+    margin: -@xbt-spacing-lg -@xbt-spacing-lg @xbt-spacing-lg;
+    padding: @xbt-spacing-md @xbt-spacing-lg;
+    border-bottom: 1px solid @xbt-border;
+    font-size: @xf-fontSizeLarge;
+    font-weight: bold;
+  }
+  
+  .upload-section {
+    margin-bottom: @xbt-spacing-xl;
+    
+    .section-title {
+      font-size: @xf-fontSizeLarge;
+      font-weight: bold;
+      margin-bottom: @xbt-spacing-md;
+      padding-bottom: @xbt-spacing-sm;
+      border-bottom: 1px solid @xbt-border;
+    }
+    
+    .section-description {
+      margin-bottom: @xbt-spacing-md;
+      color: @xf-textColorMuted;
+    }
+  }
+  
+  .upload-torrent-section {
+    border: 2px dashed @xbt-border;
+    padding: @xbt-spacing-xl;
+    text-align: center;
+    margin-bottom: @xbt-spacing-xl;
+    border-radius: @xbt-border-radius;
+    
+    .upload-icon {
+      font-size: 48px;
+      color: @xf-textColorMuted;
+      margin-bottom: @xbt-spacing-md;
+    }
+    
+    .upload-title {
+      font-size: @xf-fontSizeLarge;
+      font-weight: bold;
+      margin-bottom: @xbt-spacing-md;
+    }
+    
+    .upload-description {
+      margin-bottom: @xbt-spacing-lg;
+      color: @xf-textColorMuted;
+    }
+    
+    &.upload-active {
+      border-color: @xbt-primary;
+      background-color: rgba(red(@xbt-primary), green(@xbt-primary), blue(@xbt-primary), 0.05);
+    }
+  }
+  
+  .tmdb-search-section {
+    margin-bottom: @xbt-spacing-xl;
+    
+    .tmdb-search-form {
+      display: flex;
+      
+      .tmdb-search-input {
+        flex: 1;
+        margin-right: @xbt-spacing-md;
+      }
+    }
+    
+    .tmdb-results {
+      margin-top: @xbt-spacing-lg;
+      max-height: 300px;
+      overflow-y: auto;
+      
+      .tmdb-item {
+        display: flex;
+        padding: @xbt-spacing-md;
+        border: 1px solid @xbt-border;
+        border-radius: @xbt-border-radius;
+        margin-bottom: @xbt-spacing-md;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: @xbt-light-bg;
+          border-color: @xbt-primary;
+        }
+        
+        .tmdb-poster {
+          width: 60px;
+          margin-right: @xbt-spacing-md;
+          
+          img {
+            max-width: 100%;
+            border-radius: @xbt-border-radius;
+          }
+        }
+        
+        .tmdb-info {
+          flex: 1;
+          
+          .tmdb-title {
+            font-weight: bold;
+            margin-bottom: @xbt-spacing-sm;
+          }
+          
+          .tmdb-year {
+            font-size: @xf-fontSizeSmaller;
+            color: @xf-textColorMuted;
+          }
+          
+          .tmdb-overview {
+            font-size: @xf-fontSizeSmall;
+            margin-top: @xbt-spacing-sm;
+            color: @xf-textColorMuted;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+          }
+        }
+        
+        .tmdb-select {
+          display: flex;
+          align-items: center;
+          margin-left: @xbt-spacing-md;
+        }
+      }
+    }
+  }
+  
+  .upload-warning {
+    background-color: rgba(red(@xbt-warning), green(@xbt-warning), blue(@xbt-warning), 0.1);
+    border: 1px solid @xbt-warning;
+    color: @xbt-warning;
+    padding: @xbt-spacing-md;
+    border-radius: @xbt-border-radius;
+    margin-bottom: @xbt-spacing-xl;
+    
+    .warning-title {
+      font-weight: bold;
+      margin-bottom: @xbt-spacing-sm;
+    }
+  }
+}

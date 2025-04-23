@@ -1,0 +1,66 @@
+// styles/default/admin/xbt_tracker_admin.less
+
+// استيراد جميع ملفات LESS للوحة التحكم
+@import url('xbt_tracker/dashboard.less');
+@import url('xbt_tracker/torrents.less');
+@import url('xbt_tracker/categories.less');
+@import url('xbt_tracker/user-stats.less');
+@import url('xbt_tracker/settings.less');
+
+// أنماط عامة للإضافة في لوحة التحكم
+.xbtTracker {
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .section-title {
+      flex: 1;
+    }
+    
+    .section-actions {
+      display: flex;
+      
+      .button {
+        margin-left: 10px;
+      }
+    }
+  }
+  
+  .info-block {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: @xf-contentHighlightBg;
+    border: 1px solid @xf-borderColor;
+    border-radius: @xf-borderRadiusMedium;
+    
+    &.info {
+      background-color: fade(#3498db, 10%);
+      border-color: #3498db;
+    }
+    
+    &.success {
+      background-color: fade(#2ecc71, 10%);
+      border-color: #2ecc71;
+    }
+    
+    &.warning {
+      background-color: fade(#f39c12, 10%);
+      border-color: #f39c12;
+    }
+    
+    &.error {
+      background-color: fade(#e74c3c, 10%);
+      border-color: #e74c3c;
+    }
+    
+    .block-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  }
+  
+  .pagination-wrapper {
+    margin: 20px 0;
+  }
+}

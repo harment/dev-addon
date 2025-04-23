@@ -1,0 +1,48 @@
+// styles/default/admin/xbt_tracker/settings.less
+
+.xbtTracker-settings {
+  .settings-group {
+    margin-bottom: 30px;
+    
+    .group-header {
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid @xf-borderColor;
+      font-size: @xf-fontSizeLarge;
+      font-weight: bold;
+    }
+    
+    .group-description {
+      margin-bottom: 15px;
+      color: @xf-textColorMuted;
+    }
+  }
+  
+  .test-connection {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: @xf-contentHighlightBg;
+    border: 1px solid @xf-borderColor;
+    border-radius: @xf-borderRadiusMedium;
+    
+    .connection-status {
+      margin-bottom: 10px;
+      
+      &.online {
+        color: #2ecc71;
+      }
+      
+      &.offline {
+        color: #e74c3c;
+      }
+    }
+  }
+  
+  .tmdb-test {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: @xf-contentHighlightBg;
+    border: 1px solid @xf-borderColor;
+    border-radius: @xf-borderRadiusMedium;
+  }
+}

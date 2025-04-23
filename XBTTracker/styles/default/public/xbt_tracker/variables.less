@@ -1,0 +1,57 @@
+// styles/default/public/xbt_tracker/variables.less
+
+// Colors
+@xbt-primary: @xf-textLink; 
+@xbt-secondary: @xbt-primary; 
+@xbt-warning: #e74c3c;
+@xbt-success: #2ecc71;
+@xbt-info: #3498db;
+@xbt-border: @xf-borderColor;
+@xbt-light-bg: @xf-contentAltBg;
+
+// Sizes
+@xbt-border-radius: @xf-borderRadiusMedium;
+@xbt-spacing-sm: 5px;
+@xbt-spacing-md: 10px;
+@xbt-spacing-lg: 15px;
+@xbt-spacing-xl: 20px;
+
+// Mixins
+.xbt-card() {
+  background-color: @xf-contentBg;
+  border: 1px solid @xbt-border;
+  border-radius: @xbt-border-radius;
+  padding: @xbt-spacing-lg;
+  margin-bottom: @xbt-spacing-lg;
+}
+
+.xbt-badge() {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: @xf-fontSizeSmaller;
+  font-weight: 600;
+  border-radius: @xf-borderRadiusSmall;
+  margin-right: @xbt-spacing-sm;
+}
+
+.xbt-freeleech-badge() {
+  .xbt-badge();
+  background-color: @xbt-success;
+  color: #fff;
+}
+
+.xbt-stats() {
+  display: flex;
+  flex-wrap: wrap;
+  margin: @xbt-spacing-md 0;
+  
+  > div {
+    margin-right: @xbt-spacing-lg;
+    font-size: @xf-fontSizeSmall;
+    
+    i {
+      margin-right: @xbt-spacing-sm;
+      color: @xf-textColorMuted;
+    }
+  }
+}
