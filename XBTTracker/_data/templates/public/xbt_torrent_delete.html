@@ -12,7 +12,7 @@
                 {{ phrase('xbt_delete_torrent_confirmation', {'title': $torrent.title}) }}
             </div>
             
-            <xf:if is="{{ $torrent.seeders > 0 || $torrent.leechers > 0 }}">
+            <xf:if is="$torrent.seeders > 0 || $torrent.leechers > 0">
                 <div class="block-row block-row--warning">
                     {{ phrase('xbt_delete_torrent_has_peers_warning', {
                         'seeders': $torrent.seeders,

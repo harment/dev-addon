@@ -1,2 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<code_events/>
+<code_events>
+  <!-- حدث توليد passkey جديد -->
+  <event event_id="harment_xbttracker_passkey_generated" description="Called when a new tracker passkey is generated." hint="user_id" />
+  
+  <!-- حدث إضافة تورنت جديد -->
+  <event event_id="harment_xbttracker_torrent_added" description="Called when a new torrent is added to the tracker." hint="info_hash,user_id" />
+  
+  <!-- حدث حذف تورنت -->
+  <event event_id="harment_xbttracker_torrent_deleted" description="Called when a torrent is deleted from the tracker." hint="info_hash,user_id" />
+  
+  <!-- حدث تحديث إحصائيات التراكر -->
+  <event event_id="harment_xbttracker_stats_updated" description="Called when tracker statistics are updated." hint="stats" />
+</code_events>

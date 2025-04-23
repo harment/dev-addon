@@ -25,7 +25,7 @@
                         
                         <xf:select name="user_id" value="{{ $userId }}">
                             <xf:option value="0">{{ phrase('all_users') }}</xf:option>
-                            <xf:if is="{{ $userId }}">
+                            <xf:if is="$userId">
                                 <xf:option value="{$userId}" selected="selected">{{ $torrents.first.User.username }}</xf:option>
                             </xf:if>
                         </xf:select>
@@ -57,7 +57,7 @@
             <h2 class="block-header-title">{{ phrase('xbt_torrents') }}</h2>
         </div>
         <div class="block-body">
-            <xf:if is="{{ $torrents is empty }}">
+            <xf:if is="$torrents is empty">
                 <div class="block-row">{{ phrase('xbt_no_torrents_found') }}</div>
             <xf:else />
                 <div class="structItemContainer">
@@ -73,7 +73,7 @@
                             <div class="structItem-cell structItem-cell--main">
                                 <div class="structItem-title">
                                     <a href="{{ link('torrents', $torrent) }}" target="_blank">{$torrent.title}</a>
-                                    <xf:if is="{{ $torrent.is_freeleech }}">
+                                    <xf:if is="$torrent.is_freeleech">
                                         <span class="label label--primary">{{ phrase('xbt_freeleech') }}</span>
                                     </xf:if>
                                 </div>
@@ -84,7 +84,7 @@
                                         <li>{{ phrase('xbt_uploaded_on', { 'date': date_time($torrent.creation_date) }) }}</li>
                                     </ul>
                                     <ul class="structItem-parts structItem-parts--torrentTags">
-                                        <xf:if is="{{ $torrent.video_quality }}">
+                                        <xf:if is="$torrent.video_quality">
                                             <li>
                                                 <span class="labelTorrent labelTorrent--{$torrent.video_quality_badge.class}">
                                                     <i class="fa {$torrent.video_quality_badge.icon}"></i>
@@ -92,7 +92,7 @@
                                                 </span>
                                             </li>
                                         </xf:if>
-                                        <xf:if is="{{ $torrent.audio_format }}">
+                                        <xf:if is="$torrent.audio_format">
                                             <li>
                                                 <span class="labelTorrent labelTorrent--{$torrent.audio_format_badge.class}">
                                                     <i class="fa {$torrent.audio_format_badge.icon}"></i>
@@ -100,7 +100,7 @@
                                                 </span>
                                             </li>
                                         </xf:if>
-                                        <xf:if is="{{ $torrent.audio_channels }}">
+                                        <xf:if is="$torrent.audio_channels">
                                             <li>
                                                 <span class="labelTorrent labelTorrent--{$torrent.audio_channels_badge.class}">
                                                     <i class="fa fa-volume-up"></i>

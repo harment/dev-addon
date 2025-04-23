@@ -7,7 +7,7 @@
             <h2 class="block-header-title">{{ phrase('xbt_tracker_status') }}</h2>
         </div>
         <div class="block-body">
-            <xf:if is="{{ $trackerStatus == 'online' }}">
+            <xf:if is="$trackerStatus == 'online'">
                 <div class="block-row">
                     <div class="trackerStatus trackerStatus--online">
                         <i class="fa fa-check-circle"></i> {{ phrase('xbt_tracker_status') }}: {{ phrase('online') }}
@@ -131,7 +131,7 @@
                                 <div class="trackerNavBox">
                                     <a href="{{ link('torrents/user-stats') }}" class="trackerNavBox-link">
                                         <div class="trackerNavBox-icon">
-                                            <i class="fa fa-user-chart"></i>
+                                            <i class="fa fa-chart-line"></i>
                                         </div>
                                         <div class="trackerNavBox-title">{{ phrase('xbt_manage_user_stats') }}</div>
                                         <div class="trackerNavBox-description">{{ phrase('xbt_manage_user_stats_description') }}</div>
@@ -197,7 +197,7 @@
                                 
                                 <dt>{{ phrase('xbt_global_freeleech') }}</dt>
                                 <dd>
-                                    <xf:if is="{{ $xf.options.xbtTrackerGlobalFreeleech }}">
+                                    <xf:if is="$xf.options.xbtTrackerGlobalFreeleech">
                                         <span class="label label--green">{{ phrase('enabled') }}</span>
                                     <xf:else />
                                         <span class="label label--red">{{ phrase('disabled') }}</span>
@@ -211,3 +211,6 @@
         </div>
     </div>
 </div>
+</document_content>
+</document>
+</document_content>

@@ -40,7 +40,7 @@
             <h2 class="block-header-title">{{ phrase('xbt_user_stats') }}</h2>
         </div>
         <div class="block-body">
-            <xf:if is="{{ $userStats is empty }}">
+            <xf:if is="$userStats is empty">
                 <div class="block-row">{{ phrase('xbt_no_user_stats_found') }}</div>
             <xf:else />
                 <div class="block-row">

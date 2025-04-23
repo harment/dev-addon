@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<code_event_listeners/>
+<code_event_listeners>
+  <!-- تهيئة التطبيق - إعداد الربط مع قاعدة بيانات XBT Tracker -->
+  <listener event_id="app_setup" execute_order="10" callback_class="Harment\XBTTracker\Listener" callback_method="appSetup" active="1" hint=""/>
+  
+  <!-- تعديل هيكل كيان المستخدم - إضافة حقل passkey -->
+  <listener event_id="entity_structure" execute_order="10" callback_class="Harment\XBTTracker\Listener" callback_method="entityStructure" active="1" hint="XF\Entity\User"/>
+  
+  <!-- تسجيل المستخدم الجديد - إنشاء passkey جديد -->
+  <listener event_id="user_post_save" execute_order="10" callback_class="Harment\XBTTracker\Listener" callback_method="userPostSave" active="1" hint=""/>
+  
+  <!-- حذف المستخدم - حذف بيانات التراكر المرتبطة -->
+  <listener event_id="user_delete" execute_order="10" callback_class="Harment\XBTTracker\Listener" callback_method="userDelete" active="1" hint=""/>
+  
+  <!-- التحقق من صلاحيات المستخدم للوصول للتراكر -->
+  <listener event_id="permission_handler" execute_order="10" callback_class="Harment\XBTTracker\Listener" callback_method="permissionHandler" active="1" hint=""/>
+</code_event_listeners>

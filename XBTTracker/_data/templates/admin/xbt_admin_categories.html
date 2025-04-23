@@ -11,7 +11,7 @@
             <h2 class="block-header-title">{{ phrase('xbt_categories') }}</h2>
         </div>
         
-        <xf:if is="{{ $categories is empty }}">
+        <xf:if is="$categories is empty">
             <div class="block-body block-row">{{ phrase('xbt_no_categories') }}</div>
         <xf:else />
             <div class="block-body">
@@ -19,13 +19,13 @@
                     <div class="nestable-container" data-xf-init="nestable" data-type="category" data-url="{{ link('torrents/categories/reorder') }}">
                         <ol class="nestable">
                             <xf:foreach loop="$categories" value="$category">
-                                <xf:if is="{{ $category.parent_id == 0 }}">
+                                <xf:if is="$category.parent_id == 0">
                                     <li class="nestable-item" data-id="{$category.category_id}">
                                         <div class="nestable-handle" aria-label="{{ phrase('drag_handle') }}"></div>
                                         <div class="nestable-content">
                                             <div class="nestable-cell">
                                                 {$category.title}
-                                                <xf:if is="{{ $category.node_id }}">
+                                                <xf:if is="$category.node_id">
                                                     <span class="label label--primary">{{ phrase('xbt_linked_to_forum', {'forum': link('forums/edit', {'node_id': $category.node_id}) }) }}</span>
                                                 </xf:if>
                                             </div>
@@ -34,7 +34,7 @@
                                                 <a href="{{ link('torrents/categories/delete', $category) }}" class="actionLink" data-xf-click="overlay">{{ phrase('delete') }}</a>
                                             </div>
                                         </div>
-										<xf:if is="{{ $category.Children }}">
+										<xf:if is="$category.Children">
                                             <ol class="nestable-children">
                                                 <xf:foreach loop="$category.Children" value="$childCategory">
                                                     <li class="nestable-item" data-id="{$childCategory.category_id}">
@@ -42,7 +42,7 @@
                                                         <div class="nestable-content">
                                                             <div class="nestable-cell">
                                                                 {$childCategory.title}
-                                                                <xf:if is="{{ $childCategory.node_id }}">
+                                                                <xf:if is="$childCategory.node_id">
                                                                     <span class="label label--primary">{{ phrase('xbt_linked_to_forum', {'forum': link('forums/edit', {'node_id': $childCategory.node_id}) }) }}</span>
                                                                 </xf:if>
                                                             </div>

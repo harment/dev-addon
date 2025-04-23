@@ -69,7 +69,7 @@
                 <div class="formRow-explain">{{ phrase('xbt_tmdb_id_explain') }}</div>
             </xf:formrow>
             
-            <xf:if is="{{ \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents') }}">
+            <xf:if is="\XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents')">
                 <xf:formrow label="{{ phrase('xbt_freeleech') }}:">
                     <xf:checkbox name="is_freeleech" value="1">
                         <xf:option value="1" label="{{ phrase('xbt_enable_freeleech') }}" />

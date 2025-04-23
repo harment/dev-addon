@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<content_type_fields/>
+<content_type_fields>
+  <!-- إضافة حقل نوع المحتوى للتورنت -->
+  <content type="harment_xbttracker_torrent" addon_id="Harment/XBTTracker" fields="info_hash" primary_key="info_hash"/>
+</content_type_fields>

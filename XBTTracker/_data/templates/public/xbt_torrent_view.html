@@ -8,7 +8,7 @@
         <div class="block-header">
             <h1 class="block-header-title">{$torrent.title}</h1>
             <div class="block-header-actions">
-                <xf:if is="{{ $canDownload }}">
+                <xf:if is="$canDownload">
                     <xf:button href="{{ link('torrents', $torrent, {'download': 1}) }}" icon="download" overlay="false" class="button--primary">
                         {{ phrase('download') }}
                     </xf:button>
@@ -70,7 +70,7 @@
                                     {$torrent.completed}
                                 </dd>
                                 
-                                <xf:if is="{{ $torrent.video_quality }}">
+                                <xf:if is="$torrent.video_quality">
                                     <dt>{{ phrase('xbt_quality') }}</dt>
                                     <dd>
                                         <span class="labelTorrent labelTorrent--{$torrent.video_quality_badge.class}">
@@ -80,7 +80,7 @@
                                     </dd>
                                 </xf:if>
                                 
-                                <xf:if is="{{ $torrent.audio_format }}">
+                                <xf:if is="$torrent.audio_format">
                                     <dt>{{ phrase('xbt_audio') }}</dt>
                                     <dd>
                                         <span class="labelTorrent labelTorrent--{$torrent.audio_format_badge.class}">
@@ -90,7 +90,7 @@
                                     </dd>
                                 </xf:if>
                                 
-                                <xf:if is="{{ $torrent.audio_channels }}">
+                                <xf:if is="$torrent.audio_channels">
                                     <dt>{{ phrase('xbt_channels') }}</dt>
                                     <dd>
                                         <span class="labelTorrent labelTorrent--{$torrent.audio_channels_badge.class}">
@@ -100,7 +100,7 @@
                                     </dd>
                                 </xf:if>
                                 
-                                <xf:if is="{{ $torrent.is_freeleech }}">
+                                <xf:if is="$torrent.is_freeleech">
                                     <dt>{{ phrase('xbt_freeleech') }}</dt>
                                     <dd>
                                         <span class="label label--primary">{{ phrase('yes') }}</span>
@@ -117,15 +117,14 @@
                     </div>
                 </div>
                 
-                <xf:if is="{{ $torrent.tmdb_id && $torrent.TmdbData }}">
+                <xf:if is="$torrent.tmdb_id && $torrent.TmdbData">
                     <!-- TMDB Information -->
                     <div class="torrentView-tmdb">
                         <h3 class="block-formSectionHeader">{{ phrase('xbt_tmdb_information') }}</h3>
                         
                         <div class="torrentView-tmdbContent">
                             <div class="torrentView-tmdbPoster">
-                                <xf:if is="{{ $torrent.TmdbData.poster_url }}">
-								<xf:if is="{{ $torrent.TmdbData.poster_url }}">
+                                <xf:if is="$torrent.TmdbData.poster_url">
                                     <img src="{{ $torrent.TmdbData.poster_url }}" alt="{{ $torrent.TmdbData.display_title }}" class="torrentView-tmdbPosterImage" />
                                 </xf:if>
                             </div>
@@ -138,24 +137,24 @@
                                 </div>
                                 
                                 <dl class="pairs pairs--columns pairs--fixedSmall">
-                                    <xf:if is="{{ $torrent.TmdbData.release_date }}">
+                                    <xf:if is="$torrent.TmdbData.release_date">
                                         <dt>{{ phrase('xbt_release_date') }}</dt>
                                         <dd>{{ $torrent.TmdbData.release_date }}</dd>
                                     </xf:if>
                                     
-                                    <xf:if is="{{ $torrent.TmdbData.vote_average }}">
+                                    <xf:if is="$torrent.TmdbData.vote_average">
                                         <dt>{{ phrase('xbt_vote_average') }}</dt>
                                         <dd>{{ $torrent.TmdbData.vote_average }}/10</dd>
                                     </xf:if>
                                 </dl>
                                 
-                                <xf:if is="{{ !empty($torrent.TmdbData.cast) }}">
+                                <xf:if is="!empty($torrent.TmdbData.cast)">
                                     <h4>{{ phrase('xbt_cast') }}</h4>
                                     <div class="torrentView-tmdbCast">
                                         <xf:foreach loop="$torrent.TmdbData.cast" value="$actor">
                                             <div class="torrentView-tmdbCastMember">
                                                 <div class="torrentView-tmdbCastName">{$actor.name}</div>
-                                                <xf:if is="{{ !empty($actor.character) }}">
+                                                <xf:if is="!empty($actor.character)">
                                                     <div class="torrentView-tmdbCastCharacter">{$actor.character}</div>
                                                 </xf:if>
                                             </div>
@@ -163,13 +162,13 @@
                                     </div>
                                 </xf:if>
                                 
-                                <xf:if is="{{ !empty($torrent.TmdbData.crew) }}">
+                                <xf:if is="!empty($torrent.TmdbData.crew)">
                                     <h4>{{ phrase('xbt_crew') }}</h4>
                                     <div class="torrentView-tmdbCrew">
                                         <xf:foreach loop="$torrent.TmdbData.crew" value="$crewMember">
                                             <div class="torrentView-tmdbCrewMember">
                                                 <div class="torrentView-tmdbCrewName">{$crewMember.name}</div>
-                                                <xf:if is="{{ !empty($crewMember.job) }}">
+                                                <xf:if is="!empty($crewMember.job)">
                                                     <div class="torrentView-tmdbCrewJob">{$crewMember.job}</div>
                                                 </xf:if>
                                             </div>
@@ -185,21 +184,20 @@
         
         <div class="block-outer block-outer--after">
             <div class="block-outer-middle">
-                <xf:if is="{{ $canDownload }}">
+                <xf:if is="$canDownload">
                     <xf:button href="{{ link('torrents', $torrent, {'download': 1}) }}" icon="download" overlay="false" class="button--primary">
                         {{ phrase('download') }}
                     </xf:button>
                 </xf:if>
             </div>
             <div class="block-outer-opposite">
-                <xf:if is="{{ \XF::visitor()->hasPermission('xbtTracker', 'edit') && ($torrent.user_id == \XF::visitor()->user_id || \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents')) }}">
+                <xf:if is="\XF::visitor()->hasPermission('xbtTracker', 'edit') && ($torrent.user_id == \XF::visitor()->user_id || \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents'))">
                     <xf:button href="{{ link('torrents/edit', $torrent) }}" icon="edit">{{ phrase('edit') }}</xf:button>
                 </xf:if>
-                <xf:if is="{{ \XF::visitor()->hasPermission('xbtTracker', 'delete') && ($torrent.user_id == \XF::visitor()->user_id || \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents')) }}">
+                <xf:if is="\XF::visitor()->hasPermission('xbtTracker', 'delete') && ($torrent.user_id == \XF::visitor()->user_id || \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents'))">
                     <xf:button href="{{ link('torrents/delete', $torrent) }}" icon="delete">{{ phrase('delete') }}</xf:button>
                 </xf:if>
             </div>
         </div>
     </div>
 </div>
-

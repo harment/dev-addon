@@ -14,7 +14,7 @@
                 </div>
             </div>
             
-            <xf:if is="{{ $userStats.active_seeds > 0 || $userStats.active_leech > 0 }}">
+            <xf:if is="$userStats.active_seeds > 0 || $userStats.active_leech > 0">
                 <div class="block-row">
                     <div class="blockMessage blockMessage--error blockMessage--iconic">
                         {{ phrase('xbt_reset_passkey_active_warning', {'seeds': $userStats.active_seeds, 'leech': $userStats.active_leech}) }}
@@ -30,7 +30,7 @@
             </div>
         </div>
         
-        <xf:submitrow icon="refresh" submit="{{ phrase('xbt_reset_passkey') }}" />
+        <xf:submitrow icon="sync" submit="{{ phrase('xbt_reset_passkey') }}" />
     </div>
     
     <xf:redirect url="{{ link('torrents/user-stats') }}" />

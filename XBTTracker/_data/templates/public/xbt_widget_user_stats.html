@@ -1,5 +1,5 @@
 <!-- public:xbt_widget_user_stats -->
-<xf:if is="{{ $userStats }}">
+<xf:if is="$userStats">
     <div class="block">
         <div class="block-container">
             <div class="block-header">
@@ -33,7 +33,7 @@
                         <dt>{{ phrase('xbt_active_downloads') }}</dt>
                         <dd>{$activeDownloads.count}</dd>
                     </dl>
-                    <xf:if is="{{ $userStats.warnings > 0 }}">
+                    <xf:if is="$userStats.warnings > 0">
                         <dl class="pairs pairs--justified">
                             <dt>{{ phrase('xbt_warnings') }}</dt>
                             <dd class="userStats-warnings">{$userStats.warnings}</dd>
@@ -41,7 +41,7 @@
                     </xf:if>
                 </div>
                 
-                <xf:if is="{{ $activeSeeds.count > 0 }}">
+                <xf:if is="$activeSeeds.count > 0">
                     <h4 class="block-minorHeader">{{ phrase('xbt_active_seeds') }}</h4>
                     <div class="torrentMiniList">
                         <xf:foreach loop="$activeSeeds" value="$seed">
@@ -54,7 +54,7 @@
                     </div>
                 </xf:if>
                 
-                <xf:if is="{{ $activeDownloads.count > 0 }}">
+                <xf:if is="$activeDownloads.count > 0">
                     <h4 class="block-minorHeader">{{ phrase('xbt_active_downloads') }}</h4>
                     <div class="torrentMiniList">
                         <xf:foreach loop="$activeDownloads" value="$download">

@@ -1,2 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<options/>
+<options>
+  <!-- الإعدادات الأساسية للتراكر -->
+  <option option_id="xbtTrackerEnabled" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTracker" display_order="1"/>
+  </option>
+
+  <option option_id="xbtTrackerAnnounceUrl" edit_format="textbox" data_type="string">
+    <default_value>http://arabicsource.ddns.net:2710/announce</default_value>
+    <relation group_id="xbtTracker" display_order="10"/>
+  </option>
+
+  <option option_id="xbtTrackerAllowGuestDownloads" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xbtTracker" display_order="150"/>
+  </option>
+  
+  <!-- إعدادات قاعدة البيانات -->
+  <option option_id="xbtTrackerDbHost" edit_format="textbox" data_type="string">
+    <default_value>localhost</default_value>
+    <relation group_id="xbtTracker" display_order="20"/>
+  </option>
+  
+  <option option_id="xbtTrackerDbPort" edit_format="spinbox" data_type="integer">
+    <default_value>3306</default_value>
+    <relation group_id="xbtTracker" display_order="30"/>
+  </option>
+  
+  <option option_id="xbtTrackerDbName" edit_format="textbox" data_type="string">
+    <default_value>xbt</default_value>
+    <relation group_id="xbtTracker" display_order="40"/>
+  </option>
+  
+  <option option_id="xbtTrackerDbUser" edit_format="textbox" data_type="string">
+    <default_value>xbt</default_value>
+    <relation group_id="xbtTracker" display_order="50"/>
+  </option>
+  
+  <option option_id="xbtTrackerDbPassword" edit_format="textbox" data_type="string">
+    <default_value></default_value>
+    <relation group_id="xbtTracker" display_order="60"/>
+  </option>
+  
+  <!-- إعدادات النسبة والقيود -->
+  <option option_id="xbtTrackerRequiredRatio" edit_format="spinbox" data_type="numeric">
+    <default_value>0.7</default_value>
+    <relation group_id="xbtTracker" display_order="100"/>
+  </option>
+  
+ <option option_id="xbtTrackerRatioExemptGroups" edit_format="checkbox" data_type="array">
+  <default_value>[]</default_value>
+  <sub_options>admin|المشرفون
+moderator|المراقبون
+registered|الأعضاء المسجلون
+  </sub_options>
+  <relation group_id="xbtTracker" display_order="110"/>
+</option>
+  
+  <!-- إعدادات المسارات والملفات -->
+  <option option_id="xbtTrackerTorrentPath" edit_format="textbox" data_type="string">
+    <default_value>data/torrents</default_value>
+    <relation group_id="xbtTracker" display_order="200"/>
+  </option>
+  
+  <!-- خيارات واجهة المستخدم -->
+  <option option_id="xbtTrackerShowStats" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTracker" display_order="300"/>
+  </option>
+  
+  <option option_id="xbtTrackerShowTorrents" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTracker" display_order="310"/>
+  </option>
+  
+  <option option_id="xbtTrackerTopTorrentsCount" edit_format="spinbox" data_type="integer">
+    <default_value>10</default_value>
+    <relation group_id="xbtTracker" display_order="320"/>
+  </option>
+  
+  <option option_id="xbtTrackerTorrentsPerPage" edit_format="spinbox" data_type="integer">
+    <default_value>20</default_value>
+    <relation group_id="xbtTracker" display_order="330"/>
+  </option>
+  
+  <!-- إعدادات نظام نقاط المكافأة -->
+  <option option_id="xbtTrackerEnableBonusPoints" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTrackerBonus" display_order="10"/>
+  </option>
+  
+  <option option_id="xbtTrackerBonusPerHour" edit_format="spinbox" data_type="numeric">
+    <default_value>1.0</default_value>
+    <relation group_id="xbtTrackerBonus" display_order="20"/>
+  </option>
+  
+  <option option_id="xbtTrackerBonusMultiplierForSeeding" edit_format="spinbox" data_type="numeric">
+    <default_value>2.0</default_value>
+    <relation group_id="xbtTrackerBonus" display_order="30"/>
+  </option>
+  
+  <!-- إعدادات متقدمة -->
+  <option option_id="xbtTrackerAnnounceInterval" edit_format="spinbox" data_type="integer">
+    <default_value>1800</default_value>
+    <relation group_id="xbtTrackerAdvanced" display_order="10"/>
+  </option>
+  
+  <option option_id="xbtTrackerMinAnnounceInterval" edit_format="spinbox" data_type="integer">
+    <default_value>300</default_value>
+    <relation group_id="xbtTrackerAdvanced" display_order="20"/>
+  </option>
+  
+  <option option_id="xbtTrackerCleanupInterval" edit_format="spinbox" data_type="integer">
+    <default_value>1800</default_value>
+    <relation group_id="xbtTrackerAdvanced" display_order="30"/>
+  </option>
+  
+  <option option_id="xbtTrackerDeleteTorrentOnUserDelete" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xbtTrackerAdvanced" display_order="40"/>
+  </option>
+  
+  <option option_id="xbtTrackerCacheExpiry" edit_format="spinbox" data_type="integer">
+    <default_value>900</default_value>
+    <relation group_id="xbtTrackerAdvanced" display_order="50"/>
+  </option>
+  
+  <!-- إعدادات الأمان -->
+  <option option_id="xbtTrackerRequireLogin" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTrackerSecurity" display_order="10"/>
+  </option>
+  
+  <option option_id="xbtTrackerPasskeyLength" edit_format="spinbox" data_type="integer">
+    <default_value>32</default_value>
+    <relation group_id="xbtTrackerSecurity" display_order="20"/>
+  </option>
+  
+  <option option_id="xbtTrackerAllowPublicStats" edit_format="onoff" data_type="boolean">
+    <default_value>1</default_value>
+    <relation group_id="xbtTrackerSecurity" display_order="30"/>
+  </option>
+  
+  <option option_id="xbtTrackerAllowPublicTorrents" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xbtTrackerSecurity" display_order="40"/>
+  </option>
+  
+  <!-- إعدادات التكامل مع TMDB -->
+  <option option_id="xbtTrackerEnableTmdb" edit_format="onoff" data_type="boolean">
+    <default_value>0</default_value>
+    <relation group_id="xbtTrackerTmdb" display_order="10"/>
+  </option>
+  
+  <option option_id="xbtTrackerTmdbApiKey" edit_format="textbox" data_type="string">
+    <default_value></default_value>
+    <relation group_id="xbtTrackerTmdb" display_order="20"/>
+  </option>
+  
+  <option option_id="xbtTrackerTmdbLanguage" edit_format="textbox" data_type="string">
+    <default_value>ar-SA</default_value>
+    <relation group_id="xbtTrackerTmdb" display_order="30"/>
+  </option>
+</options>

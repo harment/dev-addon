@@ -1,0 +1,32 @@
+<!-- admin:xbt_generate_passkey -->
+<xf:title>{{ phrase('xbt_generate_passkey') }}: {$user.username}</xf:title>
+
+<xf:form action="{{ link('users/generate-passkey', $user) }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-body">
+            <div class="block-row">
+                {{ phrase('xbt_generate_passkey_explanation') }}
+            </div>
+            
+            <xf:formrow label="{{ phrase('xbt_current_passkey') }}:">
+                <xf:if is="$user.xbt_passkey">
+                    <code>{$user.xbt_passkey}</code>
+                <xf:else />
+                    <em>{{ phrase('none') }}</em>
+                </xf:if>
+            </xf:formrow>
+            
+            <xf:formrow>
+                <xf:checkbox>
+                    <xf:option name="confirm" required="required">
+                        {{ phrase('xbt_generate_passkey_confirm', {'name': $user.username}) }}
+                    </xf:option>
+                </xf:checkbox>
+            </xf:formrow>
+        </div>
+        
+        <xf:submitrow icon="refresh" submit="{{ phrase('generate') }}" />
+    </div>
+    
+    <xf:redirect url="{{ link('users/edit', $user, {'tab': 'xbt_tracker'}) }}" />
+</xf:form>

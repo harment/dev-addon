@@ -1,0 +1,45 @@
+<!-- admin:xbt_admin_user_stats_reset_passkey -->
+<xf:title>{{ phrase('xbt_reset_passkey') }}: {$user.username}</xf:title>
+
+<xf:form action="{{ link('tracker/users/reset-passkey', {'user_id': $user.user_id}) }}" class="block" ajax="true">
+    <div class="block-container">
+        <div class="block-body">
+            <div class="block-row">
+                <div class="blockMessage blockMessage--warning blockMessage--iconic">
+                    {{ phrase('xbt_reset_passkey_warning') }}
+                </div>
+                <p>{{ phrase('xbt_reset_passkey_confirm', {'name': $user.username}) }}</p>
+                
+                <xf:if is="$user.xbt_passkey">
+                    <dl class="pairs pairs--columns">
+                        <dt>{{ phrase('xbt_current_passkey') }}</dt>
+                        <dd><code>{$user.xbt_passkey}</code></dd>
+                    </dl>
+                </xf:if>
+            </div>
+            
+            <xf:formrow label="{{ phrase('notify_user') }}:">
+                <xf:checkbox name="notify_user" value="1" checked="1">
+                    <xf:option value="1" label="{{ phrase('send_reset_notification_to_user') }}" hint="{{ phrase('notification_will_include_new_passkey') }}" />
+                </xf:checkbox>
+            </xf:formrow>
+            
+            <xf:formrow label="{{ phrase('reason') }}:">
+                <xf:textbox name="reason" />
+                <div class="formRow-explain">{{ phrase('reason_for_audit_log') }}</div>
+            </xf:formrow>
+            
+            <xf:formrow>
+                <xf:checkbox>
+                    <xf:option name="confirm" required="required">
+                        {{ phrase('xbt_reset_passkey_confirm', {'name': $user.username}) }}
+                    </xf:option>
+                </xf:checkbox>
+            </xf:formrow>
+        </div>
+        
+        <xf:submitrow icon="refresh" submit="{{ phrase('reset_passkey') }}" />
+    </div>
+    
+    <xf:redirect url="{{ link('tracker/users') }}" />
+</xf:form>

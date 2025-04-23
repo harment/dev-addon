@@ -1,4 +1,3 @@
-
 <!-- public:xbt_tmdb_search_results -->
 <xf:title>{{ phrase('xbt_tmdb_search_results') }}</xf:title>
 
@@ -22,7 +21,7 @@
                 </div>
             </xf:form>
             
-            <xf:if is="{{ empty($results) }}">
+            <xf:if is="empty($results)">
                 <div class="block-row">{{ phrase('no_results_found') }}</div>
             <xf:else />
                 <ol class="block-body">
@@ -30,7 +29,7 @@
                         <li class="block-row block-row--separated">
                             <div class="contentRow">
                                 <div class="contentRow-figure">
-                                    <xf:if is="{{ !empty($result.poster_path) }}">
+                                    <xf:if is="!empty($result.poster_path)">
                                         <img src="https://image.tmdb.org/t/p/w92{$result.poster_path}" alt="{$result.title ?: $result.name}" class="tmdb-poster" />
                                     <xf:else />
                                         <div class="tmdb-poster tmdb-poster--placeholder"></div>
@@ -39,13 +38,13 @@
                                 <div class="contentRow-main">
                                     <h3 class="contentRow-header">
                                         {$result.title ?: $result.name}
-                                        <xf:if is="{{ !empty($result.release_date) }}">
+                                        <xf:if is="!empty($result.release_date)">
                                             ({{ date($result.release_date, 'Y') }})
-                                        <xf:elseif is="{{ !empty($result.first_air_date) }}" />
+                                        <xf:elseif is="!empty($result.first_air_date)" />
                                             ({{ date($result.first_air_date, 'Y') }})
                                         </xf:if>
                                     </h3>
-                                    <xf:if is="{{ !empty($result.overview) }}">
+                                    <xf:if is="!empty($result.overview)">
                                         <div class="contentRow-snippet">{$result.overview}</div>
                                     </xf:if>
                                     <div class="contentRow-minor">
@@ -95,4 +94,3 @@ XF.TmdbSelect = XF.Element.newHandler({
 
 XF.Element.register('tmdb-select', 'XF.TmdbSelect');
 </xf:js>
-

@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<bb_codes/>
+<bb_codes>
+  <bb_code bb_code_id="torrent" 
+           bb_code_mode="callback"
+           has_option="yes" 
+           callback_class="Harment\XBTTracker\BbCode\Torrent" 
+           callback_method="render" 
+           option_regex="/[a-f0-9]+/" 
+           active="1" 
+           addon_id="Harment/XBTTracker"
+           plain_children="1"
+           allow_empty="0" 
+           trim_lines_after="1">
+    <title>Torrent Information</title>
+    <description>Display torrent information</description>
+    <example>[TORRENT=abc123]Torrent Title[/TORRENT]</example>
+    <replace><![CDATA[<!-- This content is replaced by the callback -->]]></replace>
+  </bb_code>
+</bb_codes>

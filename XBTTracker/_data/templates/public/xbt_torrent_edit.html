@@ -19,7 +19,7 @@
             <xf:formrow label="{{ phrase('xbt_poster_image') }}:">
                 <div class="inputGroup">
                     <xf:upload name="poster_file" accept=".jpg, .jpeg, .png, .gif" />
-                    <xf:if is="{{ $torrent.poster_path }}">
+                    <xf:if is="$torrent.poster_path">
                         <img src="{{ $torrent.poster_url }}" alt="{$torrent.title}" class="torrentEditPoster" />
                     </xf:if>
                 </div>
@@ -70,7 +70,7 @@
                 <div class="formRow-explain">{{ phrase('xbt_tmdb_id_explain') }}</div>
             </xf:formrow>
             
-            <xf:if is="{{ \XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents') }}">
+            <xf:if is="\XF::visitor()->hasPermission('xbtTracker', 'moderateTorrents')">
                 <xf:formrow label="{{ phrase('xbt_freeleech') }}:">
                     <xf:checkbox name="is_freeleech" value="1" checked="{$torrent.is_freeleech}">
                         <xf:option value="1" label="{{ phrase('xbt_enable_freeleech') }}" />
