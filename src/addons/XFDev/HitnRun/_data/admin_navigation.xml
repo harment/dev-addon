@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<admin_navigation>
-  <admin_navigation_entry navigation_id="xftt_hitnrun_list" parent_navigation_id="torrent" display_order="700" link="hitnrun/list" debug_only="0" development_only="0" hide_no_children="0"/>
-  <admin_navigation_entry navigation_id="xftt_hitnrun_settings" parent_navigation_id="torrent" display_order="600" link="options/groups/xfdev_hitnrun_settings/" admin_permission_id="option" debug_only="0" development_only="0" hide_no_children="0"/>
-</admin_navigation>

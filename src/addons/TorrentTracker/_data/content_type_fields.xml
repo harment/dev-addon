@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<content_type_fields>
-  <field content_type="reseed" field_name="alert_handler_class">TorrentTracker\Alert\Reseed</field>
-  <field content_type="reseed" field_name="phrase">x_has_requested_reseed_for_torrent_y_completed</field>
-</content_type_fields>

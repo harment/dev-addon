@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<cron>
-  <entry entry_id="torrentupdateDaily" cron_class="TorrentTracker\Cron\Statistics" cron_method="updateDaily" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[1],"minutes":[0]}]]></entry>
-  <entry entry_id="torrentupdateHourly" cron_class="TorrentTracker\Cron\Statistics" cron_method="cacheTorrentStatistics" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[-1],"minutes":[23]}]]></entry>
-  <entry entry_id="torrentupdateWeekly" cron_class="TorrentTracker\Cron\Statistics" cron_method="updateWeekly" active="1"><![CDATA[{"day_type":"dow","dow":[1],"hours":[4],"minutes":[3]}]]></entry>
-  <entry entry_id="xfttInactiveTorrentMove" cron_class="TorrentTracker\Cron\InactiveTorrentMove" cron_method="runInactiveTorrentMove" active="1"><![CDATA[{"day_type":"dow","dow":[0],"hours":[0],"minutes":[0]}]]></entry>
-</cron>

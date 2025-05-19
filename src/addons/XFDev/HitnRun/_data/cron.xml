@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<cron>
-  <entry entry_id="xfdev_check_hitnrun" cron_class="XFDev\HitnRun\Cron\Hitnrun" cron_method="checkHitnRun" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[-1],"minutes":[59]}]]></entry>
-  <entry entry_id="xfdev_disable_access_hnr" cron_class="XFDev\HitnRun\Cron\Hitnrun" cron_method="disableTorrentDownloadAccess" active="1"><![CDATA[{"day_type":"dom","dom":[-1],"hours":[2],"minutes":[22]}]]></entry>
-  <entry entry_id="xfdev_recheck_hit_torrent" cron_class="XFDev\HitnRun\Cron\Hitnrun" cron_method="recheckHitPeers" active="1"><![CDATA[{"day_type":"dow","dow":[-1],"hours":[0],"minutes":[4]}]]></entry>
-  <entry entry_id="xfdev_recheck_zap_hitnrun" cron_class="XFDev\HitnRun\Cron\Hitnrun" cron_method="actionReCheckZappedPeers" active="1"><![CDATA[{"day_type":"dow","dow":[-1],"hours":[4],"minutes":[4]}]]></entry>
-</cron>
