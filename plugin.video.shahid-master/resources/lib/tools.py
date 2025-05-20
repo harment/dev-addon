@@ -9,7 +9,7 @@ import urlquick
 import base64
 
 from .vars import *
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 from codequick.utils import ensure_native_str
 from codequick import Listitem
 from codequick import Script
