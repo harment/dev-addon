@@ -1,0 +1,346 @@
+Request URL
+https://api3.shahid.net/proxy/v2.1/devicesservice?q=1747708309278&country=SA
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+[2600:9000:292d:a00:a:5cd5:3a40:93a1]:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://shahid.mbc.net
+access-control-expose-headers
+x-signature
+alt-svc
+h3=":443"; ma=86400
+cache-control
+no-cache, no-store, max-age=0, must-revalidate
+content-encoding
+gzip
+content-type
+application/json
+date
+Tue, 20 May 2025 02:31:49 GMT
+ms-info-decode
+cdn-country=SAU, user-country=SAU, timestamp=e:2025-05-20 02:31:49.215 UTC
+set-cookie
+dtCookie=v_4_srv_27_sn_7F9267037EE69315CD2E95BA9A0942CC_perc_100000_ol_0_mul_1_app-3Aa28d789e067b813f_0; Path=/; Domain=.shahid.net
+set-cookie
+JSESSIONID=98BF65FFD455FBAFC8538B46CDB7BB9E; Path=/shahid-auth-v4; HttpOnly
+vary
+Content-Encoding,Accept-Encoding,Origin,language,profile-key
+vary
+Origin
+via
+1.1 2e4f19b72e6357adadfa8f66b19e41ba.cloudfront.net (CloudFront)
+x-amz-cf-id
+QXGeU8n3Hl0ThJ03ITsNGI0k64dt8X3n_O86HozBdFN3YR5L1IEenQ==
+x-amz-cf-pop
+JED50-P3
+x-cache
+Miss from cloudfront
+x-oneagent-js-injection
+true
+:authority
+api3.shahid.net
+:method
+GET
+:path
+/proxy/v2.1/devicesservice?q=1747708309278&country=SA
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ar
+accept-session
+58CCBDB8C4C5C09059B78EE9F558F9FA
+browser_name
+CHROME
+browser_version
+136.0.0.0
+language
+AR
+origin
+https://shahid.mbc.net
+os_version
+NT 10.0
+priority
+u=1, i
+profile
+{"ageRestriction":false,"id":"d9f14fa4-0552-4a28-9058-647be1b3f910","master":true}
+profile-key
+{"ageRestriction":false,"isAdult":true}
+referer
+https://shahid.mbc.net/
+sec-ch-ua
+"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+shahid_os
+WEB
+token
+eyJhbGciOiJIUzI1NiJ9.eyJjYWNoZSI6IlVzZXJfNmJhNmJjZmNhNjBlNDEzNWJlYWY5ZDQwZjdiNjkyOTgiLCJ1aWQiOiJhcHIxU2hhaGlkRW5RWUpQTUsyTmxCb25xVnZqejJFV3QiLCJkaWQiOiJXZWIiLCJzdWJpZCI6IjZiYTZiY2ZjYTYwZTQxMzViZWFmOWQ0MGY3YjY5Mjk4Iiwic3ViIjoic2hhaGlkLXRva2VuLWVuY29kZSIsImlzcyI6InNoYWhpZC10b2tlbi1lbmNvZGUiLCJpYXQiOjE3NDc3MDcxNTAsImV4cCI6MTc3OTI0MzE1MH0.tH1b4tg2Lq1DE8JRnGIw6el6r93oV4RhPBtU-E6DX3E
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Request URL
+https://api3.shahid.net/proxy/v2.1/usersservice?country=SA
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+[2600:9000:292d:a00:a:5cd5:3a40:93a1]:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://shahid.mbc.net
+access-control-expose-headers
+x-signature
+alt-svc
+h3=":443"; ma=86400
+cache-control
+no-cache, no-store, max-age=0, must-revalidate
+content-encoding
+gzip
+content-type
+application/json
+date
+Tue, 20 May 2025 02:32:07 GMT
+ms-info-decode
+cdn-country=SAU, user-country=SAU, timestamp=e:2025-05-20 02:32:07.381 UTC
+set-cookie
+dtCookie=v_4_srv_20_sn_DD1899091EA9D533D5FFC7FD60EF3C16_perc_100000_ol_0_mul_1_app-3Aa28d789e067b813f_0; Path=/; Domain=.shahid.net
+set-cookie
+JSESSIONID=53517A01E59ACBB191043A1874440836; Path=/shahid-auth-v4; HttpOnly
+vary
+Content-Encoding,Accept-Encoding,Origin,language,profile-key
+vary
+Origin
+via
+1.1 2e4f19b72e6357adadfa8f66b19e41ba.cloudfront.net (CloudFront)
+x-amz-cf-id
+L4j8KSiMEumL3ZyLYHVMrBzZXK-t5cHI3w-rCaZhq_rV9FAnMQBnnQ==
+x-amz-cf-pop
+JED50-P3
+x-cache
+Miss from cloudfront
+x-oneagent-js-injection
+true
+:authority
+api3.shahid.net
+:method
+GET
+:path
+/proxy/v2.1/usersservice?country=SA
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+ar
+browser_name
+CHROME
+browser_version
+136.0.0.0
+language
+AR
+origin
+https://shahid.mbc.net
+os_version
+NT 10.0
+priority
+u=1, i
+profile
+{"ageRestriction":false,"id":"d9f14fa4-0552-4a28-9058-647be1b3f910","master":true}
+profile-key
+{"ageRestriction":false,"isAdult":true}
+referer
+https://shahid.mbc.net/
+sec-ch-ua
+"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+shahid_os
+WEB
+token
+eyJhbGciOiJIUzI1NiJ9.eyJjYWNoZSI6IlVzZXJfNmJhNmJjZmNhNjBlNDEzNWJlYWY5ZDQwZjdiNjkyOTgiLCJ1aWQiOiJhcHIxU2hhaGlkRW5RWUpQTUsyTmxCb25xVnZqejJFV3QiLCJkaWQiOiJXZWIiLCJzdWJpZCI6IjZiYTZiY2ZjYTYwZTQxMzViZWFmOWQ0MGY3YjY5Mjk4Iiwic3ViIjoic2hhaGlkLXRva2VuLWVuY29kZSIsImlzcyI6InNoYWhpZC10b2tlbi1lbmNvZGUiLCJpYXQiOjE3NDc3MDcxNTAsImV4cCI6MTc3OTI0MzE1MH0.tH1b4tg2Lq1DE8JRnGIw6el6r93oV4RhPBtU-E6DX3E
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Request URL
+https://api3.shahid.net/proxy/v2.1/devicesservice/rendezvousCode?q=1747708327903&country=SA
+Request Method
+OPTIONS
+Status Code
+200 OK
+Remote Address
+[2600:9000:292d:a00:a:5cd5:3a40:93a1]:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+accept-session,browser_name,browser_version,content-type,language,os_version,profile,profile-key,shahid_os,token
+access-control-allow-methods
+GET,HEAD,PUT,POST,PATCH,DELETE,OPTIONS
+access-control-allow-origin
+https://shahid.mbc.net
+access-control-max-age
+600
+alt-svc
+h3=":443"; ma=86400
+cache-control
+public, max-age=86400
+content-length
+0
+date
+Tue, 20 May 2025 02:32:07 GMT
+vary
+origin
+vary
+Access-Control-Request-Method
+vary
+Origin
+vary
+Access-Control-Request-Headers
+via
+1.1 2e4f19b72e6357adadfa8f66b19e41ba.cloudfront.net (CloudFront)
+x-amz-cf-id
+CnLv96ytsqkjQ7SX_u6epD7RV8m0iyCfwhjQBDU-RXbfQevpl0kOCw==
+x-amz-cf-pop
+JED50-P3
+x-cache
+Miss from cloudfront
+:authority
+api3.shahid.net
+:method
+OPTIONS
+:path
+/proxy/v2.1/devicesservice/rendezvousCode?q=1747708327903&country=SA
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9,ar;q=0.8
+access-control-request-headers
+accept-session,browser_name,browser_version,content-type,language,os_version,profile,profile-key,shahid_os,token
+access-control-request-method
+POST
+origin
+https://shahid.mbc.net
+priority
+u=1, i
+referer
+https://shahid.mbc.net/
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+Request URL
+https://api3.shahid.net/proxy/v2.1/devicesservice?q=1747708328320&country=SA
+Request Method
+OPTIONS
+Status Code
+200 OK
+Remote Address
+[2600:9000:292d:a00:a:5cd5:3a40:93a1]:443
+Referrer Policy
+strict-origin-when-cross-origin
+access-control-allow-credentials
+true
+access-control-allow-headers
+accept-session,browser_name,browser_version,language,os_version,profile,profile-key,shahid_os,token
+access-control-allow-methods
+GET,HEAD,PUT,POST,PATCH,DELETE,OPTIONS
+access-control-allow-origin
+https://shahid.mbc.net
+access-control-max-age
+600
+alt-svc
+h3=":443"; ma=86400
+cache-control
+public, max-age=86400
+content-length
+0
+date
+Tue, 20 May 2025 02:32:08 GMT
+vary
+origin
+vary
+Access-Control-Request-Method
+vary
+Origin
+vary
+Access-Control-Request-Headers
+via
+1.1 2e4f19b72e6357adadfa8f66b19e41ba.cloudfront.net (CloudFront)
+x-amz-cf-id
+p9obOLMGsvd3iCEQs77TJSrTKsWPNcD5GXOMhBEE3ZalMXY-7UEQnQ==
+x-amz-cf-pop
+JED50-P3
+x-cache
+Miss from cloudfront
+:authority
+api3.shahid.net
+:method
+OPTIONS
+:path
+/proxy/v2.1/devicesservice?q=1747708328320&country=SA
+:scheme
+https
+accept
+*/*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9,ar;q=0.8
+access-control-request-headers
+accept-session,browser_name,browser_version,language,os_version,profile,profile-key,shahid_os,token
+access-control-request-method
+GET
+origin
+https://shahid.mbc.net
+priority
+u=1, i
+referer
+https://shahid.mbc.net/
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+cross-site
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
